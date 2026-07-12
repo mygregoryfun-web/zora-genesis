@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import http from "node:http";
 import { config } from "./config.js";
-import { runAgent } from "./index.js";
+import { runAgent } from "./agent.js";
 import { getAgentProfile } from "./profile.js";
 
 function sendJson(res: http.ServerResponse, statusCode: number, data: unknown) {
@@ -13,11 +13,14 @@ function sendJson(res: http.ServerResponse, statusCode: number, data: unknown) {
 }
 
 function isAuthorized(req: http.IncomingMessage) {
-  if (!config.agentRunToken) {
+  if (!config.agentRunToken || !config.agentAllowedUserId) {
     return false;
   }
 
-  return req.headers.authorization === `Bearer ${config.agentRunToken}`;
+  return (
+    req.headers.authorization === `Bearer ${config.agentRunToken}` &&
+    req.headers["x-user-id"] === config.agentAllowedUserId
+  );
 }
 
 const server = http.createServer(async (req, res) => {
@@ -46,7 +49,7 @@ const server = http.createServer(async (req, res) => {
     if (!isAuthorized(req)) {
       sendJson(res, 403, {
         ok: false,
-        error: "AGENT_RUN_TOKEN is required to trigger the agent over HTTP.",
+        error: "Valid AGENT_RUN_TOKEN and x-user-id are required to trigger the agent over HTTP.",
       });
       return;
     }

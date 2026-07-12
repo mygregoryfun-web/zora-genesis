@@ -23,6 +23,7 @@ export const config = {
   agentEndpoint: process.env.AGENT_ENDPOINT ?? "",
   agentPublicUrl: process.env.AGENT_PUBLIC_URL ?? "",
   agentRunToken: process.env.AGENT_RUN_TOKEN ?? "",
+  agentAllowedUserId: process.env.AGENT_ALLOWED_USER_ID ?? "",
 };
 
 export function validateRuntimeConfig() {
@@ -40,4 +41,3 @@ export function validateRuntimeConfig() {
     }
   }
 }
-

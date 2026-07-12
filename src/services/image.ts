@@ -38,22 +38,31 @@ export async function generateImageForPost(post: GeneratedPost): Promise<Generat
     return null;
   }
 
-  const res = await axios.post(
-    "https://api.openai.com/v1/images/generations",
-    {
-      model: config.imageModel,
-      prompt,
-      size: "1024x1024",
-      n: 1,
-      response_format: "b64_json",
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${config.openAiApiKey}`,
-        "Content-Type": "application/json",
+  const res = await axios
+    .post(
+      "https://api.openai.com/v1/images/generations",
+      {
+        model: config.imageModel,
+        prompt,
+        size: "1024x1024",
+        n: 1,
+        output_format: "png",
       },
-    }
-  );
+      {
+        headers: {
+          Authorization: `Bearer ${config.openAiApiKey}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .catch((error) => {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.error?.message ?? error.message;
+        throw new Error(`Image generation failed: ${message}`);
+      }
+
+      throw error;
+    });
 
   const b64 = res.data?.data?.[0]?.b64_json;
   if (!b64) {
