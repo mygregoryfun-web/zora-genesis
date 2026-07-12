@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/api/health.ts"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/api/health.ts"
+    },
+    {
+      "src": "/health",
+      "dest": "/api/health.ts"
+    },
+    {
+      "src": "/agent/profile",
+      "dest": "/api/agent/profile.ts"
+    },
+    {
+      "src": "/agent/run",
+      "dest": "/api/agent/run.ts"
+    },
+    {
+      "src": "/api/health",
+      "dest": "/api/health.ts"
+    },
+    {
+      "src": "/api/agent/profile",
+      "dest": "/api/agent/profile.ts"
+    },
+    {
+      "src": "/api/agent/run",
+      "dest": "/api/agent/run.ts"
+    }
+  ]
+}
