@@ -10,7 +10,31 @@ const MAX_POST_LENGTH = 280;
 const X_MEDIA_UPLOAD_URL = "https://api.x.com/2/media/upload";
 const X_CREATE_TWEET_URL = "https://api.x.com/2/tweets";
 
-function formatForX(post: GeneratedPost) {
+function trimToBoundary(text: string, maxLength: number) {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  const candidate = text.slice(0, Math.max(0, maxLength)).trimEnd();
+  const sentenceBoundary = Math.max(
+    candidate.lastIndexOf(". "),
+    candidate.lastIndexOf("! "),
+    candidate.lastIndexOf("? "),
+  );
+
+  if (sentenceBoundary >= 80) {
+    return candidate.slice(0, sentenceBoundary + 1).trimEnd();
+  }
+
+  const wordBoundary = candidate.lastIndexOf(" ");
+  if (wordBoundary >= 40) {
+    return candidate.slice(0, wordBoundary).trimEnd();
+  }
+
+  return candidate;
+}
+
+export function formatForX(post: GeneratedPost) {
   const hashtags = post.hashtags.join(" ");
   const fullText = `${post.title}\n\n${post.post}\n\n${hashtags}`.trim();
 
@@ -21,8 +45,9 @@ function formatForX(post: GeneratedPost) {
   const suffix = hashtags ? `\n\n${hashtags}` : "";
   const available = MAX_POST_LENGTH - suffix.length - 1;
   const body = `${post.title}\n\n${post.post}`.trim();
+  const trimmed = trimToBoundary(body, available);
 
-  return `${body.slice(0, Math.max(0, available)).trimEnd()}…${suffix}`;
+  return `${trimmed}…${suffix}`;
 }
 
 function hasOAuth1Credentials() {

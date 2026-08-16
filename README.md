@@ -93,7 +93,42 @@ npm run run:once
 
 ## Publishing
 
-The agent can publish to Farcaster through Neynar and to X through the X API.
+The agent can publish to:
+
+- Zora through the Zora Coins SDK
+- Farcaster through Neynar
+- X through the X API
+
+Use `PUBLISH_CHANNELS` to run only selected channels. Accepted values are
+`zora`, `farcaster`, and `x`, separated by commas.
+
+Safe single-channel previews:
+
+```powershell
+npm.cmd run build
+npm.cmd run preview:x
+npm.cmd run preview:farcaster
+npm.cmd run preview:zora
+```
+
+`check:x`, `check:farcaster`, and `check:zora` are kept as aliases for the same
+safe preview flow.
+
+Live single-channel publishing:
+
+```powershell
+npm.cmd run publish:x
+npm.cmd run publish:farcaster
+npm.cmd run publish:zora
+```
+
+Manual channel selection:
+
+```powershell
+$env:PUBLISH_CHANNELS='x,farcaster'
+$env:SKIP_POST='true'
+npm.cmd run run:once
+```
 
 ## Facebook relationship posts
 
@@ -137,6 +172,9 @@ Required for X:
 
 ```bash
 X_BEARER_TOKEN=
+X_CLIENT_ID=
+X_CLIENT_SECRET=
+X_REFRESH_TOKEN=
 ```
 
 `X_BEARER_TOKEN` must be a user OAuth2 token with permission to create posts.

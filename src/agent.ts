@@ -13,8 +13,28 @@ import { postToZora } from "./services/poster.js";
 import { uploadImageForSocialEmbed } from "./services/social-image.js";
 import { postToX } from "./services/x.js";
 import { describeChannelResult, publishedChannels } from "./services/publishing.js";
+import { preparePostForChannel } from "./services/channel-content.js";
 
 let running = false;
+
+const knownChannels = new Set(["zora", "farcaster", "x"]);
+
+function selectedChannelNames() {
+  const unknownChannels = config.publishChannels.filter((channel) => !knownChannels.has(channel));
+  if (unknownChannels.length > 0) {
+    throw new Error(`Unknown PUBLISH_CHANNELS value: ${unknownChannels.join(", ")}`);
+  }
+
+  const selected = config.publishChannels.length > 0
+    ? config.publishChannels
+    : Array.from(knownChannels);
+
+  if (selected.length === 0) {
+    throw new Error("No publishing channels selected.");
+  }
+
+  return selected;
+}
 
 export async function runAgent() {
   if (running) {
@@ -95,17 +115,25 @@ async function runAgentOnce() {
     console.error("Image generation failed; continuing without image:", reason);
     return null;
   });
-  const socialImage = await uploadImageForSocialEmbed(image).catch((err) => {
-    const reason = err instanceof Error ? err.message : String(err);
-    console.error("Social image upload failed; continuing without Farcaster image embed:", reason);
-    return null;
-  });
+  const selectedChannels = selectedChannelNames();
+  const needsFarcasterEmbed = selectedChannels.includes("farcaster");
+  const socialImage = needsFarcasterEmbed
+    ? await uploadImageForSocialEmbed(image).catch((err) => {
+        const reason = err instanceof Error ? err.message : String(err);
+        console.error("Social image upload failed; continuing without Farcaster image embed:", reason);
+        return null;
+      })
+    : null;
 
   const channels = [
-    { name: "Zora", publish: () => postToZora(post, image) },
-    { name: "Farcaster", publish: () => postToFarcaster(post, socialImage?.url) },
-    { name: "X", publish: () => postToX(post, image) },
-  ];
+    { name: "Zora", publish: () => postToZora(preparePostForChannel(post, "zora"), image) },
+    { name: "Farcaster", publish: () => postToFarcaster(preparePostForChannel(post, "farcaster"), socialImage?.url) },
+    { name: "X", publish: () => postToX(preparePostForChannel(post, "x"), image) },
+  ].filter((channel) => selectedChannels.includes(channel.name.toLowerCase()));
+
+  if (config.publishChannels.length > 0) {
+    console.log("Selected publishing channels:", channels.map((channel) => channel.name).join(", "));
+  }
 
   const publishResults = await Promise.allSettled(
     channels.map((channel) => channel.publish())

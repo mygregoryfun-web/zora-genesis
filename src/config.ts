@@ -1,4 +1,9 @@
 const bool = (name: string) => process.env[name] === "true";
+const list = (name: string) =>
+  (process.env[name] ?? "")
+    .split(",")
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
 
 export const config = {
   openRouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
@@ -31,6 +36,7 @@ export const config = {
   facebookTopic: process.env.FACEBOOK_TOPIC ?? "relationships",
   facebookMemoryFile: process.env.FACEBOOK_MEMORY_FILE ?? (process.env.VERCEL ? "/tmp/zora-genesis-facebook-posts.json" : "src/memory/facebook-posts.json"),
   skipPost: bool("SKIP_POST") || bool("DRY_RUN"),
+  publishChannels: list("PUBLISH_CHANNELS"),
 
   requestTimeoutMs: Number(process.env.REQUEST_TIMEOUT_MS ?? 15000),
 
