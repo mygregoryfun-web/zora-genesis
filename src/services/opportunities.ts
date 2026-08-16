@@ -26,6 +26,7 @@ export function generateOpportunities({ trends, market }: OpportunityInput): Opp
   const baseIsActive = trends?.base?.activity === "high";
   const zoraMintingIsRising = trends?.zora?.mintVolume === "rising";
   const creatorMarketIsBullish = trends?.market?.topic === "creator economy";
+  const predictionMarketNarrative = trends?.predictionMarketNarrative;
   const ethChange = Number(market?.ethChange24h ?? 0);
 
   if (zoraFit.includes("new asset creation")) {
@@ -67,6 +68,20 @@ export function generateOpportunities({ trends, market }: OpportunityInput): Opp
       zoraAssetIdea: "A daily feed of creator assets with plain-language context, share cards, and one-click Zora/Farcaster routes.",
       builderNote: "Start with a public endpoint and lightweight UI before adding personalization.",
       riskNote: "Rank cultural relevance and creator activity, not expected financial performance.",
+    }));
+  }
+
+  if (areas.includes("prediction markets") || predictionMarketNarrative?.priority) {
+    opportunities.push(opportunity({
+      id: "prediction-market-narrative-radar",
+      title: "Narrative radar for Base prediction-market jumps",
+      area: "prediction markets / consumer signal layer",
+      score: 80 + (baseIsActive ? 4 : 0),
+      whyNow: "Base builders are exploring prediction markets and consumer-native trading experiences; these spikes can reveal where attention is moving before it becomes a creator asset trend.",
+      suggestedAction: "track-prediction-market-narrative",
+      zoraAssetIdea: "A Zora brief series that turns notable prediction-market narratives into collectible creator-market explainers without telling users what to trade.",
+      builderNote: "Track narrative velocity, source credibility, social spread, and Base relevance, then convert the signal into a creator asset idea or publishing brief.",
+      riskNote: "Observation only: no perps execution, leverage guidance, price targets, liquidation claims, or autonomous trading.",
     }));
   }
 

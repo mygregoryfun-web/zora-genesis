@@ -25,6 +25,7 @@ export type OpportunityAction =
   | "create-zora-asset"
   | "draft-launchpad-concept"
   | "build-consumer-app"
+  | "track-prediction-market-narrative"
   | "observe-agent-commerce"
   | "observe-defi-signal";
 

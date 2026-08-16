@@ -34,6 +34,7 @@ The strongest Base alignment is:
 - new asset creation
 - token launchpad-lite workflows
 - consumer discovery for onchain creator assets
+- prediction-market narrative radar for Base attention spikes
 - agent-assisted creator publishing
 - future x402-style premium creator briefs
 
@@ -45,6 +46,7 @@ Current shipped work:
 - Base mainnet proof contract: `0xc74659ce159b88ef3aae55a61fc3906fe2b1de58`
 - public agent profile endpoint
 - Base/Zora opportunity engine
+- prediction-market signal layer that converts Base attention spikes into creator asset briefs
 - AI-generated creator-market post flow
 - safety controls for publishing with `SKIP_POST`
 - image failure fallback so the agent can continue without OpenAI image credits

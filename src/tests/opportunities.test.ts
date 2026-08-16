@@ -37,3 +37,27 @@ test("keeps DeFi and autonomous trading as observation only", () => {
   assert.equal(defi?.suggestedAction, "observe-defi-signal");
   assert.match(defi?.riskNote ?? "", /No autonomous trading/);
 });
+
+test("turns prediction-market jumps into narrative radar, not trading advice", () => {
+  const opportunities = generateOpportunities({
+    market: { ethChange24h: 0.5 },
+    trends: {
+      base: { activity: "high" },
+      predictionMarketNarrative: {
+        priority: "medium",
+        theme: "prediction market rails with perps-like UX",
+      },
+      baseBuilderFocus: {
+        areas: ["prediction markets", "consumer apps"],
+        zoraFit: [],
+      },
+    },
+  });
+
+  const radar = opportunities.find((item) => item.id === "prediction-market-narrative-radar");
+
+  assert.equal(radar?.suggestedAction, "track-prediction-market-narrative");
+  assert.match(radar?.builderNote ?? "", /narrative velocity/);
+  assert.match(radar?.riskNote ?? "", /Observation only/);
+  assert.doesNotMatch(radar?.builderNote ?? "", /leverage guidance|price targets/i);
+});

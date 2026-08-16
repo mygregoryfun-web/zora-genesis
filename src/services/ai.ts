@@ -182,10 +182,16 @@ For Zora Genesis, the strongest overlap is:
 - new asset creation
 - token launchpads
 - consumer apps for creators and collectors
+- prediction-market narrative radar as a signal layer
 - agent-assisted discovery and publishing
 
 Treat autonomous trading and DeFi execution as observation topics only. Do not
 recommend trades, leverage, looping, or specific financial actions.
+
+Prediction-market rails and perps-like UX should be framed as market-attention
+signals for builders. Use them to explain what Base users are paying attention
+to, then connect that attention to creator assets, discovery feeds, or publishing
+briefs. Do not present them as trading products for Zora Genesis.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 BASE INFRASTRUCTURE CONTEXT

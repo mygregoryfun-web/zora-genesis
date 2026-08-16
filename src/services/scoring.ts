@@ -46,6 +46,13 @@ export function scoreSignals(data: any) {
     });
   }
 
+  if (data?.trends?.predictionMarketNarrative?.priority) {
+    scores.push({
+      signal: "Prediction market rails becoming consumer-native signal layer",
+      score: 8
+    });
+  }
+
   // ETH move
   if (data?.market?.ethChange24h > 3) {
     scores.push({

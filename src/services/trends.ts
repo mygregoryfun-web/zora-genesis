@@ -13,6 +13,19 @@ export function fetchTrends() {
       sentiment: "bullish",
       topic: "creator economy"
     },
+    predictionMarketNarrative: {
+      priority: "medium",
+      source: "ForecastFDN",
+      theme: "prediction market rails with perps-like UX",
+      baseRelevance: [
+        "prediction markets",
+        "consumer apps",
+        "new asset creation",
+        "market signal discovery"
+      ],
+      zoraFit: "Use prediction-market narratives as attention signals for creator assets, not as trading instructions.",
+      safetyBoundary: "Observe narratives only; do not recommend leverage, perps, liquidations, or autonomous trading."
+    },
     baseBuilderFocus: {
       priority: "high",
       areas: [
