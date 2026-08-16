@@ -7,6 +7,7 @@ function page() {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="talentapp:project_verification" content="7c6058f9ea0632426fc0a6c3d08ee4877a7fb59563066a6b999211904155a3ebe328ea030b68a2835651423ef9f9c310d2bbf666ee93c3f750ab98ba867b3b60" />
+  <meta name="base:app_id" content="69af0091f6467f4d78d304ac" />
   <title>Zora Genesis | Base Creator Agent</title>
   <style>
     :root {
