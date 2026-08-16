@@ -12,6 +12,7 @@ export async function fetchMarketData() {
   const res = await axios.get(
     "https://api.coingecko.com/api/v3/simple/price",
     {
+      timeout: config.requestTimeoutMs,
       params: {
         ids: "ethereum",
         vs_currencies: "usd",

@@ -25,6 +25,27 @@ export function scoreSignals(data: any) {
     });
   }
 
+  if (data?.trends?.baseBuilderFocus?.priority === "high") {
+    scores.push({
+      signal: "Base builder focus on new asset creation",
+      score: 9
+    });
+  }
+
+  if (data?.trends?.baseBuilderFocus?.zoraFit?.includes("token launchpads")) {
+    scores.push({
+      signal: "Token launchpad opportunity for Zora creators",
+      score: 8
+    });
+  }
+
+  if (data?.trends?.baseBuilderFocus?.zoraFit?.includes("consumer apps")) {
+    scores.push({
+      signal: "Consumer app demand for onchain creator assets",
+      score: 8
+    });
+  }
+
   // ETH move
   if (data?.market?.ethChange24h > 3) {
     scores.push({

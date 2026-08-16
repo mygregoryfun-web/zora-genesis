@@ -2,6 +2,69 @@
 
 A minimal autonomous AI agent for Base, Zora, NFTs, and the creator economy.
 
+## Live demo
+
+Production demo:
+
+https://zora-genesis-mygregoryfun-4145s-projects.vercel.app
+
+Public build post:
+
+https://x.com/mygregoryfun/status/2088388638916694508
+
+Public endpoints:
+
+- `GET /`
+- `GET /health`
+- `GET /agent/profile`
+- `GET /agent/opportunities`
+- `POST /agent/run`
+
+`POST /agent/run` is protected with `AGENT_RUN_TOKEN` and `x-user-id`.
+
+## Project goal
+
+Zora Genesis helps Base and Zora builders turn creator-economy signals into
+usable onchain asset ideas. The agent monitors Base/Zora signals, scores new
+asset opportunities, and produces launchpad-lite concepts for creator assets,
+consumer discovery, and agent-assisted publishing.
+
+The strongest Base alignment is:
+
+- new asset creation
+- token launchpad-lite workflows
+- consumer discovery for onchain creator assets
+- agent-assisted creator publishing
+- future x402-style premium creator briefs
+
+## Base grant readiness
+
+Current shipped work:
+
+- live Vercel production demo
+- Base mainnet proof contract: `0xc74659ce159b88ef3aae55a61fc3906fe2b1de58`
+- public agent profile endpoint
+- Base/Zora opportunity engine
+- AI-generated creator-market post flow
+- safety controls for publishing with `SKIP_POST`
+- image failure fallback so the agent can continue without OpenAI image credits
+- cleanup for malformed AI output, hashtags, and joined words
+
+Current impact signals:
+
+- public demo URL
+- public X build post
+- BaseScan proof: https://basescan.org/address/0xc74659ce159b88ef3aae55a61fc3906fe2b1de58
+- working opportunity endpoint for Base/Zora creator asset ideas
+- documented safe local and production flows
+
+Next milestone:
+
+- add a creator-facing UI for the opportunity engine
+- connect scored opportunities to a Zora-ready asset launch workflow
+- create one Base/Zora onchain proof asset tied to Zora Genesis
+- track early usage and social engagement metrics
+
 ## Run locally
 
 Install dependencies:
@@ -31,6 +94,37 @@ npm run run:once
 ## Publishing
 
 The agent can publish to Farcaster through Neynar and to X through the X API.
+
+## Facebook relationship posts
+
+The Facebook flow is separate from the crypto/Zora agent flow. It writes Slovenian
+relationship/life posts and publishes them to a Facebook Page when Page settings
+are configured.
+
+Dry run:
+
+```powershell
+$env:DRY_RUN='true'
+$env:SKIP_AI='true'
+$env:SKIP_POST='true'
+npm.cmd run fb:post
+```
+
+Live posting requires:
+
+```env
+FACEBOOK_PAGE_ID=
+FACEBOOK_PAGE_ACCESS_TOKEN=
+FACEBOOK_TOPIC=relationships
+SKIP_POST=false
+SKIP_AI=false
+```
+
+Run:
+
+```powershell
+npm.cmd run fb:post
+```
 
 Required for Farcaster:
 
@@ -86,6 +180,7 @@ This project includes Vercel serverless endpoints for:
 
 - `GET /health`
 - `GET /agent/profile`
+- `GET /agent/opportunities`
 - `POST /agent/run`
 
 After deployment, set:
@@ -108,6 +203,9 @@ Run the container with environment variables from a file:
 ```bash
 docker run --env-file .env zora-genesis
 ```
+
+The container starts the HTTP server. To run the agent as a one-off container,
+override the command with `node dist/cli.js`.
 
 ## Registration
 

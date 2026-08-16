@@ -1,11 +1,6 @@
 import axios from "axios";
 import { config } from "../config.js";
-
-type GeneratedPost = {
-  title: string;
-  post: string;
-  hashtags: string[];
-};
+import type { GeneratedPost } from "../types.js";
 
 export type GeneratedImage = {
   prompt: string;
@@ -49,6 +44,7 @@ export async function generateImageForPost(post: GeneratedPost): Promise<Generat
         output_format: "png",
       },
       {
+        timeout: config.requestTimeoutMs,
         headers: {
           Authorization: `Bearer ${config.openAiApiKey}`,
           "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 WORKDIR /usr/src/app
 
 COPY package.json package-lock.json ./
@@ -7,7 +7,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM node:20-slim
+FROM node:22-slim
 WORKDIR /usr/src/app
 
 COPY package.json package-lock.json ./
@@ -17,4 +17,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/src/memory ./src/memory
 
 ENV NODE_ENV=production
-CMD ["node", "dist/cli.js"]
+CMD ["node", "dist/server.js"]

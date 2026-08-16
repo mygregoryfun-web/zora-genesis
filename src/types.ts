@@ -1,0 +1,40 @@
+import { z } from "zod";
+
+export const GeneratedPostSchema = z.object({
+  title: z.string().trim().min(1).max(120),
+  post: z.string().trim().min(1).max(1000),
+  hashtags: z.array(
+    z.string().trim().regex(/^#[\p{L}\p{N}_]+$/u, "Hashtags must start with #"),
+  ).max(3),
+});
+
+export type GeneratedPost = z.infer<typeof GeneratedPostSchema>;
+
+export type PublishStatus = "published" | "skipped";
+
+export type PublishResult = {
+  status: PublishStatus;
+  platform: string;
+  reason?: string;
+  data?: unknown;
+};
+
+export type OpportunityAction =
+  | "create-zora-asset"
+  | "draft-launchpad-concept"
+  | "build-consumer-app"
+  | "observe-agent-commerce"
+  | "observe-defi-signal";
+
+export type Opportunity = {
+  id: string;
+  title: string;
+  area: string;
+  score: number;
+  confidence: "low" | "medium" | "high";
+  whyNow: string;
+  suggestedAction: OpportunityAction;
+  zoraAssetIdea?: string;
+  builderNote: string;
+  riskNote: string;
+};

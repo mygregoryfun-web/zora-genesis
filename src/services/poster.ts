@@ -1,21 +1,11 @@
 import { File } from "node:buffer";
+import * as coinsSdk from "@zoralabs/coins-sdk";
+import { createPublicClient, createWalletClient, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { base } from "viem/chains";
 import { config } from "../config.js";
 import type { GeneratedImage } from "./image.js";
-
-type GeneratedPost = {
-  title: string;
-  post: string;
-  hashtags: string[];
-};
-
-async function optionalImport<T>(moduleName: string): Promise<T | null> {
-  try {
-    const load = new Function("moduleName", "return import(moduleName)");
-    return (await load(moduleName)) as T;
-  } catch {
-    return null;
-  }
-}
+import type { GeneratedPost, PublishResult } from "../types.js";
 
 function symbolFromName(name: string) {
   return name
@@ -25,7 +15,31 @@ function symbolFromName(name: string) {
     .padEnd(3, "Z");
 }
 
-export async function postToZora(post: GeneratedPost, image: GeneratedImage | null) {
+function hasValidEvmPrivateKey(value: string) {
+  return /^0x[0-9a-fA-F]{64}$/.test(value);
+}
+
+async function diagnoseCreateContentFailure(call: Record<string, unknown>) {
+  try {
+    const response = await fetch("https://api-sdk.zora.engineering/create/content", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "api-key": config.zoraApiKey,
+      },
+      body: JSON.stringify(call),
+    });
+    const body = await response.text();
+    const detail = body.slice(0, 1000) || "Empty response";
+    return `Zora create API ${response.status}: ${detail}`;
+  } catch (error) {
+    return `Unable to read Zora create API error: ${
+      error instanceof Error ? error.message : String(error)
+    }`;
+  }
+}
+
+export async function postToZora(post: GeneratedPost, image: GeneratedImage | null): Promise<PublishResult> {
   const coinName = `${config.creatorName}: ${post.title}`.slice(0, 64);
 
   if (config.skipPost) {
@@ -34,28 +48,31 @@ export async function postToZora(post: GeneratedPost, image: GeneratedImage | nu
     console.log("COIN:", coinName);
     console.log("POST:", post.post);
     console.log("IMAGE:", image ? `${image.filename} generated` : "not generated");
-    return null;
+    return { status: "skipped", platform: "zora", reason: "SKIP_POST enabled" };
   }
 
   if (!config.creatorWalletAddress || !config.walletPrivateKey || !config.baseRpcUrl) {
     console.log("Zora wallet settings not configured; skipping Zora.");
-    return null;
+    return { status: "skipped", platform: "zora", reason: "Wallet settings not configured" };
+  }
+
+  if (!hasValidEvmPrivateKey(config.walletPrivateKey)) {
+    console.log("Zora SDK publishing needs a local EVM private key in WALLET_PRIVATE_KEY (0x + 64 hex characters); skipping Zora.");
+    return { status: "skipped", platform: "zora", reason: "Invalid private key format" };
+  }
+
+  if (!config.zoraApiKey) {
+    console.log("ZORA_API_KEY not configured; skipping Zora.");
+    return { status: "skipped", platform: "zora", reason: "ZORA_API_KEY not configured" };
   }
 
   if (!image) {
     console.log("Generated image missing; skipping Zora.");
-    return null;
+    return { status: "skipped", platform: "zora", reason: "Generated image missing" };
   }
 
-  const coins = await optionalImport<any>("@zoralabs/coins-sdk");
-  const viem = await optionalImport<any>("viem");
-  const accounts = await optionalImport<any>("viem/accounts");
-  const chains = await optionalImport<any>("viem/chains");
-
-  if (!coins || !viem || !accounts || !chains) {
-    console.log("Zora SDK dependencies not installed; skipping Zora.");
-    return null;
-  }
+  const coins = coinsSdk as any;
+  coins.setApiKey(config.zoraApiKey);
 
   const creator = config.creatorWalletAddress as `0x${string}`;
   const { createMetadataParameters } = await coins
@@ -66,29 +83,38 @@ export async function postToZora(post: GeneratedPost, image: GeneratedImage | nu
     .withImage(new File([image.buffer], image.filename, { type: image.mimeType }))
     .upload(coins.createZoraUploaderForCreator(creator));
 
-  const account = accounts.privateKeyToAccount(config.walletPrivateKey as `0x${string}`);
-  const chain = chains.base;
-  const publicClient = viem.createPublicClient({
-    chain,
-    transport: viem.http(config.baseRpcUrl),
+  const account = privateKeyToAccount(config.walletPrivateKey as `0x${string}`);
+  const publicClient = createPublicClient({
+    chain: base,
+    transport: http(config.baseRpcUrl),
   });
-  const walletClient = viem.createWalletClient({
+  const walletClient = createWalletClient({
     account,
-    chain,
-    transport: viem.http(config.baseRpcUrl),
+    chain: base,
+    transport: http(config.baseRpcUrl),
   });
 
-  const result = await coins.createCoin({
-    call: {
-      ...createMetadataParameters,
-      creator,
-      currency: coins.CreateConstants.ContentCoinCurrencies[config.zoraCurrency] ?? coins.CreateConstants.ContentCoinCurrencies.ZORA,
-      chainId: chain.id,
-      startingMarketCap: coins.CreateConstants.StartingMarketCaps.LOW,
-    },
-    walletClient,
-    publicClient,
-  });
+  const createCall = {
+    ...createMetadataParameters,
+    creator,
+    currency: coins.CreateConstants.ContentCoinCurrencies[config.zoraCurrency] ?? coins.CreateConstants.ContentCoinCurrencies.ZORA,
+    chainId: base.id,
+    startingMarketCap: coins.CreateConstants.StartingMarketCaps.LOW,
+  };
+
+  let result;
+  try {
+    result = await coins.createCoin({
+      call: createCall,
+      walletClient,
+      publicClient,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "Failed to create content calldata") {
+      throw new Error(await diagnoseCreateContentFailure(createCall));
+    }
+    throw error;
+  }
 
   console.log("Posted to Zora:", {
     hash: result.hash,
@@ -97,10 +123,8 @@ export async function postToZora(post: GeneratedPost, image: GeneratedImage | nu
   });
 
   return {
-    success: true,
+    status: "published",
     platform: "zora",
-    hash: result.hash,
-    address: result.address,
-    timestamp: new Date().toISOString(),
+    data: { hash: result.hash, address: result.address },
   };
 }

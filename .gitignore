@@ -1,5 +1,8 @@
 node_modules
 dist
+output
+__pycache__
+scripts/__pycache__
 .env
 .DS_Store
 src/api hol.txt
@@ -7,3 +10,7 @@ src/*.txt
 
 .vercel
 .env*
+x-oauth-url.txt
+*.tmp
+*token*.txt
+*oauth*.txt

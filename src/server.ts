@@ -4,6 +4,9 @@ import http from "node:http";
 import { config } from "./config.js";
 import { runAgent } from "./agent.js";
 import { getAgentProfile } from "./profile.js";
+import { fetchMarketData } from "./services/market.js";
+import { generateOpportunities } from "./services/opportunities.js";
+import { fetchTrends } from "./services/trends.js";
 
 function sendJson(res: http.ServerResponse, statusCode: number, data: unknown) {
   res.writeHead(statusCode, {
@@ -42,6 +45,26 @@ const server = http.createServer(async (req, res) => {
       publicUrl: config.agentPublicUrl,
       communicationProtocol: "hcs-10",
     });
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/agent/opportunities") {
+    try {
+      const trends = fetchTrends();
+      const market = await fetchMarketData();
+      sendJson(res, 200, {
+        generatedAt: new Date().toISOString(),
+        positioning: "Base/Zora opportunity engine for new asset creation, token launchpads, consumer apps, and agent-assisted creator workflows.",
+        disclaimer: "Opportunities are builder/product signals, not financial advice or trading instructions.",
+        opportunities: generateOpportunities({ trends, market }),
+      });
+    } catch (error) {
+      sendJson(res, 500, {
+        ok: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+
     return;
   }
 

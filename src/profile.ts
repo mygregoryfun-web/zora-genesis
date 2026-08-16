@@ -9,7 +9,7 @@ export type AgentProfile = {
     type: number;
     creator: string;
     model: string;
-    capabilities: string[];
+    capabilities: number[];
   };
 };
 
@@ -19,18 +19,19 @@ export function getAgentProfile(): AgentProfile {
     type: 1,
     display_name: "Zora Genesis",
     alias: "zora-genesis",
-    bio: "Autonomous AI agent for Base, Zora, NFTs and creator economy.",
+    bio: "Autonomous AI agent for Base, Zora, new asset creation, consumer crypto and creator economy.",
     base_account: process.env.ACCOUNT_ID,
     aiAgent: {
       type: 1,
       creator: "Fun Gregory",
       model: process.env.MODEL ?? "openai/gpt-4o-mini",
       capabilities: [
-        "base-ecosystem-analysis",
-        "zora-creator-economy-analysis",
-        "market-signal-scoring",
-        "farcaster-publishing",
-        "x-publishing",
+        0,
+        1,
+        8,
+        9,
+        17,
+        18,
       ],
     },
   };

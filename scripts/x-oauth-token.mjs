@@ -3,14 +3,15 @@ import http from "node:http";
 import fs from "node:fs";
 
 const envPath = new URL("../.env", import.meta.url);
-const envText = fs.readFileSync(envPath, "utf8");
 
 function readEnv(name) {
+  const envText = fs.readFileSync(envPath, "utf8");
   const match = envText.match(new RegExp(`^${name}=(.*)$`, "m"));
   return match?.[1]?.trim() ?? "";
 }
 
 function updateEnv(name, value) {
+  const envText = fs.readFileSync(envPath, "utf8");
   const escaped = value.replace(/\r?\n/g, "");
   const pattern = new RegExp(`^${name}=.*$`, "m");
   const next = pattern.test(envText)

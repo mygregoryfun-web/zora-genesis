@@ -1,1 +1,0 @@
-https://twitter.com/i/oauth2/authorize?response_type=code&client_id=CjVd3KFZ59sCg-X011CXWpA6CVhoMh9yhJmzuOlYDW4FAnwb68&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback&scope=tweet.read+tweet.write+users.read+offline.access&state=E3Hsfm-4MeflvwvDjA4Ezw&code_challenge=ps6BjAH7-NjOb4HdEsDCkjSr7mBwwpqrYeJpOFBJTHc&code_challenge_method=S256

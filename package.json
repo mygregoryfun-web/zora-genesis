@@ -10,10 +10,14 @@
     "dev": "tsx src/cli.ts",
     "dev:server": "tsx src/server.ts",
     "build": "tsc",
+    "test": "npm run build && node --test \"dist/tests/*.test.js\"",
     "start": "node dist/server.js",
     "run:once": "node dist/cli.js",
+    "fb:post": "tsx src/facebook-cli.ts",
     "register": "tsx src/test-register.ts",
     "hol:register": "tsx src/hol.ts",
+    "hol:resolve": "tsx src/hol-resolve.ts",
+    "hol:update": "tsx src/hol-update.ts",
     "docker:build": "docker build -t zora-genesis .",
     "docker:run": "docker run --env-file .env zora-genesis"
   },
@@ -29,6 +33,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
+    "solc": "^0.8.36",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   }
