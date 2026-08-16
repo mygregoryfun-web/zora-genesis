@@ -211,6 +211,7 @@ function page() {
     <nav>
       <a href="/agent/profile">Profile</a>
       <a href="/agent/opportunities">Opportunities</a>
+      <a href="/agent/monetization">Monetization</a>
       <a href="/health">Health</a>
     </nav>
   </header>
@@ -231,6 +232,7 @@ function page() {
         <div class="row"><span class="label">Primary Track</span><span>New asset creation</span></div>
         <div class="row"><span class="label">Publishing Guard</span><span class="safe">Protected</span></div>
         <div class="row"><span class="label">Demo Endpoint</span><span><code>/agent/opportunities</code></span></div>
+        <div class="row"><span class="label">Revenue Model</span><span><code>/agent/monetization</code></span></div>
       </aside>
     </section>
 
@@ -251,6 +253,11 @@ function page() {
           <span class="tag">Consumer Apps</span>
           <h3>Discovery feed</h3>
           <p>Ranks cultural relevance and creator activity so non-technical users can discover onchain creator assets faster.</p>
+        </article>
+        <article class="card">
+          <span class="tag">x402 Commerce</span>
+          <h3>Premium briefs</h3>
+          <p>Packages deeper creator asset briefs as paid access while keeping safety-critical context free.</p>
         </article>
       </div>
     </section>

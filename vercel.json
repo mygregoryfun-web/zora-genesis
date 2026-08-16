@@ -32,6 +32,10 @@
       "dest": "/api/agent/opportunities.ts"
     },
     {
+      "src": "/agent/monetization",
+      "dest": "/api/agent/monetization.ts"
+    },
+    {
       "src": "/api/health",
       "dest": "/api/health.ts"
     },
@@ -46,6 +50,10 @@
     {
       "src": "/api/agent/opportunities",
       "dest": "/api/agent/opportunities.ts"
+    },
+    {
+      "src": "/api/agent/monetization",
+      "dest": "/api/agent/monetization.ts"
     }
   ]
 }

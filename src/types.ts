@@ -41,3 +41,32 @@ export type Opportunity = {
   builderNote: string;
   riskNote: string;
 };
+
+export type MonetizationTier = {
+  id: string;
+  name: string;
+  priceUsdMonthly: number;
+  audience: string;
+  included: string[];
+  limits: string[];
+};
+
+export type MonetizationProduct = {
+  id: string;
+  name: string;
+  model: "subscription" | "pay-per-brief" | "service";
+  baseFit: string[];
+  revenueHypothesis: string;
+  userValue: string;
+  implementationNote: string;
+  safetyBoundary: string;
+};
+
+export type MonetizationPlan = {
+  positioning: string;
+  freeValue: string[];
+  tiers: MonetizationTier[];
+  products: MonetizationProduct[];
+  nextExperiment: string;
+  riskNote: string;
+};

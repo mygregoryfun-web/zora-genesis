@@ -18,6 +18,7 @@ Public endpoints:
 - `GET /health`
 - `GET /agent/profile`
 - `GET /agent/opportunities`
+- `GET /agent/monetization`
 - `POST /agent/run`
 
 `POST /agent/run` is protected with `AGENT_RUN_TOKEN` and `x-user-id`.
@@ -47,6 +48,7 @@ Current shipped work:
 - public agent profile endpoint
 - Base/Zora opportunity engine
 - prediction-market signal layer that converts Base attention spikes into creator asset briefs
+- monetization plan endpoint for premium briefs, subscriptions, and done-for-you setup
 - AI-generated creator-market post flow
 - safety controls for publishing with `SKIP_POST`
 - image failure fallback so the agent can continue without OpenAI image credits
@@ -221,6 +223,7 @@ This project includes Vercel serverless endpoints for:
 - `GET /health`
 - `GET /agent/profile`
 - `GET /agent/opportunities`
+- `GET /agent/monetization`
 - `POST /agent/run`
 
 After deployment, set:

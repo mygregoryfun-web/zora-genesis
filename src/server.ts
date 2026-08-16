@@ -7,6 +7,7 @@ import { getAgentProfile } from "./profile.js";
 import { fetchMarketData } from "./services/market.js";
 import { generateOpportunities } from "./services/opportunities.js";
 import { fetchTrends } from "./services/trends.js";
+import { generateMonetizationPlan } from "./services/monetization.js";
 
 function sendJson(res: http.ServerResponse, statusCode: number, data: unknown) {
   res.writeHead(statusCode, {
@@ -65,6 +66,15 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/agent/monetization") {
+    sendJson(res, 200, {
+      generatedAt: new Date().toISOString(),
+      disclaimer: "Monetization ideas sell workflow and creator intelligence, not trading advice or autonomous execution.",
+      plan: generateMonetizationPlan(),
+    });
     return;
   }
 
