@@ -8,6 +8,7 @@ import { fetchMarketData } from "./services/market.js";
 import { generateOpportunities } from "./services/opportunities.js";
 import { fetchTrends } from "./services/trends.js";
 import { generateMonetizationPlan } from "./services/monetization.js";
+import { getBuilderCodeAttribution } from "./services/base-builder.js";
 
 function sendJson(res: http.ServerResponse, statusCode: number, data: unknown) {
   res.writeHead(statusCode, {
@@ -74,6 +75,16 @@ const server = http.createServer(async (req, res) => {
       generatedAt: new Date().toISOString(),
       disclaimer: "Monetization ideas sell workflow and creator intelligence, not trading advice or autonomous execution.",
       plan: generateMonetizationPlan(),
+    });
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/agent/builder-code") {
+    sendJson(res, 200, {
+      ok: true,
+      service: "zora-genesis",
+      generatedAt: new Date().toISOString(),
+      builderCode: getBuilderCodeAttribution(),
     });
     return;
   }

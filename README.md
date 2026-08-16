@@ -6,7 +6,7 @@ A minimal autonomous AI agent for Base, Zora, NFTs, and the creator economy.
 
 Production demo:
 
-https://zora-genesis-mygregoryfun-4145s-projects.vercel.app
+https://zora-genesis-t1j9.vercel.app
 
 Public build post:
 
@@ -19,6 +19,7 @@ Public endpoints:
 - `GET /agent/profile`
 - `GET /agent/opportunities`
 - `GET /agent/monetization`
+- `GET /agent/builder-code`
 - `POST /agent/run`
 
 `POST /agent/run` is protected with `AGENT_RUN_TOKEN` and `x-user-id`.
@@ -45,6 +46,7 @@ Current shipped work:
 
 - live Vercel production demo
 - Base mainnet proof contract: `0xc74659ce159b88ef3aae55a61fc3906fe2b1de58`
+- Base Builder Code attribution: `bc_lk15eqwc`
 - public agent profile endpoint
 - Base/Zora opportunity engine
 - prediction-market signal layer that converts Base attention spikes into creator asset briefs
@@ -191,9 +193,12 @@ ZORA_CREATOR_NAME=
 ZORA_CREATOR_WALLET_ADDRESS=
 WALLET_PRIVATE_KEY=
 BASE_RPC_URL=
+BASE_BUILDER_CODE=bc_lk15eqwc
 ```
 
 The Zora path generates an original image, uploads it as coin metadata, and creates the coin under `ZORA_CREATOR_NAME` and `ZORA_CREATOR_WALLET_ADDRESS`.
+
+`BASE_BUILDER_CODE` is used for Base Builder Code attribution and analytics. It is not a contract address, wallet private key, payment credential, or transaction hash.
 
 ### Dry run (safe local test)
 
@@ -224,6 +229,7 @@ This project includes Vercel serverless endpoints for:
 - `GET /agent/profile`
 - `GET /agent/opportunities`
 - `GET /agent/monetization`
+- `GET /agent/builder-code`
 - `POST /agent/run`
 
 After deployment, set:

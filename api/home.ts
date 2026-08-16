@@ -1,4 +1,4 @@
-const productionUrl = "https://zora-genesis-mygregoryfun-4145s-projects.vercel.app";
+const productionUrl = "https://zora-genesis-t1j9.vercel.app";
 
 function page() {
   return `<!doctype html>
@@ -212,6 +212,7 @@ function page() {
       <a href="/agent/profile">Profile</a>
       <a href="/agent/opportunities">Opportunities</a>
       <a href="/agent/monetization">Monetization</a>
+      <a href="/agent/builder-code">Builder Code</a>
       <a href="/health">Health</a>
     </nav>
   </header>
@@ -233,6 +234,7 @@ function page() {
         <div class="row"><span class="label">Publishing Guard</span><span class="safe">Protected</span></div>
         <div class="row"><span class="label">Demo Endpoint</span><span><code>/agent/opportunities</code></span></div>
         <div class="row"><span class="label">Revenue Model</span><span><code>/agent/monetization</code></span></div>
+        <div class="row"><span class="label">Builder Code</span><span><code>bc_lk15eqwc</code></span></div>
       </aside>
     </section>
 
@@ -258,6 +260,11 @@ function page() {
           <span class="tag">x402 Commerce</span>
           <h3>Premium briefs</h3>
           <p>Packages deeper creator asset briefs as paid access while keeping safety-critical context free.</p>
+        </article>
+        <article class="card">
+          <span class="tag">Builder Codes</span>
+          <h3>Attributed activity</h3>
+          <p>Exposes Base Builder Code metadata so future app, wallet, and agent transactions can be measured.</p>
         </article>
       </div>
     </section>

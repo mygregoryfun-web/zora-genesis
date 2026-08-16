@@ -70,3 +70,13 @@ export type MonetizationPlan = {
   nextExperiment: string;
   riskNote: string;
 };
+
+export type BaseBuilderCodeAttribution = {
+  builderCode: string;
+  valid: boolean;
+  app: string;
+  attribution: string;
+  usage: string[];
+  integrationTargets: string[];
+  safetyBoundary: string;
+};

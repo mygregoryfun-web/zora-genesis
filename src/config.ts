@@ -15,6 +15,7 @@ export const config = {
   zoraApiKey: process.env.ZORA_API_KEY ?? "",
   walletPrivateKey: process.env.WALLET_PRIVATE_KEY ?? "",
   baseRpcUrl: process.env.BASE_RPC_URL ?? "",
+  baseBuilderCode: process.env.BASE_BUILDER_CODE ?? "bc_lk15eqwc",
   zoraCurrency: process.env.ZORA_CURRENCY ?? "ZORA",
   dryRun: bool("DRY_RUN"),
   skipAI: bool("SKIP_AI") || bool("DRY_RUN"),

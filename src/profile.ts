@@ -47,6 +47,7 @@ export function getRegistrationPayload() {
       provider: "Fun Gregory",
       category: "web3-ai-agent",
       verified: false,
+      baseBuilderCode: process.env.BASE_BUILDER_CODE ?? "bc_lk15eqwc",
       publicUrl: process.env.AGENT_PUBLIC_URL,
     },
   };

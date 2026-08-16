@@ -36,6 +36,10 @@
       "dest": "/api/agent/monetization.ts"
     },
     {
+      "src": "/agent/builder-code",
+      "dest": "/api/agent/builder-code.ts"
+    },
+    {
       "src": "/api/health",
       "dest": "/api/health.ts"
     },
@@ -54,6 +58,10 @@
     {
       "src": "/api/agent/monetization",
       "dest": "/api/agent/monetization.ts"
+    },
+    {
+      "src": "/api/agent/builder-code",
+      "dest": "/api/agent/builder-code.ts"
     }
   ]
 }
