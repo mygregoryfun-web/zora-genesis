@@ -31,10 +31,11 @@ export async function fetchMarketData() {
   }
 }
 
-function fallbackMarketData(source: "dry-run" | "fallback") {
+export function fallbackMarketData(source: "dry-run" | "fallback") {
   return {
-    ethPrice: 1800,
-    ethChange24h: 0,
+    ethPrice: null,
+    ethChange24h: null,
     source,
+    available: false,
   };
 }

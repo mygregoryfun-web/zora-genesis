@@ -54,6 +54,10 @@ function hasOAuth1Credentials() {
   return Boolean(config.xApiKey && config.xApiSecret && config.xAccessToken && config.xAccessTokenSecret);
 }
 
+function hasOAuth2Credentials() {
+  return Boolean(config.xBearerToken || (config.xClientId && config.xClientSecret && config.xRefreshToken));
+}
+
 function encodeOAuthValue(value: string) {
   return encodeURIComponent(value)
     .replace(/[!'()*]/g, (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
@@ -177,6 +181,50 @@ export async function postToX(post: GeneratedPost, image?: GeneratedImage | null
     return { status: "skipped", platform: "x", reason: "SKIP_POST enabled" };
   }
 
+  if (hasOAuth2Credentials()) {
+    const accessToken = await getXAccessToken().catch((err) => {
+      const reason = err instanceof Error ? err.message : String(err);
+      if (!hasOAuth1Credentials()) {
+        throw err;
+      }
+
+      console.error("X OAuth2 failed; falling back to OAuth 1.0a:", reason);
+      return null;
+    });
+
+    if (accessToken) {
+      try {
+        const mediaId = image
+          ? await uploadImageToX(image, accessToken).catch((err) => {
+              const reason = err instanceof Error ? err.message : String(err);
+              console.error("X image upload failed; posting text only:", reason);
+              return null;
+            })
+          : null;
+        const res = await axios.post(
+          X_CREATE_TWEET_URL,
+          {
+            text,
+            ...(mediaId ? { media: { media_ids: [mediaId] } } : {}),
+          },
+          {
+            timeout: config.requestTimeoutMs,
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("Posted to X:", res.data);
+        return { status: "published", platform: "x", data: res.data };
+      } catch (err: any) {
+        console.error("X API error:", err?.response?.data || err.message);
+        throw err;
+      }
+    }
+  }
+
   if (hasOAuth1Credentials()) {
     if (image) {
       console.log("X OAuth 1.0a path is posting text only; image upload skipped.");
@@ -203,40 +251,6 @@ export async function postToX(post: GeneratedPost, image?: GeneratedImage | null
     }
   }
 
-  const accessToken = await getXAccessToken();
-
-  if (!accessToken) {
-    console.log("X access token not configured; skipping X.");
-    return { status: "skipped", platform: "x", reason: "Access token not configured" };
-  }
-
-  try {
-    const mediaId = image
-      ? await uploadImageToX(image, accessToken).catch((err) => {
-          const reason = err instanceof Error ? err.message : String(err);
-          console.error("X image upload failed; posting text only:", reason);
-          return null;
-        })
-      : null;
-    const res = await axios.post(
-      X_CREATE_TWEET_URL,
-      {
-        text,
-        ...(mediaId ? { media: { media_ids: [mediaId] } } : {}),
-      },
-      {
-        timeout: config.requestTimeoutMs,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    console.log("Posted to X:", res.data);
-    return { status: "published", platform: "x", data: res.data };
-  } catch (err: any) {
-    console.error("X API error:", err?.response?.data || err.message);
-    throw err;
-  }
+  console.log("X access token not configured; skipping X.");
+  return { status: "skipped", platform: "x", reason: "Access token not configured" };
 }

@@ -22,6 +22,8 @@
     "publish:x": "node dist/channel-run.js x --live",
     "publish:farcaster": "node dist/channel-run.js farcaster --live",
     "publish:zora": "node dist/channel-run.js zora --live",
+    "proof:check": "node scripts/deploy-zora-genesis-proof.mjs",
+    "proof:check:testnet": "node scripts/deploy-zora-genesis-proof.mjs --network=base-sepolia",
     "fb:post": "tsx src/facebook-cli.ts",
     "register": "tsx src/test-register.ts",
     "hol:register": "tsx src/hol.ts",
@@ -31,8 +33,6 @@
     "docker:run": "docker run --env-file .env zora-genesis"
   },
   "dependencies": {
-    "@hashgraphonline/standards-sdk": "^0.1.184",
-    "@hol-org/rb-client": "^0.1.184",
     "@zoralabs/coins-sdk": "^0.7.1",
     "axios": "^1.18.1",
     "chalk": "^5.6.2",
@@ -41,6 +41,8 @@
     "zod": "^4.1.5"
   },
   "devDependencies": {
+    "@hashgraphonline/standards-sdk": "^0.1.184",
+    "@hol-org/rb-client": "^0.1.184",
     "@types/node": "^24.13.3",
     "solc": "^0.8.36",
     "tsx": "^4.20.5",
