@@ -1,6 +1,7 @@
 import axios from "axios";
 import { config } from "../config.js";
 import type { GeneratedPost } from "../types.js";
+import { generateImageWithComfy } from "./comfy.js";
 
 export type GeneratedImage = {
   prompt: string;
@@ -26,6 +27,15 @@ export async function generateImageForPost(post: GeneratedPost): Promise<Generat
   if (config.skipImage) {
     console.log("SKIP_IMAGE enabled; not generating an image.");
     return null;
+  }
+
+  if (config.imageProvider.toLowerCase() === "comfy") {
+    try {
+      return await generateImageWithComfy(prompt);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      console.error(`Comfy image generation failed; falling back to OpenAI: ${reason}`);
+    }
   }
 
   if (!config.openAiApiKey) {

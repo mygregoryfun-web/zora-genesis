@@ -194,6 +194,7 @@ Required for generated Zora image coins:
 
 ```bash
 OPENAI_API_KEY=
+IMAGE_PROVIDER=openai
 ZORA_CREATOR_NAME=
 ZORA_CREATOR_WALLET_ADDRESS=
 WALLET_PRIVATE_KEY=
@@ -202,6 +203,26 @@ BASE_BUILDER_CODE=bc_lk15eqwc
 ```
 
 The Zora path generates an original image, uploads it as coin metadata, and creates the coin under `ZORA_CREATOR_NAME` and `ZORA_CREATOR_WALLET_ADDRESS`.
+
+### Comfy Cloud image provider
+
+Comfy Cloud can be used as the image generation backend while keeping OpenAI as
+a fallback:
+
+```bash
+IMAGE_PROVIDER=comfy
+COMFY_API_KEY=
+COMFY_WORKFLOW_FILE=config/comfy-workflow-api.json
+COMFY_PROMPT_NODE_ID=
+COMFY_PROMPT_INPUT=text
+COMFY_SEED_NODE_ID=
+COMFY_SEED_INPUT=seed
+COMFY_TIMEOUT_MS=300000
+```
+
+Export your Comfy workflow with **Save (API Format)** and save it at
+`config/comfy-workflow-api.json`. Set `COMFY_PROMPT_NODE_ID` when the agent
+cannot infer the prompt node automatically.
 
 `BASE_BUILDER_CODE` is used for Base Builder Code attribution and analytics. It is not a contract address, wallet private key, payment credential, or transaction hash.
 
