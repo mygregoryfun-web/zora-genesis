@@ -200,6 +200,30 @@ The Zora path generates an original image, uploads it as coin metadata, and crea
 
 `BASE_BUILDER_CODE` is used for Base Builder Code attribution and analytics. It is not a contract address, wallet private key, payment credential, or transaction hash.
 
+## Base proof contract
+
+Compile-check the proof contract without a wallet or network request:
+
+```bash
+npm run proof:check
+```
+
+For a testnet deployment, configure `BASE_SEPOLIA_RPC_URL` and run:
+
+```bash
+node scripts/deploy-zora-genesis-proof.mjs --network=base-sepolia --confirm-testnet
+```
+
+Mainnet deployment requires an explicit confirmation flag:
+
+```bash
+node scripts/deploy-zora-genesis-proof.mjs --network=base --confirm-mainnet
+```
+
+Before broadcasting, the script verifies the RPC chain ID, estimates the maximum
+cost, and checks the wallet balance. Successful deployments write a JSON record
+under `deployments/`.
+
 ### Dry run (safe local test)
 
 This mode skips the external AI service and Farcaster post.

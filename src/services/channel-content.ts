@@ -1,4 +1,5 @@
 import type { GeneratedPost, PublishChannel } from "../types.js";
+import { config } from "../config.js";
 
 const CHANNEL_HASHTAGS: Record<PublishChannel, string[]> = {
   x: ["#Base", "#Zora"],
@@ -52,13 +53,29 @@ function ensureLeadProductAngle(text: string) {
   return `Creator asset pulse: ${text}`;
 }
 
+function appendSignature(text: string, maxLength: number) {
+  const signature = config.publishSignature.trim();
+  if (!signature) {
+    return trimAtBoundary(text, maxLength);
+  }
+
+  const signed = `${text}\n\n- ${signature}`;
+  if (signed.length <= maxLength) {
+    return signed;
+  }
+
+  const suffix = `\n\n- ${signature}`;
+  const body = trimAtBoundary(text, Math.max(40, maxLength - suffix.length));
+  return `${body}${suffix}`;
+}
+
 export function preparePostForChannel(post: GeneratedPost, channel: PublishChannel): GeneratedPost {
   const hashtags = uniqueHashtags(post.hashtags, CHANNEL_HASHTAGS[channel]);
 
   if (channel === "x") {
     return {
       title: trimAtBoundary(post.title, 72),
-      post: trimAtBoundary(ensureLeadProductAngle(post.post), 190),
+      post: appendSignature(ensureLeadProductAngle(post.post), 190),
       hashtags: hashtags.slice(0, 2),
     };
   }
@@ -66,7 +83,7 @@ export function preparePostForChannel(post: GeneratedPost, channel: PublishChann
   if (channel === "farcaster") {
     return {
       title: trimAtBoundary(post.title, 96),
-      post: trimAtBoundary(ensureProductAngle(post.post), 620),
+      post: appendSignature(ensureProductAngle(post.post), 620),
       hashtags,
     };
   }
@@ -74,7 +91,10 @@ export function preparePostForChannel(post: GeneratedPost, channel: PublishChann
   return {
     title: trimAtBoundary(post.title, 96),
     post: trimAtBoundary(
-      `${ensureProductAngle(post.post)} This can become a Zora-ready creator asset brief with a cover image, distribution note, and onchain proof.`,
+      appendSignature(
+        `${ensureProductAngle(post.post)} This can become a Zora-ready creator asset brief with a cover image, distribution note, and onchain proof.`,
+        900,
+      ),
       900,
     ),
     hashtags,

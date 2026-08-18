@@ -11,6 +11,7 @@ export const config = {
   model: process.env.MODEL ?? "openai/gpt-4o-mini",
   imageModel: process.env.IMAGE_MODEL ?? "gpt-image-1",
   creatorName: process.env.ZORA_CREATOR_NAME ?? "Fun Gregory",
+  publishSignature: process.env.PUBLISH_SIGNATURE ?? process.env.ZORA_CREATOR_NAME ?? "Fun Gregory",
   creatorWalletAddress: process.env.ZORA_CREATOR_WALLET_ADDRESS ?? "",
   zoraApiKey: process.env.ZORA_API_KEY ?? "",
   walletPrivateKey: process.env.WALLET_PRIVATE_KEY ?? "",
