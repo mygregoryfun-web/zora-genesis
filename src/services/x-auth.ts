@@ -72,6 +72,11 @@ export async function refreshXAccessToken() {
 
   if (!response.ok || !data.access_token) {
     const reason = data.error_description ?? data.error ?? response.statusText;
+    if (config.xBearerToken) {
+      console.log(`X token refresh failed; using existing access token: ${reason}`);
+      return config.xBearerToken;
+    }
+
     throw new Error(`X token refresh failed: ${reason}`);
   }
 
