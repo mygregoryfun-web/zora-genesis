@@ -20,6 +20,7 @@ Public endpoints:
 - `GET /agent/opportunities`
 - `GET /agent/monetization`
 - `GET /agent/builder-code`
+- `GET /agent/metrics`
 - `POST /agent/run`
 
 `POST /agent/run` is protected with `AGENT_RUN_TOKEN` and `x-user-id`.
@@ -62,6 +63,7 @@ Current impact signals:
 - public X build post
 - BaseScan proof: https://basescan.org/address/0xc74659ce159b88ef3aae55a61fc3906fe2b1de58
 - working opportunity endpoint for Base/Zora creator asset ideas
+- public metrics endpoint with Base, Zora, Farcaster, and X proofs
 - documented safe local and production flows
 
 Next milestone:
@@ -254,6 +256,7 @@ This project includes Vercel serverless endpoints for:
 - `GET /agent/opportunities`
 - `GET /agent/monetization`
 - `GET /agent/builder-code`
+- `GET /agent/metrics`
 - `POST /agent/run`
 
 After deployment, set:

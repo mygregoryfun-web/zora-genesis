@@ -40,6 +40,10 @@
       "dest": "/api/agent/builder-code.ts"
     },
     {
+      "src": "/agent/metrics",
+      "dest": "/api/agent/metrics.ts"
+    },
+    {
       "src": "/api/health",
       "dest": "/api/health.ts"
     },
@@ -62,6 +66,10 @@
     {
       "src": "/api/agent/builder-code",
       "dest": "/api/agent/builder-code.ts"
+    },
+    {
+      "src": "/api/agent/metrics",
+      "dest": "/api/agent/metrics.ts"
     }
   ]
 }

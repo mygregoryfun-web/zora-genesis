@@ -12,14 +12,15 @@ function page() {
   <style>
     :root {
       color-scheme: light;
-      --ink: #14151a;
-      --muted: #5c6370;
-      --line: #d7dde8;
-      --paper: #f7f8fb;
+      --ink: #12141a;
+      --muted: #626b7a;
+      --line: #d9e1ee;
+      --paper: #f6f8fc;
       --panel: #ffffff;
       --blue: #0052ff;
       --green: #11845b;
-      --amber: #b26b00;
+      --amber: #a76100;
+      --red: #b42318;
     }
     * { box-sizing: border-box; }
     body {
@@ -27,18 +28,18 @@ function page() {
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--paper);
       color: var(--ink);
-      line-height: 1.5;
+      line-height: 1.45;
     }
     header, main, footer {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
     }
     header {
-      padding: 28px 0 18px;
+      padding: 22px 0 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 18px;
       border-bottom: 1px solid var(--line);
     }
     .brand {
@@ -48,160 +49,190 @@ function page() {
       font-weight: 760;
     }
     .mark {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 8px;
       background: var(--blue);
       display: grid;
       place-items: center;
       color: white;
-      font-weight: 800;
+      font-weight: 820;
     }
     nav {
       display: flex;
-      gap: 14px;
+      gap: 12px;
       flex-wrap: wrap;
       font-size: 14px;
     }
     a { color: var(--blue); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .hero {
-      padding: 56px 0 32px;
+    main { padding: 26px 0 8px; }
+    .topbar {
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
-      gap: 28px;
-      align-items: start;
+      grid-template-columns: minmax(0, 1.15fr) minmax(330px, .85fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .hero, .panel, .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .hero { padding: 26px; }
+    .eyebrow {
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 760;
+      margin-bottom: 14px;
     }
     h1 {
       margin: 0;
       max-width: 820px;
-      font-size: clamp(40px, 6vw, 76px);
-      line-height: .96;
+      font-size: clamp(34px, 4.5vw, 58px);
+      line-height: 1;
       letter-spacing: 0;
     }
     .lead {
-      margin: 22px 0 0;
-      max-width: 720px;
+      margin: 18px 0 0;
+      max-width: 760px;
       color: var(--muted);
-      font-size: 19px;
+      font-size: 18px;
     }
     .actions {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
-      margin-top: 28px;
+      margin-top: 22px;
     }
     .button {
       display: inline-flex;
       align-items: center;
-      min-height: 42px;
-      padding: 0 16px;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 14px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--panel);
       color: var(--ink);
       font-weight: 650;
+      font-size: 14px;
     }
     .button.primary {
       background: var(--blue);
       border-color: var(--blue);
       color: white;
     }
-    .status {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 18px;
-    }
-    .status h2, .section h2 {
+    .panel { padding: 18px; }
+    .panel h2, .section h2 {
       margin: 0 0 14px;
       font-size: 18px;
     }
     .row {
       display: flex;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       padding: 10px 0;
       border-top: 1px solid var(--line);
       font-size: 14px;
     }
     .row:first-of-type { border-top: 0; }
     .label { color: var(--muted); }
-    .ok { color: var(--green); font-weight: 700; }
-    .safe { color: var(--amber); font-weight: 700; }
-    .grid {
+    .ok { color: var(--green); font-weight: 760; }
+    .warn { color: var(--amber); font-weight: 760; }
+    .bad { color: var(--red); font-weight: 760; }
+    .metrics {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-      margin: 16px 0 34px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
     }
-    .card {
+    .metric {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 18px;
-      min-height: 176px;
+      padding: 16px;
+      min-height: 104px;
+    }
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1.15;
+    }
+    .section { padding: 12px 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .card {
+      padding: 17px;
+      min-height: 168px;
     }
     .card h3 {
       margin: 0 0 8px;
-      font-size: 17px;
+      font-size: 16px;
     }
-    .card p {
-      margin: 0;
+    .card p, .card li {
       color: var(--muted);
       font-size: 14px;
     }
+    .card p { margin: 0; }
     .tag {
       display: inline-block;
       margin-bottom: 12px;
       color: var(--blue);
-      font-size: 13px;
-      font-weight: 750;
+      font-size: 12px;
+      font-weight: 760;
     }
-    .section {
-      padding: 20px 0 10px;
-    }
-    .wide {
-      background: var(--panel);
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      margin: 22px calc(50% - 50vw);
-      padding: 34px calc(50vw - 50%);
-    }
-    .steps {
+    .proofs {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
-    .step {
-      border-left: 3px solid var(--blue);
-      padding: 4px 12px;
+    .proof {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfcff;
+      min-width: 0;
     }
-    .step strong {
+    .proof span {
       display: block;
-      margin-bottom: 4px;
-    }
-    .step span {
       color: var(--muted);
-      font-size: 14px;
+      font-size: 12px;
+      margin-bottom: 5px;
     }
-    code {
-      background: #edf1f8;
+    .proof code, code {
+      background: #edf2fa;
       border: 1px solid var(--line);
       border-radius: 6px;
       padding: 2px 6px;
-      font-size: 13px;
+      font-size: 12px;
+      word-break: break-word;
+    }
+    ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
     }
     footer {
-      padding: 26px 0 36px;
+      padding: 22px 0 34px;
       color: var(--muted);
       font-size: 14px;
     }
-    @media (max-width: 820px) {
+    @media (max-width: 900px) {
       header { align-items: flex-start; flex-direction: column; }
-      .hero { grid-template-columns: 1fr; padding-top: 38px; }
-      .grid, .steps { grid-template-columns: 1fr; }
-      h1 { font-size: 44px; }
+      .topbar, .grid, .proofs { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .metrics { grid-template-columns: 1fr; }
+      h1 { font-size: 38px; }
     }
   </style>
 </head>
@@ -209,90 +240,101 @@ function page() {
   <header>
     <div class="brand"><div class="mark">ZG</div><span>Zora Genesis</span></div>
     <nav>
-      <a href="/agent/profile">Profile</a>
       <a href="/agent/opportunities">Opportunities</a>
+      <a href="/agent/metrics">Metrics</a>
       <a href="/agent/monetization">Monetization</a>
       <a href="/agent/builder-code">Builder Code</a>
-      <a href="/health">Health</a>
+      <a href="/agent/profile">Profile</a>
     </nav>
   </header>
   <main>
-    <section class="hero">
-      <div>
-        <h1>AI agent for Base creator asset discovery.</h1>
-        <p class="lead">Zora Genesis monitors Base and Zora creator-economy signals, scores new asset opportunities, and turns them into launchpad-lite workflows for creators, collectors, and builders.</p>
+    <section class="topbar">
+      <div class="hero">
+        <div class="eyebrow">Base Builder Grant Prototype</div>
+        <h1>Signal-to-asset agent for Base and Zora creators.</h1>
+        <p class="lead">Zora Genesis tracks builder narratives, scores creator asset opportunities, generates channel-ready posts, and creates Zora-ready briefs with an approval-first publishing flow.</p>
         <div class="actions">
-          <a class="button primary" href="/agent/opportunities">View Live Opportunities</a>
-          <a class="button" href="/agent/profile">Agent Profile</a>
+          <a class="button primary" href="/agent/opportunities">Open Opportunity Radar</a>
+          <a class="button" href="/agent/metrics">View Proof Metrics</a>
+          <a class="button" href="https://x.com/mygregoryfun/status/2089550413590647294">Latest X Post</a>
         </div>
       </div>
-      <aside class="status" aria-label="Deployment status">
-        <h2>Production Status</h2>
+      <aside class="panel" aria-label="Deployment status">
+        <h2>Launch Readiness</h2>
         <div class="row"><span class="label">Deployment</span><span class="ok">Live</span></div>
-        <div class="row"><span class="label">Network Focus</span><span>Base + Zora</span></div>
-        <div class="row"><span class="label">Primary Track</span><span>New asset creation</span></div>
-        <div class="row"><span class="label">Publishing Guard</span><span class="safe">Protected</span></div>
-        <div class="row"><span class="label">Demo Endpoint</span><span><code>/agent/opportunities</code></span></div>
-        <div class="row"><span class="label">Revenue Model</span><span><code>/agent/monetization</code></span></div>
+        <div class="row"><span class="label">Network</span><span>Base Mainnet</span></div>
         <div class="row"><span class="label">Builder Code</span><span><code>bc_lk15eqwc</code></span></div>
+        <div class="row"><span class="label">Zora</span><span class="ok">Published</span></div>
+        <div class="row"><span class="label">Farcaster</span><span class="ok">Published</span></div>
+        <div class="row"><span class="label">X</span><span class="warn">Text live</span></div>
+        <div class="row"><span class="label">X Images</span><span class="bad">Needs media.write</span></div>
       </aside>
     </section>
 
+    <section class="metrics" aria-label="Agent metrics">
+      <div class="metric"><span>Published memory</span><strong id="post-count">26</strong></div>
+      <div class="metric"><span>Active channels</span><strong>Zora / FC / X</strong></div>
+      <div class="metric"><span>Primary Base track</span><strong>New assets</strong></div>
+      <div class="metric"><span>Revenue experiment</span><strong>Premium briefs</strong></div>
+    </section>
+
     <section class="section">
-      <h2>Base Builder Fit</h2>
+      <h2>Working Product Surface</h2>
       <div class="grid">
         <article class="card">
-          <span class="tag">New Asset Creation</span>
-          <h3>Creator asset pulse</h3>
-          <p>Turns Base and Zora creator signals into collectible market notes, launch concepts, and shareable asset briefs.</p>
+          <span class="tag">Radar</span>
+          <h3>Opportunity scoring</h3>
+          <p>Ranks Base/Zora signals across new asset creation, launchpad-lite flows, consumer discovery, x402 commerce, and prediction-market narrative attention.</p>
         </article>
         <article class="card">
-          <span class="tag">Token Launchpads</span>
-          <h3>Launchpad-lite flow</h3>
-          <p>Guides creators from idea to image, metadata, launch post, distribution checklist, and future Zora coin workflow.</p>
+          <span class="tag">Publishing</span>
+          <h3>Channel-specific output</h3>
+          <p>Generates different versions for Zora, Farcaster, and X, keeps X under 280 characters, and adds the Fun Gregory signature.</p>
         </article>
         <article class="card">
-          <span class="tag">Consumer Apps</span>
-          <h3>Discovery feed</h3>
-          <p>Ranks cultural relevance and creator activity so non-technical users can discover onchain creator assets faster.</p>
-        </article>
-        <article class="card">
-          <span class="tag">x402 Commerce</span>
-          <h3>Premium briefs</h3>
-          <p>Packages deeper creator asset briefs as paid access while keeping safety-critical context free.</p>
-        </article>
-        <article class="card">
-          <span class="tag">Builder Codes</span>
-          <h3>Attributed activity</h3>
-          <p>Exposes Base Builder Code metadata so future app, wallet, and agent transactions can be measured.</p>
+          <span class="tag">Monetization</span>
+          <h3>Premium creator briefs</h3>
+          <p>Defines free previews, Pro Creator, Builder Studio, pay-per-brief, and done-for-you setup paths without trading promises.</p>
         </article>
       </div>
     </section>
 
-    <section class="wide">
-      <h2>How The Agent Works</h2>
-      <div class="steps">
-        <div class="step"><strong>1. Detect</strong><span>Reads Base, Zora, and creator-economy trend inputs.</span></div>
-        <div class="step"><strong>2. Score</strong><span>Ranks signals for asset, launchpad, consumer, and commerce fit.</span></div>
-        <div class="step"><strong>3. Generate</strong><span>Creates concise builder/operator notes and launch ideas.</span></div>
-        <div class="step"><strong>4. Guard</strong><span>Filters malformed AI output and keeps publishing behind safety controls.</span></div>
+    <section class="section">
+      <h2>Public Proofs</h2>
+      <div class="proofs">
+        <div class="proof"><span>Latest Zora asset</span><a href="https://basescan.org/address/0x380518528ba2C7B80B61fAd1A03B52aA4006F892"><code>0x380518528ba2C7B80B61fAd1A03B52aA4006F892</code></a></div>
+        <div class="proof"><span>Latest Zora transaction</span><a href="https://basescan.org/tx/0x2c45b55722868fe72b1dfc5c5f0338f37d3125665d7344abb9cc813fbd35d8c2"><code>0x2c45b55722868fe72b1dfc5c5f0338f37d3125665d7344abb9cc813fbd35d8c2</code></a></div>
+        <div class="proof"><span>Latest X post</span><a href="https://x.com/mygregoryfun/status/2089550413590647294"><code>2089550413590647294</code></a></div>
+        <div class="proof"><span>Base proof contract</span><a href="https://basescan.org/address/0xc74659ce159b88ef3aae55a61fc3906fe2b1de58"><code>0xc74659ce159b88ef3aae55a61fc3906fe2b1de58</code></a></div>
       </div>
     </section>
 
     <section class="section">
-      <h2>Grant Pitch</h2>
+      <h2>Next Build Steps</h2>
       <div class="grid">
         <article class="card">
-          <h3>Problem</h3>
-          <p>Creators and builders see many signals, but few simple tools convert those signals into usable onchain asset workflows.</p>
+          <h3>Approval Queue</h3>
+          <ul>
+            <li>Preview generated post</li>
+            <li>Select channels</li>
+            <li>Publish only after approval</li>
+          </ul>
         </article>
         <article class="card">
-          <h3>Prototype</h3>
-          <p>A deployed AI agent with public profile, opportunity engine, safe AI post generation, and production endpoints.</p>
+          <h3>Creator Brief Studio</h3>
+          <ul>
+            <li>Generate asset concept</li>
+            <li>Cover image direction</li>
+            <li>Zora launch checklist</li>
+          </ul>
         </article>
         <article class="card">
-          <h3>Next Milestone</h3>
-          <p>Build a lightweight UI and creator launch flow that connects opportunity scoring to Zora-ready asset creation.</p>
+          <h3>Usage Metrics</h3>
+          <ul>
+            <li>Track posts and assets</li>
+            <li>Track channel status</li>
+            <li>Expose grant-ready proof links</li>
+          </ul>
         </article>
       </div>
     </section>
@@ -300,6 +342,17 @@ function page() {
   <footer>
     <span>Live production URL: <a href="${productionUrl}">${productionUrl}</a></span>
   </footer>
+  <script>
+    fetch("/agent/metrics")
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        const metrics = data && data.metrics;
+        if (!metrics) return;
+        const count = document.getElementById("post-count");
+        if (count) count.textContent = String(metrics.publishedPostCount);
+      })
+      .catch(() => {});
+  </script>
 </body>
 </html>`;
 }
