@@ -256,6 +256,7 @@ function page() {
         <div class="actions">
           <a class="button primary" href="/agent/opportunities">Open Opportunity Radar</a>
           <a class="button" href="/agent/metrics">View Proof Metrics</a>
+          <a class="button" href="/agent/monetization">Revenue Model</a>
           <a class="button" href="https://x.com/mygregoryfun/status/2089550413590647294">Latest X Post</a>
         </div>
       </div>

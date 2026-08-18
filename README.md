@@ -24,6 +24,8 @@ Public endpoints:
 - `POST /agent/run`
 
 `POST /agent/run` is protected with `AGENT_RUN_TOKEN` and `x-user-id`.
+`GET /agent/monetization` renders a human-readable revenue model; use
+`GET /agent/monetization?format=json` for API JSON.
 
 ## Project goal
 
