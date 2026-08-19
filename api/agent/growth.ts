@@ -37,6 +37,7 @@ export default async function handler(req: any, res: any) {
         <div class="stat">
           <strong>${escapeHtml(plan.primaryCta)}</strong>
           <span>First revenue experiment</span>
+          <p><a href="${escapeHtml(plan.primaryCtaUrl)}">Contact the builder</a></p>
         </div>
       </section>
 

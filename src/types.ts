@@ -83,6 +83,7 @@ export type GrowthChannel = {
 export type GrowthPlan = {
   positioning: string;
   primaryCta: string;
+  primaryCtaUrl: string;
   weeklyLoop: string[];
   channels: GrowthChannel[];
   samplePosts: {

@@ -9,6 +9,7 @@ test("generates a free growth plan for Base/Zora distribution", () => {
   assert.ok(plan.channels.some((channel) => channel.id === "farcaster"));
   assert.ok(plan.channels.some((channel) => channel.id === "x"));
   assert.ok(plan.primaryCta.toLowerCase().includes("premium"));
+  assert.ok(plan.primaryCtaUrl.startsWith("https://"));
   assert.ok(plan.samplePosts.x.length <= 280);
 });
 

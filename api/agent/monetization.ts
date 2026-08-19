@@ -150,6 +150,30 @@ function renderPage(plan: MonetizationPlan, generatedAt: string) {
       font-weight: 760;
       margin: 0 6px 6px 0;
     }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      font-weight: 650;
+      font-size: 14px;
+    }
+    .button.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+    }
     ul {
       margin: 10px 0 0;
       padding-left: 18px;
@@ -194,6 +218,10 @@ function renderPage(plan: MonetizationPlan, generatedAt: string) {
         <div class="eyebrow">Revenue Model</div>
         <h1>Monetization for Base/Zora creator intelligence.</h1>
         <p class="lead">${escapeHtml(plan.positioning)} The model sells useful workflow, brief generation, and setup help while avoiding trading advice or autonomous financial execution.</p>
+        <div class="actions">
+          <a class="button primary" href="https://x.com/mygregoryfun">Request Premium Brief</a>
+          <a class="button" href="/agent/growth">View Free Growth Plan</a>
+        </div>
       </div>
       <div class="summary">
         <strong>$19-$49/mo</strong>

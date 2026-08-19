@@ -4,6 +4,7 @@ export function generateGrowthPlan(): GrowthPlan {
   return {
     positioning: "Public build-in-progress for an AI creator-assets agent on Base and Zora.",
     primaryCta: "Request a premium Base/Zora creator brief",
+    primaryCtaUrl: "https://x.com/mygregoryfun",
     weeklyLoop: [
       "Publish one build log with the newest agent improvement.",
       "Share one proof link: dashboard, metrics, Zora asset, X post, or Builder Code.",

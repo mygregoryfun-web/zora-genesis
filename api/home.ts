@@ -122,6 +122,11 @@ function page() {
       border-color: var(--blue);
       color: white;
     }
+    .button.success {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
     .panel { padding: 18px; }
     .panel h2, .section h2 {
       margin: 0 0 14px;
@@ -256,6 +261,7 @@ function page() {
         <p class="lead">Zora Genesis tracks builder narratives, scores creator asset opportunities, generates channel-ready posts, and creates Zora-ready briefs with an approval-first publishing flow.</p>
         <div class="actions">
           <a class="button primary" href="/agent/opportunities">Open Opportunity Radar</a>
+          <a class="button success" href="https://x.com/mygregoryfun">Request Premium Brief</a>
           <a class="button" href="/agent/metrics">View Proof Metrics</a>
           <a class="button" href="/agent/monetization">Revenue Model</a>
           <a class="button" href="/agent/growth">Free Growth Plan</a>
