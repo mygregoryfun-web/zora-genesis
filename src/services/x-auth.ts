@@ -48,7 +48,7 @@ function persistTokens(tokens: { accessToken: string; refreshToken?: string }) {
 }
 
 async function requestRefreshToken(body: URLSearchParams) {
-  const basic = Buffer.from(`${config.xClientId}:${config.xClientSecret}`).toString("base64");
+  const basic = Buffer.from(`${encodeURIComponent(config.xClientId)}:${encodeURIComponent(config.xClientSecret)}`).toString("base64");
   const confidentialResponse = await fetch(X_TOKEN_URL, {
     method: "POST",
     headers: {

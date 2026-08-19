@@ -47,7 +47,7 @@ authUrl.searchParams.set("code_challenge", challenge);
 authUrl.searchParams.set("code_challenge_method", "S256");
 
 async function exchangeCodeForToken(body) {
-  const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+  const basic = Buffer.from(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`).toString("base64");
   const confidentialRes = await fetch("https://api.x.com/2/oauth2/token", {
     method: "POST",
     headers: {
