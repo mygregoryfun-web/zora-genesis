@@ -3,6 +3,7 @@ import path from "node:path";
 import { config } from "../config.js";
 
 const X_TOKEN_URL = "https://api.x.com/2/oauth2/token";
+const X_FALLBACK_TOKEN_URL = "https://api.twitter.com/2/oauth2/token";
 
 type XTokenResponse = {
   token_type?: string;
@@ -48,46 +49,68 @@ function persistTokens(tokens: { accessToken: string; refreshToken?: string }) {
 }
 
 async function requestRefreshToken(body: URLSearchParams) {
-  const basic = Buffer.from(`${encodeURIComponent(config.xClientId)}:${encodeURIComponent(config.xClientSecret)}`).toString("base64");
-  const confidentialResponse = await fetch(X_TOKEN_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${basic}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body,
-    signal: AbortSignal.timeout(config.requestTimeoutMs),
-  });
-  const confidentialData = (await confidentialResponse.json()) as XTokenResponse & { error?: string; error_description?: string };
+  const basicRaw = Buffer.from(`${config.xClientId}:${config.xClientSecret}`).toString("base64");
+  const basicEncoded = Buffer.from(`${encodeURIComponent(config.xClientId)}:${encodeURIComponent(config.xClientSecret)}`).toString("base64");
+  const attempts: {
+    name: string;
+    url: string;
+    headers: Record<string, string>;
+    body: URLSearchParams;
+  }[] = [];
 
-  if (confidentialResponse.ok && confidentialData.access_token) {
-    return confidentialData;
+  for (const tokenUrl of [X_TOKEN_URL, X_FALLBACK_TOKEN_URL]) {
+    attempts.push({
+      name: `confidential raw Basic via ${new URL(tokenUrl).host}`,
+      url: tokenUrl,
+      body: new URLSearchParams(body),
+      headers: {
+        Authorization: `Basic ${basicRaw}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    attempts.push({
+      name: `confidential encoded Basic via ${new URL(tokenUrl).host}`,
+      url: tokenUrl,
+      body: new URLSearchParams(body),
+      headers: {
+        Authorization: `Basic ${basicEncoded}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    const publicBody = new URLSearchParams(body);
+    publicBody.set("client_id", config.xClientId);
+    attempts.push({
+      name: `public PKCE via ${new URL(tokenUrl).host}`,
+      url: tokenUrl,
+      body: publicBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
   }
 
-  const reason = confidentialData.error_description ?? confidentialData.error ?? confidentialResponse.statusText;
-  console.log(`X confidential token refresh failed; retrying as public PKCE client: ${reason}`);
+  let lastFailure: XTokenResponse & { error?: string; error_description?: string } = {};
+  for (const attempt of attempts) {
+    const response = await fetch(attempt.url, {
+      method: "POST",
+      headers: attempt.headers,
+      body: attempt.body,
+      signal: AbortSignal.timeout(config.requestTimeoutMs),
+    });
+    const data = (await response.json().catch(() => ({}))) as XTokenResponse & { error?: string; error_description?: string };
 
-  const publicBody = new URLSearchParams(body);
-  publicBody.set("client_id", config.xClientId);
+    if (response.ok && data.access_token) {
+      console.log(`X token refresh succeeded: ${attempt.name}`);
+      return data;
+    }
 
-  const publicResponse = await fetch(X_TOKEN_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: publicBody,
-    signal: AbortSignal.timeout(config.requestTimeoutMs),
-  });
-  const publicData = (await publicResponse.json()) as XTokenResponse & { error?: string; error_description?: string };
-
-  if (publicResponse.ok && publicData.access_token) {
-    return publicData;
+    lastFailure = data;
+    const reason = data.error_description ?? data.error ?? response.statusText;
+    console.log(`X token refresh failed: ${attempt.name}: ${response.status} ${reason}`);
   }
 
-  return {
-    error: publicData.error ?? confidentialData.error,
-    error_description: publicData.error_description ?? confidentialData.error_description ?? reason,
-  } as XTokenResponse & { error?: string; error_description?: string };
+  return lastFailure;
 }
 
 export async function refreshXAccessToken() {

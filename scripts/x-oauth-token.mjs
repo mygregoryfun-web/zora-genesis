@@ -37,7 +37,12 @@ const challenge = base64Url(crypto.createHash("sha256").update(verifier).digest(
 const state = base64Url(crypto.randomBytes(16));
 const scope = "tweet.read tweet.write users.read media.write offline.access";
 
-const authUrl = new URL("https://twitter.com/i/oauth2/authorize");
+const tokenUrls = [
+  "https://api.x.com/2/oauth2/token",
+  "https://api.twitter.com/2/oauth2/token",
+];
+
+const authUrl = new URL("https://x.com/i/oauth2/authorize");
 authUrl.searchParams.set("response_type", "code");
 authUrl.searchParams.set("client_id", clientId);
 authUrl.searchParams.set("redirect_uri", redirectUri);
@@ -47,41 +52,62 @@ authUrl.searchParams.set("code_challenge", challenge);
 authUrl.searchParams.set("code_challenge_method", "S256");
 
 async function exchangeCodeForToken(body) {
-  const basic = Buffer.from(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`).toString("base64");
-  const confidentialRes = await fetch("https://api.x.com/2/oauth2/token", {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${basic}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body,
-  });
+  const attempts = [];
+  const basicRaw = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+  const basicEncoded = Buffer.from(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`).toString("base64");
 
-  const confidentialData = await confidentialRes.json();
-  if (confidentialRes.ok) {
-    return confidentialData;
+  for (const tokenUrl of tokenUrls) {
+    attempts.push({
+      name: `confidential raw Basic via ${new URL(tokenUrl).host}`,
+      url: tokenUrl,
+      body: new URLSearchParams(body),
+      headers: {
+        Authorization: `Basic ${basicRaw}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    attempts.push({
+      name: `confidential encoded Basic via ${new URL(tokenUrl).host}`,
+      url: tokenUrl,
+      body: new URLSearchParams(body),
+      headers: {
+        Authorization: `Basic ${basicEncoded}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    const publicBody = new URLSearchParams(body);
+    publicBody.set("client_id", clientId);
+    attempts.push({
+      name: `public PKCE via ${new URL(tokenUrl).host}`,
+      url: tokenUrl,
+      body: publicBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
   }
 
-  console.warn(`X confidential token exchange failed: ${confidentialData.error_description || confidentialData.error || confidentialRes.statusText}`);
-  console.warn("Retrying as a public PKCE client.");
+  const failures = [];
+  for (const attempt of attempts) {
+    const response = await fetch(attempt.url, {
+      method: "POST",
+      headers: attempt.headers,
+      body: attempt.body,
+    });
+    const data = await response.json().catch(() => ({}));
 
-  const publicBody = new URLSearchParams(body);
-  publicBody.set("client_id", clientId);
+    if (response.ok && data.access_token) {
+      console.log(`X token exchange succeeded: ${attempt.name}`);
+      return data;
+    }
 
-  const publicRes = await fetch("https://api.x.com/2/oauth2/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: publicBody,
-  });
-
-  const publicData = await publicRes.json();
-  if (!publicRes.ok) {
-    throw new Error(publicData.error_description || publicData.error || "Token exchange failed.");
+    const reason = data.error_description || data.error || response.statusText;
+    failures.push(`${attempt.name}: ${response.status} ${reason}`);
+    console.warn(`X token exchange failed: ${attempt.name}: ${response.status} ${reason}`);
   }
 
-  return publicData;
+  throw new Error(`Token exchange failed after ${attempts.length} attempts. ${failures.join(" | ")}`);
 }
 
 const server = http.createServer(async (req, res) => {
@@ -141,6 +167,14 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(8080, () => {
   fs.writeFileSync(new URL("../x-oauth-url.txt", import.meta.url), authUrl.toString());
+  fs.writeFileSync(new URL("../x-oauth-session.json", import.meta.url), JSON.stringify({
+    clientId,
+    clientSecret,
+    redirectUri,
+    verifier,
+    state,
+    scope,
+  }, null, 2));
   console.log("Open the URL saved in x-oauth-url.txt");
   console.log(authUrl.toString());
 });
