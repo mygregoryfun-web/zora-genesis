@@ -35,7 +35,7 @@ if (!clientId || !clientSecret) {
 const verifier = base64Url(crypto.randomBytes(32));
 const challenge = base64Url(crypto.createHash("sha256").update(verifier).digest());
 const state = base64Url(crypto.randomBytes(16));
-const scope = "tweet.read tweet.write users.read";
+const scope = "tweet.read tweet.write users.read media.write offline.access";
 
 const authUrl = new URL("https://twitter.com/i/oauth2/authorize");
 authUrl.searchParams.set("response_type", "code");
@@ -92,6 +92,14 @@ const server = http.createServer(async (req, res) => {
 
     updateEnv("X_BEARER_TOKEN", tokenData.access_token);
     if (tokenData.refresh_token) updateEnv("X_REFRESH_TOKEN", tokenData.refresh_token);
+
+    const returnedScopes = String(tokenData.scope ?? "").split(/\s+/).filter(Boolean);
+    const missingScopes = scope.split(/\s+/).filter((item) => !returnedScopes.includes(item));
+    if (missingScopes.length > 0) {
+      console.warn(`X token saved, but returned token is missing scopes: ${missingScopes.join(", ")}`);
+    } else {
+      console.log(`X token saved with scopes: ${returnedScopes.join(", ")}`);
+    }
 
     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     res.end("<h1>X authorization complete</h1><p>You can close this tab and return to Codex.</p>");
