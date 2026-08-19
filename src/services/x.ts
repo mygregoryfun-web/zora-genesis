@@ -8,6 +8,7 @@ import type { GeneratedPost, PublishResult } from "../types.js";
 
 const MAX_POST_LENGTH = 280;
 const X_MEDIA_UPLOAD_URL = "https://api.x.com/2/media/upload";
+const X_OAUTH1_MEDIA_UPLOAD_URL = "https://upload.twitter.com/1.1/media/upload.json";
 const X_CREATE_TWEET_URL = "https://api.x.com/2/tweets";
 
 function trimToBoundary(text: string, maxLength: number) {
@@ -136,6 +137,28 @@ async function uploadImageToX(image: GeneratedImage, accessToken: string) {
   return mediaId as string;
 }
 
+async function uploadImageToXWithOAuth1(image: GeneratedImage) {
+  const form = new FormData();
+  form.append("media", new File([image.buffer], image.filename, { type: image.mimeType }));
+
+  const uploadResponse = await fetch(X_OAUTH1_MEDIA_UPLOAD_URL, {
+    method: "POST",
+    headers: {
+      Authorization: createOAuth1Header("POST", X_OAUTH1_MEDIA_UPLOAD_URL),
+    },
+    body: form,
+    signal: AbortSignal.timeout(config.requestTimeoutMs),
+  });
+  const uploadData = await readJsonResponse(uploadResponse);
+  const mediaId = uploadData?.media_id_string ?? uploadData?.media_id?.toString();
+
+  if (!mediaId) {
+    throw new Error("X OAuth 1.0a media upload did not return a media id.");
+  }
+
+  return mediaId as string;
+}
+
 async function waitForXMediaProcessing(
   mediaId: string,
   processing: { state?: string; check_after_secs?: number },
@@ -226,14 +249,20 @@ export async function postToX(post: GeneratedPost, image?: GeneratedImage | null
   }
 
   if (hasOAuth1Credentials()) {
-    if (image) {
-      console.log("X OAuth 1.0a path is posting text only; image upload skipped.");
-    }
-
     try {
+      const mediaId = image
+        ? await uploadImageToXWithOAuth1(image).catch((err) => {
+            const reason = err instanceof Error ? err.message : String(err);
+            console.error("X OAuth 1.0a image upload failed; posting text only:", reason);
+            return null;
+          })
+        : null;
       const res = await axios.post(
         X_CREATE_TWEET_URL,
-        { text },
+        {
+          text,
+          ...(mediaId ? { media: { media_ids: [mediaId] } } : {}),
+        },
         {
           timeout: config.requestTimeoutMs,
           headers: {
