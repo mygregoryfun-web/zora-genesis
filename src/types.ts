@@ -71,6 +71,28 @@ export type MonetizationPlan = {
   riskNote: string;
 };
 
+export type GrowthChannel = {
+  id: string;
+  name: string;
+  audience: string;
+  freeTactic: string;
+  proofToShare: string;
+  cadence: string;
+};
+
+export type GrowthPlan = {
+  positioning: string;
+  primaryCta: string;
+  weeklyLoop: string[];
+  channels: GrowthChannel[];
+  samplePosts: {
+    x: string;
+    farcaster: string;
+    facebook: string;
+  };
+  safetyBoundary: string;
+};
+
 export type BaseBuilderCodeAttribution = {
   builderCode: string;
   valid: boolean;

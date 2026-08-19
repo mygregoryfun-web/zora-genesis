@@ -243,6 +243,7 @@ function page() {
       <a href="/agent/opportunities">Opportunities</a>
       <a href="/agent/metrics">Metrics</a>
       <a href="/agent/monetization">Monetization</a>
+      <a href="/agent/growth">Growth</a>
       <a href="/agent/builder-code">Builder Code</a>
       <a href="/agent/profile">Profile</a>
     </nav>
@@ -257,6 +258,7 @@ function page() {
           <a class="button primary" href="/agent/opportunities">Open Opportunity Radar</a>
           <a class="button" href="/agent/metrics">View Proof Metrics</a>
           <a class="button" href="/agent/monetization">Revenue Model</a>
+          <a class="button" href="/agent/growth">Free Growth Plan</a>
           <a class="button" href="https://x.com/mygregoryfun/status/2089550413590647294">Latest X Post</a>
         </div>
       </div>
@@ -296,6 +298,11 @@ function page() {
           <span class="tag">Monetization</span>
           <h3>Premium creator briefs</h3>
           <p>Defines free previews, Pro Creator, Builder Studio, pay-per-brief, and done-for-you setup paths without trading promises.</p>
+        </article>
+        <article class="card">
+          <span class="tag">Growth</span>
+          <h3>Free distribution loop</h3>
+          <p>Turns product proof into weekly build logs, Farcaster/X updates, Facebook creator examples, GitHub proof links, and Base grant-friendly evidence.</p>
         </article>
       </div>
     </section>

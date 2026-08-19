@@ -161,6 +161,7 @@ export function page(title: string, body: string) {
       <a href="/agent/opportunities">Opportunities</a>
       <a href="/agent/metrics">Metrics</a>
       <a href="/agent/monetization">Monetization</a>
+      <a href="/agent/growth">Growth</a>
       <a href="/agent/profile">Profile</a>
     </nav>
   </header>
