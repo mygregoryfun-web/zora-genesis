@@ -47,19 +47,9 @@ function persistTokens(tokens: { accessToken: string; refreshToken?: string }) {
   fs.writeFileSync(envPath, content);
 }
 
-export async function refreshXAccessToken() {
-  if (!hasRefreshCredentials()) {
-    return config.xBearerToken;
-  }
-
+async function requestRefreshToken(body: URLSearchParams) {
   const basic = Buffer.from(`${config.xClientId}:${config.xClientSecret}`).toString("base64");
-  const body = new URLSearchParams({
-    grant_type: "refresh_token",
-    refresh_token: config.xRefreshToken,
-    client_id: config.xClientId,
-  });
-
-  const response = await fetch(X_TOKEN_URL, {
+  const confidentialResponse = await fetch(X_TOKEN_URL, {
     method: "POST",
     headers: {
       Authorization: `Basic ${basic}`,
@@ -68,10 +58,52 @@ export async function refreshXAccessToken() {
     body,
     signal: AbortSignal.timeout(config.requestTimeoutMs),
   });
-  const data = (await response.json()) as XTokenResponse & { error?: string; error_description?: string };
+  const confidentialData = (await confidentialResponse.json()) as XTokenResponse & { error?: string; error_description?: string };
 
-  if (!response.ok || !data.access_token) {
-    const reason = data.error_description ?? data.error ?? response.statusText;
+  if (confidentialResponse.ok && confidentialData.access_token) {
+    return confidentialData;
+  }
+
+  const reason = confidentialData.error_description ?? confidentialData.error ?? confidentialResponse.statusText;
+  console.log(`X confidential token refresh failed; retrying as public PKCE client: ${reason}`);
+
+  const publicBody = new URLSearchParams(body);
+  publicBody.set("client_id", config.xClientId);
+
+  const publicResponse = await fetch(X_TOKEN_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: publicBody,
+    signal: AbortSignal.timeout(config.requestTimeoutMs),
+  });
+  const publicData = (await publicResponse.json()) as XTokenResponse & { error?: string; error_description?: string };
+
+  if (publicResponse.ok && publicData.access_token) {
+    return publicData;
+  }
+
+  return {
+    error: publicData.error ?? confidentialData.error,
+    error_description: publicData.error_description ?? confidentialData.error_description ?? reason,
+  } as XTokenResponse & { error?: string; error_description?: string };
+}
+
+export async function refreshXAccessToken() {
+  if (!hasRefreshCredentials()) {
+    return config.xBearerToken;
+  }
+
+  const body = new URLSearchParams({
+    grant_type: "refresh_token",
+    refresh_token: config.xRefreshToken,
+  });
+
+  const data = await requestRefreshToken(body);
+
+  if (!data.access_token) {
+    const reason = data.error_description ?? data.error ?? "Token refresh failed";
     if (config.xBearerToken) {
       console.log(`X token refresh failed; using existing access token: ${reason}`);
       return config.xBearerToken;

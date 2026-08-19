@@ -46,6 +46,44 @@ authUrl.searchParams.set("state", state);
 authUrl.searchParams.set("code_challenge", challenge);
 authUrl.searchParams.set("code_challenge_method", "S256");
 
+async function exchangeCodeForToken(body) {
+  const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+  const confidentialRes = await fetch("https://api.x.com/2/oauth2/token", {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${basic}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body,
+  });
+
+  const confidentialData = await confidentialRes.json();
+  if (confidentialRes.ok) {
+    return confidentialData;
+  }
+
+  console.warn(`X confidential token exchange failed: ${confidentialData.error_description || confidentialData.error || confidentialRes.statusText}`);
+  console.warn("Retrying as a public PKCE client.");
+
+  const publicBody = new URLSearchParams(body);
+  publicBody.set("client_id", clientId);
+
+  const publicRes = await fetch("https://api.x.com/2/oauth2/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: publicBody,
+  });
+
+  const publicData = await publicRes.json();
+  if (!publicRes.ok) {
+    throw new Error(publicData.error_description || publicData.error || "Token exchange failed.");
+  }
+
+  return publicData;
+}
+
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url ?? "/", redirectUri);
@@ -75,20 +113,7 @@ const server = http.createServer(async (req, res) => {
       code_verifier: verifier,
     });
 
-    const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-    const tokenRes = await fetch("https://api.x.com/2/oauth2/token", {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${basic}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body,
-    });
-
-    const tokenData = await tokenRes.json();
-    if (!tokenRes.ok) {
-      throw new Error(tokenData.error_description || tokenData.error || "Token exchange failed.");
-    }
+    const tokenData = await exchangeCodeForToken(body);
 
     updateEnv("X_BEARER_TOKEN", tokenData.access_token);
     if (tokenData.refresh_token) updateEnv("X_REFRESH_TOKEN", tokenData.refresh_token);
