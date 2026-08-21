@@ -30,56 +30,113 @@ export function page(title: string, body: string) {
   <style>
     :root {
       color-scheme: light;
-      --ink: #12141a;
+      --ink: #10131a;
       --muted: #626b7a;
-      --line: #d9e1ee;
-      --paper: #f6f8fc;
+      --subtle: #7b8494;
+      --line: #d8e0ec;
+      --soft-line: #e8edf5;
+      --paper: #f3f6fb;
       --panel: #ffffff;
+      --panel-soft: #f9fbff;
       --blue: #0052ff;
-      --green: #11845b;
-      --amber: #a76100;
+      --blue-soft: #edf3ff;
+      --green: #12715b;
+      --green-soft: #e9f7f1;
+      --amber: #9b5f00;
+      --amber-soft: #fff4df;
       --red: #b42318;
+      --red-soft: #fff0ed;
+      --violet: #5b4bdb;
+      --violet-soft: #f1efff;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--paper);
+      background: linear-gradient(180deg, #fbfcff 0, var(--paper) 340px);
       color: var(--ink);
       line-height: 1.48;
     }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
     header, main, footer {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1220px, calc(100% - 32px));
       margin: 0 auto;
     }
     header {
-      padding: 22px 0 16px;
+      min-height: 74px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 18px;
       border-bottom: 1px solid var(--line);
     }
-    .brand { font-weight: 780; }
-    nav { display: flex; gap: 12px; flex-wrap: wrap; font-size: 14px; }
-    a { color: var(--blue); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    main { padding: 28px 0 10px; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 210px;
+      font-weight: 780;
+    }
+    .mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #111827;
+      color: #ffffff;
+      font-weight: 850;
+      box-shadow: inset 0 -3px 0 var(--blue);
+    }
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 1px;
+    }
+    nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: 13px;
+    }
+    nav a {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 9px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--muted);
+      font-weight: 660;
+    }
+    nav a:hover {
+      color: var(--ink);
+      background: var(--panel);
+      border-color: var(--line);
+      text-decoration: none;
+    }
+    main { padding: 22px 0 10px; }
     .hero, .card, .band {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(16, 19, 26, .04);
     }
     .hero {
-      padding: 26px;
+      padding: 28px;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(260px, .35fr);
+      grid-template-columns: minmax(0, 1fr) minmax(260px, .34fr);
       gap: 22px;
       align-items: center;
     }
     .eyebrow {
       color: var(--blue);
       font-size: 13px;
-      font-weight: 760;
+      font-weight: 780;
       margin-bottom: 12px;
     }
     h1 {
@@ -100,8 +157,15 @@ export function page(title: string, body: string) {
       border-left: 4px solid var(--blue);
       padding-left: 14px;
     }
-    .stat strong { display: block; font-size: 28px; }
-    .stat span, .muted, li, p { color: var(--muted); font-size: 14px; }
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1.15;
+    }
+    .stat span, .muted, li, p {
+      color: var(--muted);
+      font-size: 14px;
+    }
     .section { padding: 18px 0 0; }
     .grid {
       display: grid;
@@ -110,34 +174,101 @@ export function page(title: string, body: string) {
     }
     .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .card, .band { padding: 18px; min-width: 0; }
-    .card.highlight { border-color: var(--blue); box-shadow: inset 0 3px 0 var(--blue); }
-    .score { font-size: 26px; font-weight: 800; color: var(--green); }
+    .card.highlight {
+      border-color: var(--blue);
+      box-shadow: inset 0 3px 0 var(--blue);
+    }
+    .score {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--green);
+    }
     .tag {
       display: inline-flex;
       align-items: center;
-      min-height: 25px;
+      min-height: 26px;
       padding: 0 9px;
-      border-radius: 999px;
-      background: #edf2ff;
+      border-radius: 8px;
+      background: var(--blue-soft);
       color: var(--blue);
       font-size: 12px;
-      font-weight: 760;
+      font-weight: 780;
       margin: 0 6px 6px 0;
     }
-    .ok { color: var(--green); font-weight: 760; }
-    .warn { color: var(--amber); font-weight: 760; }
-    .bad { color: var(--red); font-weight: 760; }
+    .ok { color: var(--green); font-weight: 780; }
+    .warn { color: var(--amber); font-weight: 780; }
+    .bad { color: var(--red); font-weight: 780; }
     .row {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       padding: 10px 0;
-      border-top: 1px solid var(--line);
+      border-top: 1px solid var(--soft-line);
       font-size: 14px;
     }
     .row:first-of-type { border-top: 0; }
     .label { color: var(--muted); }
-    code {
+    .button, button {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .button:hover, button:hover {
+      text-decoration: none;
+      border-color: #b8c5d8;
+      background: #fbfcff;
+    }
+    button[type="submit"], .button.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+    }
+    form {
+      display: grid;
+      gap: 14px;
+    }
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    input, textarea, select {
+      width: 100%;
+      min-height: 44px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+    }
+    textarea {
+      min-height: 128px;
+      resize: vertical;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: 3px solid rgba(0, 82, 255, .15);
+      border-color: var(--blue);
+    }
+    small {
+      color: var(--subtle);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    code, pre {
       background: #edf2fa;
       border: 1px solid var(--line);
       border-radius: 6px;
@@ -145,23 +276,49 @@ export function page(title: string, body: string) {
       font-size: 12px;
       word-break: break-word;
     }
+    pre {
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
     ul { margin: 10px 0 0; padding-left: 18px; }
-    footer { padding: 22px 0 34px; color: var(--muted); font-size: 14px; }
+    footer {
+      padding: 22px 0 34px;
+      color: var(--muted);
+      font-size: 14px;
+    }
     @media (max-width: 900px) {
-      header, .hero { grid-template-columns: 1fr; flex-direction: column; }
-      .grid, .grid.two { grid-template-columns: 1fr; }
+      header {
+        min-height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px 0;
+      }
+      nav { justify-content: flex-start; }
+      .hero, .grid, .grid.two { grid-template-columns: 1fr; }
+      h1 { font-size: 38px; }
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="brand">Zora Genesis</div>
+    <div class="brand">
+      <div class="mark">ZG</div>
+      <div>
+        <span>Zora Genesis</span>
+        <small>Base + Zora creator intelligence</small>
+      </div>
+    </div>
     <nav>
       <a href="/">Dashboard</a>
-      <a href="/agent/opportunities">Opportunities</a>
+      <a href="/agent/opportunities">Radar</a>
       <a href="/agent/metrics">Metrics</a>
-      <a href="/agent/monetization">Monetization</a>
+      <a href="/agent/monetization">Revenue</a>
+      <a href="/agent/security">Security</a>
+      <a href="/agent/firewall">Firewall</a>
+      <a href="/agent/nft">NFT Studio</a>
       <a href="/agent/growth">Growth</a>
+      <a href="/agent/builder-code">Builder Code</a>
       <a href="/agent/profile">Profile</a>
     </nav>
   </header>
