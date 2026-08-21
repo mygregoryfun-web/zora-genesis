@@ -248,6 +248,9 @@ function page() {
       <a href="/agent/opportunities">Opportunities</a>
       <a href="/agent/metrics">Metrics</a>
       <a href="/agent/monetization">Monetization</a>
+      <a href="/agent/security">Security</a>
+      <a href="/agent/firewall">Transaction Firewall</a>
+      <a href="/agent/nft">NFT Studio</a>
       <a href="/agent/growth">Growth</a>
       <a href="/agent/builder-code">Builder Code</a>
       <a href="/agent/profile">Profile</a>
@@ -264,6 +267,8 @@ function page() {
           <a class="button success" href="https://x.com/mygregoryfun">Request Premium Brief</a>
           <a class="button" href="/agent/metrics">View Proof Metrics</a>
           <a class="button" href="/agent/monetization">Revenue Model</a>
+          <a class="button" href="/agent/nft">View Article NFT</a>
+          <a class="button" href="/agent/firewall">Check Transaction</a>
           <a class="button" href="/agent/growth">Free Growth Plan</a>
           <a class="button" href="https://x.com/mygregoryfun/status/2089550413590647294">Latest X Post</a>
         </div>
@@ -309,6 +314,16 @@ function page() {
           <span class="tag">Growth</span>
           <h3>Free distribution loop</h3>
           <p>Turns product proof into weekly build logs, Farcaster/X updates, Facebook creator examples, GitHub proof links, and Base grant-friendly evidence.</p>
+        </article>
+        <article class="card">
+          <span class="tag">Safety</span>
+          <h3>Contract risk scanner</h3>
+          <p>Checks Base contracts for owner authority, mint, blacklist, fee, pause and proxy warning signals before creators promote unknown assets.</p>
+        </article>
+        <article class="card">
+          <span class="tag">NFT Studio</span>
+          <h3>Article-to-NFT edition</h3>
+          <p>Turns the latest saved article prompt into one original NFT-ready image and metadata package without paid image generation.</p>
         </article>
       </div>
     </section>

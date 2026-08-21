@@ -228,6 +228,42 @@ cannot infer the prompt node automatically.
 
 ## Base proof contract
 
+## Contract safety radar
+
+Run a free, read-only Base contract screening using the configured RPC endpoint:
+
+```bash
+npm run security:scan -- 0xContractAddress base
+```
+
+The deployed endpoint is `/agent/security?address=0x...&network=base`. Add
+`&format=json` for structured output. The scanner reports warning signals such
+as owner authority, minting, blacklisting, mutable fees, pausing and upgradeable
+proxy storage. It does not execute transactions and does not require an image or
+AI API. The result is not a full audit or proof that a token is safe or a scam.
+
+Create one free NFT-ready draft from the latest saved article:
+
+```text
+/agent/nft
+/agent/nft?format=json
+```
+
+The draft includes an original SVG cover, its source prompt, NFT metadata and a
+data-based token URI. It is deliberately not minted; an on-chain mint requires
+separate wallet approval and may incur network gas.
+
+Inspect transaction calldata and simulate the call before signing:
+
+```text
+/agent/firewall
+/agent/firewall?to=0x...&data=0x...&from=0x...&network=base
+```
+
+The firewall detects unlimited token approvals, NFT operator approvals, permits,
+unknown calls and simulation failures. It never connects a wallet or signs.
+
+
 Compile-check the proof contract without a wallet or network request:
 
 ```bash

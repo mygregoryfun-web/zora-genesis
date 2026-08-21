@@ -44,6 +44,18 @@
       "dest": "/api/agent/metrics.ts"
     },
     {
+      "src": "/agent/security",
+      "dest": "/api/agent/security.ts"
+    },
+    {
+      "src": "/agent/nft",
+      "dest": "/api/agent/nft.ts"
+    },
+    {
+      "src": "/agent/firewall",
+      "dest": "/api/agent/firewall.ts"
+    },
+    {
       "src": "/api/health",
       "dest": "/api/health.ts"
     },
@@ -70,6 +82,18 @@
     {
       "src": "/api/agent/metrics",
       "dest": "/api/agent/metrics.ts"
+    },
+    {
+      "src": "/api/agent/security",
+      "dest": "/api/agent/security.ts"
+    },
+    {
+      "src": "/api/agent/nft",
+      "dest": "/api/agent/nft.ts"
+    },
+    {
+      "src": "/api/agent/firewall",
+      "dest": "/api/agent/firewall.ts"
     }
   ]
 }

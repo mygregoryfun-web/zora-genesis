@@ -11,6 +11,8 @@ import { generateMonetizationPlan } from "./services/monetization.js";
 import { getBuilderCodeAttribution } from "./services/base-builder.js";
 import { generateMetrics } from "./services/metrics.js";
 import { generateGrowthPlan } from "./services/growth.js";
+import { scanContractSecurity, type SecurityNetwork } from "./services/contract-security.js";
+import { createNftDraft } from "./services/nft-draft.js";
 
 function sendJson(res: http.ServerResponse, statusCode: number, data: unknown) {
   res.writeHead(statusCode, {
@@ -107,6 +109,27 @@ const server = http.createServer(async (req, res) => {
       service: "zora-genesis",
       metrics: generateMetrics(),
     });
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/agent/security") {
+    const address = url.searchParams.get("address") ?? "";
+    const network = (url.searchParams.get("network") ?? "base") as SecurityNetwork;
+    if (!address || !["base", "base-sepolia"].includes(network)) {
+      sendJson(res, 400, { ok: false, error: "Provide address and a valid network (base or base-sepolia)." });
+      return;
+    }
+
+    try {
+      sendJson(res, 200, { ok: true, report: await scanContractSecurity({ address, network }) });
+    } catch (error) {
+      sendJson(res, 400, { ok: false, error: error instanceof Error ? error.message : "Scan failed" });
+    }
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/agent/nft") {
+    sendJson(res, 200, { ok: true, draft: createNftDraft() });
     return;
   }
 

@@ -14,3 +14,5 @@ x-oauth-url.txt
 *.tmp
 *token*.txt
 *oauth*.txt
+x-api-.txt
+x-oauth-session.json

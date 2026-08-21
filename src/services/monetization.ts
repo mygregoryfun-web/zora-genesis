@@ -5,6 +5,8 @@ export function generateMonetizationPlan(): MonetizationPlan {
     positioning: "Creator intelligence and publishing assistant for Base and Zora builders.",
     freeValue: [
       "Public Base/Zora opportunity endpoint",
+      "Public smart-contract safety screening",
+      "One article-to-NFT draft without paid image generation",
       "Daily creator asset signal preview",
       "Safe channel-specific post previews",
       "Basic Zora-ready brief examples",
@@ -60,6 +62,26 @@ export function generateMonetizationPlan(): MonetizationPlan {
       },
     ],
     products: [
+      {
+        id: "contract-safety-reports",
+        name: "Base contract safety reports",
+        model: "pay-per-brief",
+        baseFit: ["token safety", "contract screening", "creator protection"],
+        revenueHypothesis: "Free basic checks with $3-$10 deeper reports after liquidity and trade simulation are added.",
+        userValue: "Creators receive explainable warnings before promoting an unknown token.",
+        implementationNote: "Keep essential warnings free; monetize expanded evidence and monitoring.",
+        safetyBoundary: "Never label a contract fraudulent from heuristics alone or present the score as a full audit.",
+      },
+      {
+        id: "article-nft-studio",
+        name: "Article-to-NFT Studio",
+        model: "pay-per-brief",
+        baseFit: ["new asset creation", "Zora publishing", "creator economy"],
+        revenueHypothesis: "$1-$5 for an NFT-ready article edition or one draft inside Pro Creator.",
+        userValue: "One saved article becomes an original cover, prompt, metadata and approval-ready token URI.",
+        implementationNote: "Generate free; require explicit wallet approval before minting.",
+        safetyBoundary: "No automatic minting, wallet signing, copyright claims or return promises.",
+      },
       {
         id: "premium-briefs",
         name: "Premium Base/Zora creator briefs",

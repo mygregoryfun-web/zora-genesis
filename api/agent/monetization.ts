@@ -221,6 +221,9 @@ function renderPage(plan: MonetizationPlan, generatedAt: string) {
         <div class="actions">
           <a class="button primary" href="https://x.com/mygregoryfun">Request Premium Brief</a>
           <a class="button" href="/agent/growth">View Free Growth Plan</a>
+          <a class="button" href="/agent/security">Open Contract Safety</a>
+          <a class="button" href="/agent/firewall">Open Transaction Firewall</a>
+          <a class="button" href="/agent/nft">Open NFT Draft</a>
         </div>
       </div>
       <div class="summary">
@@ -254,6 +257,15 @@ function renderPage(plan: MonetizationPlan, generatedAt: string) {
             <div>${product.baseFit.map((fit) => `<span class="tag">${escapeHtml(fit)}</span>`).join("")}</div>
           </article>
         `).join("")}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Safety + NFT revenue loop</h2>
+      <div class="products">
+        <article class="card"><h3>1. Screen</h3><p class="note">Run the free Base contract safety check before featuring an asset.</p><a href="/agent/security">Contract Safety Radar</a></article>
+        <article class="card"><h3>2. Create</h3><p class="note">Turn the latest saved article into one NFT-ready artwork, prompt and metadata file.</p><a href="/agent/nft">Article NFT Draft</a></article>
+        <article class="card"><h3>3. Approve</h3><p class="note">The creator reviews the result and signs separately if they decide to mint. No automatic transaction.</p></article>
       </div>
     </section>
 

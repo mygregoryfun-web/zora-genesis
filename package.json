@@ -24,6 +24,7 @@
     "publish:zora": "node dist/channel-run.js zora --live",
     "proof:check": "node scripts/deploy-zora-genesis-proof.mjs",
     "proof:check:testnet": "node scripts/deploy-zora-genesis-proof.mjs --network=base-sepolia",
+    "security:scan": "tsx src/security-cli.ts",
     "fb:post": "tsx src/facebook-cli.ts",
     "register": "tsx src/test-register.ts",
     "hol:register": "tsx src/hol.ts",
