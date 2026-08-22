@@ -21,7 +21,7 @@
     },
     {
       "src": "/base-grant",
-      "dest": "/api/base-grant.ts"
+      "dest": "/api/home.ts"
     },
     {
       "src": "/agent/profile",

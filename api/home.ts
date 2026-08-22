@@ -1,5 +1,80 @@
 const productionUrl = "https://zora-genesis-t1j9.vercel.app";
 
+const grantBrief = {
+  builderCode: "bc_lk15eqwc",
+  baseAppId: "69af0091f6467f4d78d304ac",
+  baseProofContract: "0xc74659ce159b88ef3aae55a61fc3906fe2b1de58",
+  zoraAsset: "0x380518528ba2C7B80B61fAd1A03B52aA4006F892",
+  latestXPost: "2090559452877324327",
+  baseFit: [
+    "new asset creation",
+    "consumer apps",
+    "agent-assisted publishing",
+    "x402-style paid briefs",
+    "creator economy assets",
+    "Builder Codes attribution",
+  ],
+  shipped: [
+    "Live production dashboard with Base app verification tag",
+    "Public opportunity radar for Base/Zora creator signals",
+    "Monetization page with free, creator, studio, and service tiers",
+    "Contract safety radar and transaction firewall surfaces",
+    "NFT-ready draft page for collectible asset concepts",
+    "Live X text publishing plus Farcaster and Zora publishing support",
+  ],
+  userFlow: [
+    "Free visitors can open the public dashboard, radar, metrics, and proof links without signing in.",
+    "Creators connect a Base wallet only for saved briefs, paid requests, or onchain attribution.",
+    "Sign-in uses a signed wallet message, never a private key or seed phrase.",
+    "Payments can later use an x402-style flow while publishing remains approval-first.",
+  ],
+  safety: [
+    "Manual approval remains required before publishing or minting.",
+    "No custody of user funds.",
+    "No autonomous trading execution.",
+    "No leverage, lending, yield, or price-target recommendations.",
+    "DeFi and prediction-market narratives are treated as context only.",
+  ],
+  monetization: [
+    "Free public radar and draft previews.",
+    "Pro Creator at $19/month for unlimited channel-ready previews and saved briefs.",
+    "Builder Studio at $49/month for narrative radar, workflow templates, and API-ready output.",
+    "$1-$5 pay-per-brief experiment for premium Base/Zora creator briefs.",
+    "$250-$1,000 done-for-you setup service for small creator or builder teams.",
+  ],
+  roadmap: [
+    "Approval queue for all live channel publishing.",
+    "Premium brief request form with checkout-ready output.",
+    "Builder Code attribution on eligible onchain flows.",
+    "Engagement metrics panel for X, Farcaster, Zora, and site traffic.",
+    "x402-style paid access gate after the free endpoint proves useful.",
+  ],
+};
+
+function escapeHtml(value: unknown) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function list(items: string[]) {
+  return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+}
+
+function tags(items: string[]) {
+  return items.map((item) => `<span class="tag">${escapeHtml(item)}</span>`).join("");
+}
+
+function grantProof(label: string, value: string, href: string) {
+  return `<div class="proof"><span>${escapeHtml(label)}</span><a href="${escapeHtml(href)}"><code>${escapeHtml(value)}</code></a></div>`;
+}
+
+function applicationCopy() {
+  return `Zora Genesis is a live Base and Zora creator-intelligence agent. It tracks Base/Zora signals, scores opportunities around new asset creation and creator discovery, generates channel-ready drafts for Zora, Farcaster, and X, and packages ideas into premium creator briefs. The project is deployed publicly, uses Builder Code ${grantBrief.builderCode}, and keeps the workflow approval-first, non-custodial, and outside trading execution.`;
+}
+
 function page() {
   return `<!doctype html>
 <html lang="en">
@@ -601,7 +676,117 @@ function page() {
 </html>`;
 }
 
-export default function handler(_req: any, res: any) {
+function grantPage() {
+  return page()
+    .replace("<title>Zora Genesis | Base Creator Agent</title>", "<title>Zora Genesis | Base Grant Proof</title>")
+    .replace(
+      /<main>[\s\S]*?<\/main>/,
+      `<main>
+    <section class="hero-grid">
+      <div class="hero">
+        <div>
+          <div class="hero-top">
+            <div>
+              <div class="eyebrow">Base Builder Grant Proof Page</div>
+              <h1>Live agent for Base creator asset discovery.</h1>
+              <p class="lead">Zora Genesis is an approval-first AI agent that turns Base and Zora market signals into creator asset ideas, channel-ready posts, and premium launch briefs.</p>
+              <p>${tags(grantBrief.baseFit)}</p>
+            </div>
+            <div class="status-pill"><span class="dot"></span>Grant ready</div>
+          </div>
+          <div class="actions">
+            <a class="button primary" href="/agent/opportunities">Open radar</a>
+            <a class="button" href="/agent/monetization">Revenue model</a>
+            <a class="button" href="/agent/security">Safety tools</a>
+            <a class="button success" href="${productionUrl}">Production app</a>
+          </div>
+        </div>
+        <div class="mini-strip">
+          <div class="mini"><span>App ID</span><strong>${escapeHtml(grantBrief.baseAppId)}</strong></div>
+          <div class="mini"><span>Builder Code</span><strong>${escapeHtml(grantBrief.builderCode)}</strong></div>
+          <div class="mini"><span>Network</span><strong>Base Mainnet</strong></div>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <div class="panel-head">
+          <h2>Reviewer Summary</h2>
+          <span class="status-pill"><span class="dot"></span>Live</span>
+        </div>
+        <p class="panel-caption">${escapeHtml(applicationCopy())}</p>
+        <div class="row"><span class="label">Public access</span><span class="ok">No login needed</span></div>
+        <div class="row"><span class="label">Wallet flow</span><span>Base wallet for paid/saved features</span></div>
+        <div class="row"><span class="label">Publishing</span><span class="ok">Approval-first</span></div>
+        <div class="row"><span class="label">Custody</span><span class="ok">Non-custodial</span></div>
+      </aside>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>What Is Shipped</h2>
+          <p>Current public product surface for Base reviewers and early users.</p>
+        </div>
+        <a class="button" href="/agent/metrics">Open metrics</a>
+      </div>
+      <div class="grid">
+        <article class="card"><span class="tag">Radar</span><h3>Opportunity scoring</h3>${list(grantBrief.shipped.slice(0, 2))}</article>
+        <article class="card"><span class="tag green">Revenue</span><h3>Premium briefs</h3>${list(grantBrief.shipped.slice(2, 4))}</article>
+        <article class="card"><span class="tag violet">Publishing</span><h3>Channel workflow</h3>${list(grantBrief.shipped.slice(4))}</article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>User Connection Flow</h2>
+          <p>Wallet connection is used when value becomes personal, not for reading the public proof page.</p>
+        </div>
+      </div>
+      <div class="task-list">
+        <article class="task"><h2>Public first</h2>${list(grantBrief.userFlow.slice(0, 1))}<p class="panel-caption">A reviewer can inspect the product immediately.</p></article>
+        <article class="task"><h2>Wallet later</h2>${list(grantBrief.userFlow.slice(1))}</article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Public Proof Links</h2>
+          <p>Onchain and social evidence that the prototype is live.</p>
+        </div>
+      </div>
+      <div class="proofs">
+        ${grantProof("Base proof contract", grantBrief.baseProofContract, `https://basescan.org/address/${grantBrief.baseProofContract}`)}
+        ${grantProof("Zora asset contract", grantBrief.zoraAsset, `https://basescan.org/address/${grantBrief.zoraAsset}`)}
+        ${grantProof("Latest X post", grantBrief.latestXPost, `https://x.com/mygregoryfun/status/${grantBrief.latestXPost}`)}
+        ${grantProof("Production URL", productionUrl, productionUrl)}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="task-list">
+        <article class="task"><h2>Monetization Path</h2>${list(grantBrief.monetization)}</article>
+        <article class="task"><h2>Safety Boundaries</h2>${list(grantBrief.safety)}</article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="task-list">
+        <article class="task"><h2>Next Development</h2>${list(grantBrief.roadmap)}</article>
+        <article class="task cta">
+          <h2>Application Copy</h2>
+          <p>${escapeHtml(applicationCopy())}</p>
+          <a class="button" href="/agent/opportunities">Review the live radar</a>
+        </article>
+      </div>
+    </section>
+  </main>`
+    );
+}
+
+export default function handler(req: any, res: any) {
   res.setHeader("content-type", "text/html; charset=utf-8");
-  res.status(200).send(page());
+  const url = new URL(req.url ?? "/", productionUrl);
+  res.status(200).send(url.pathname === "/base-grant" ? grantPage() : page());
 }
