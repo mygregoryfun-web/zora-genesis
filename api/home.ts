@@ -445,6 +445,7 @@ function page() {
     </div>
     <nav>
       <a href="/agent/opportunities">Radar</a>
+      <a href="/base-grant">Grant</a>
       <a href="/agent/metrics">Metrics</a>
       <a href="/agent/monetization">Revenue</a>
       <a href="/agent/security">Security</a>
@@ -469,6 +470,7 @@ function page() {
           </div>
           <div class="actions">
             <a class="button primary" href="/agent/opportunities">Open Opportunity Radar</a>
+            <a class="button" href="/base-grant">Base Grant Page</a>
             <a class="button success" href="https://x.com/mygregoryfun">Request Premium Brief</a>
             <a class="button" href="/agent/metrics">Proof Metrics</a>
             <a class="button" href="/agent/firewall">Check Transaction</a>

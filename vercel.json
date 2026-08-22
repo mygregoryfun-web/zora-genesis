@@ -20,6 +20,10 @@
       "dest": "/api/health.ts"
     },
     {
+      "src": "/base-grant",
+      "dest": "/api/base-grant.ts"
+    },
+    {
       "src": "/agent/profile",
       "dest": "/api/agent/profile.ts"
     },
@@ -54,6 +58,10 @@
     {
       "src": "/agent/firewall",
       "dest": "/api/agent/firewall.ts"
+    },
+    {
+      "src": "/agent/growth",
+      "dest": "/api/agent/growth.ts"
     },
     {
       "src": "/api/health",
@@ -94,6 +102,10 @@
     {
       "src": "/api/agent/firewall",
       "dest": "/api/agent/firewall.ts"
+    },
+    {
+      "src": "/api/agent/growth",
+      "dest": "/api/agent/growth.ts"
     }
   ]
 }

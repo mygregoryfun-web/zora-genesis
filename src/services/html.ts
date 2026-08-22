@@ -311,6 +311,7 @@ export function page(title: string, body: string) {
     </div>
     <nav>
       <a href="/">Dashboard</a>
+      <a href="/base-grant">Grant</a>
       <a href="/agent/opportunities">Radar</a>
       <a href="/agent/metrics">Metrics</a>
       <a href="/agent/monetization">Revenue</a>
