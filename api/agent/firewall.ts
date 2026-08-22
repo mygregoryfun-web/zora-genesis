@@ -1,4 +1,4 @@
-import { inspectTransaction, type TransactionFirewallReport } from "../../src/services/transaction-firewall.js";
+import { inspectTransaction, inspectTransactionHash, type TransactionFirewallReport } from "../../src/services/transaction-firewall.js";
 import type { SecurityNetwork } from "../../src/services/contract-security.js";
 import { escapeHtml, page, wantsJson } from "../../src/services/html.js";
 
@@ -17,8 +17,26 @@ function form() {
 
     <section class="section">
       <div class="grid two">
+        <article class="card highlight">
+          <h2>Quick check</h2>
+          <p>Najlažje: prilepi Base transaction hash iz BaseScan, denarnice ali aplikacije. Agent sam prebere ciljni naslov, calldata, pošiljatelja in vrednost.</p>
+          <form method="get" action="/agent/firewall">
+            <label>Transaction hash
+              <input name="tx" required placeholder="0x...64 znakov">
+              <small>Primer: hash že pripravljene ali že poslane transakcije na Base.</small>
+            </label>
+            <label>Omrežje
+              <select name="network">
+                <option value="base">Base</option>
+                <option value="base-sepolia">Base Sepolia</option>
+              </select>
+            </label>
+            <button type="submit">Preveri transaction hash</button>
+          </form>
+        </article>
+
         <article class="card">
-          <h2>Transaction input</h2>
+          <h2>Advanced calldata input</h2>
           <form method="get" action="/agent/firewall">
             <label>Ciljni naslov pogodbe
               <input name="to" required placeholder="0x...">
@@ -46,7 +64,17 @@ function form() {
         </article>
 
         <article class="card">
-          <h2>Kaj preveri</h2>
+          <h2>Kaj vneseš</h2>
+          <ul>
+            <li><strong>Transaction hash</strong>: najlažja pot, če ga imaš iz BaseScan ali denarnice.</li>
+            <li><strong>Ciljni naslov pogodbe</strong>: polje <code>to</code> iz transakcije.</li>
+            <li><strong>Calldata</strong>: polje <code>data</code>, začne se z <code>0x</code>.</li>
+            <li><strong>From</strong>: tvoj wallet naslov, priporočeno za simulacijo.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2>Kaj agent preveri</h2>
           <ul>
             <li>ali je calldata veljaven</li>
             <li>ali pogodba obstaja na izbranem omrežju</li>
@@ -92,21 +120,25 @@ export default async function handler(req: any, res: any) {
   }
 
   const url = new URL(req.url ?? "/agent/firewall", "https://zora-genesis-t1j9.vercel.app");
+  const tx = String(req.query?.tx ?? url.searchParams.get("tx") ?? "");
   const to = String(req.query?.to ?? url.searchParams.get("to") ?? "");
 
-  if (!to) {
+  if (!to && !tx) {
     res.setHeader("content-type", "text/html; charset=utf-8");
     return res.status(200).send(page("Transaction Firewall", form()));
   }
 
   try {
-    const report = await inspectTransaction({
-      to,
-      data: String(req.query?.data ?? url.searchParams.get("data") ?? "0x"),
-      from: String(req.query?.from ?? url.searchParams.get("from") ?? "") || undefined,
-      valueWei: String(req.query?.valueWei ?? url.searchParams.get("valueWei") ?? "0"),
-      network: String(req.query?.network ?? url.searchParams.get("network") ?? "base") as SecurityNetwork,
-    });
+    const network = String(req.query?.network ?? url.searchParams.get("network") ?? "base") as SecurityNetwork;
+    const report = tx
+      ? await inspectTransactionHash({ hash: tx, network })
+      : await inspectTransaction({
+          to,
+          data: String(req.query?.data ?? url.searchParams.get("data") ?? "0x"),
+          from: String(req.query?.from ?? url.searchParams.get("from") ?? "") || undefined,
+          valueWei: String(req.query?.valueWei ?? url.searchParams.get("valueWei") ?? "0"),
+          network,
+        });
 
     if (wantsJson(req, "/agent/firewall")) {
       return res.status(200).json({ ok: true, service: "zora-genesis", report });

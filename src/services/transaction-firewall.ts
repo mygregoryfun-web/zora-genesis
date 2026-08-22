@@ -23,9 +23,41 @@ export interface TransactionFirewallReport {
   disclaimer: string;
 }
 
+function chainForNetwork(network: SecurityNetwork) {
+  return network === "base-sepolia" ? baseSepolia : base;
+}
+
+function rpcUrlForNetwork(network: SecurityNetwork) {
+  return network === "base-sepolia" ? process.env.BASE_SEPOLIA_RPC_URL : process.env.BASE_RPC_URL;
+}
+
 function compactError(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
   return message.split("\n")[0]?.slice(0, 240) || "Simulation failed";
+}
+
+export async function inspectTransactionHash(input: {
+  hash: string;
+  network?: SecurityNetwork;
+  rpcUrl?: string;
+}): Promise<TransactionFirewallReport> {
+  if (!/^0x[0-9a-fA-F]{64}$/.test(input.hash)) throw new Error("Invalid transaction hash.");
+
+  const network = input.network ?? "base";
+  const chain = chainForNetwork(network);
+  const client = createPublicClient({ chain, transport: http(input.rpcUrl || rpcUrlForNetwork(network) || chain.rpcUrls.default.http[0]) });
+  const transaction = await client.getTransaction({ hash: input.hash as Hex });
+
+  if (!transaction.to) throw new Error("Contract creation transactions are not supported by the firewall yet.");
+
+  return inspectTransaction({
+    to: transaction.to,
+    data: transaction.input,
+    from: transaction.from,
+    valueWei: transaction.value.toString(),
+    network,
+    rpcUrl: input.rpcUrl,
+  });
 }
 
 export async function inspectTransaction(input: {
@@ -45,8 +77,8 @@ export async function inspectTransaction(input: {
   if (value < 0n) throw new Error("valueWei must be a non-negative integer.");
 
   const network = input.network ?? "base";
-  const chain = network === "base-sepolia" ? baseSepolia : base;
-  const rpcUrl = input.rpcUrl || (network === "base-sepolia" ? process.env.BASE_SEPOLIA_RPC_URL : process.env.BASE_RPC_URL);
+  const chain = chainForNetwork(network);
+  const rpcUrl = input.rpcUrl || rpcUrlForNetwork(network);
   const client = createPublicClient({ chain, transport: http(rpcUrl || chain.rpcUrls.default.http[0]) });
   const to = getAddress(input.to);
   const from = input.from ? getAddress(input.from) : null;
