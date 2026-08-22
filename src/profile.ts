@@ -13,6 +13,9 @@ export type AgentProfile = {
   };
 };
 
+const defaultAccountId = "0.0.10628935";
+const defaultPublicUrl = "https://zora-genesis-t1j9.vercel.app";
+
 export function getAgentProfile(): AgentProfile {
   return {
     version: "1.0.0",
@@ -20,7 +23,7 @@ export function getAgentProfile(): AgentProfile {
     display_name: "Zora Genesis",
     alias: "zora-genesis",
     bio: "Autonomous AI agent for Base, Zora, new asset creation, consumer crypto and creator economy.",
-    base_account: process.env.ACCOUNT_ID,
+    base_account: process.env.ACCOUNT_ID || defaultAccountId,
     aiAgent: {
       type: 1,
       creator: "Fun Gregory",
@@ -40,15 +43,15 @@ export function getAgentProfile(): AgentProfile {
 export function getRegistrationPayload() {
   return {
     profile: getAgentProfile(),
-    endpoint: process.env.AGENT_ENDPOINT,
+    endpoint: process.env.AGENT_ENDPOINT || `${defaultPublicUrl}/agent/profile`,
     protocol: "https",
     communicationProtocol: "hcs-10",
     metadata: {
       provider: "Fun Gregory",
       category: "web3-ai-agent",
       verified: false,
-      baseBuilderCode: process.env.BASE_BUILDER_CODE ?? "bc_lk15eqwc",
-      publicUrl: process.env.AGENT_PUBLIC_URL,
+      baseBuilderCode: process.env.BASE_BUILDER_CODE || "bc_lk15eqwc",
+      publicUrl: process.env.AGENT_PUBLIC_URL || defaultPublicUrl,
     },
   };
 }
