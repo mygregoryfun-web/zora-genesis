@@ -195,6 +195,214 @@ function page() {
       flex-direction: column;
       justify-content: space-between;
     }
+    .hero.visual {
+      overflow: hidden;
+      position: relative;
+      min-height: 480px;
+      border-color: #b8c8f0;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .96) 0%, rgba(239, 245, 255, .96) 48%, rgba(229, 239, 255, .96) 100%);
+    }
+    .hero.visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 82, 255, .10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 82, 255, .10) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, transparent 0, #000 28%, #000 100%);
+      pointer-events: none;
+    }
+    .hero.visual > * { position: relative; z-index: 1; }
+    .visual-stage {
+      display: grid;
+      grid-template-columns: 210px minmax(0, 1fr) 236px;
+      gap: 14px;
+      align-items: center;
+      margin-top: 24px;
+    }
+    .radar-panel, .brief-panel, .agent-console, .firewall-card {
+      border: 1px solid rgba(0, 82, 255, .18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .82);
+      box-shadow: 0 16px 40px rgba(23, 47, 94, .10);
+      backdrop-filter: blur(10px);
+    }
+    .radar-panel {
+      min-height: 250px;
+      padding: 16px;
+    }
+    .radar {
+      width: 154px;
+      aspect-ratio: 1;
+      margin: 12px auto 16px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, #ffffff 0 5px, #0052ff 6px 8px, transparent 9px),
+        repeating-radial-gradient(circle at center, rgba(0, 82, 255, .18) 0 1px, transparent 2px 28px),
+        conic-gradient(from 20deg, rgba(0, 82, 255, .06), rgba(0, 82, 255, .85), rgba(0, 82, 255, .06) 34%, rgba(0, 82, 255, .14));
+      border: 1px solid rgba(0, 82, 255, .18);
+      box-shadow: inset 0 0 24px rgba(0, 82, 255, .18);
+    }
+    .signal-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 8px;
+    }
+    .signal-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .signal-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 0 4px rgba(0, 82, 255, .10);
+    }
+    .agent-console {
+      min-height: 292px;
+      padding: 18px;
+      color: #f8fbff;
+      background:
+        radial-gradient(circle at 72% 42%, rgba(42, 117, 255, .24), transparent 28%),
+        linear-gradient(145deg, #071226 0%, #0c1730 58%, #13233f 100%);
+      border-color: rgba(95, 151, 255, .28);
+      box-shadow: 0 24px 54px rgba(7, 18, 38, .24);
+    }
+    .console-top, .console-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .console-brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 14px;
+      font-weight: 780;
+    }
+    .console-mark {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: var(--blue);
+      color: #ffffff;
+      font-size: 12px;
+    }
+    .console-status {
+      color: #8ff0bf;
+      font-size: 12px;
+      font-weight: 760;
+    }
+    .wave {
+      position: relative;
+      height: 82px;
+      margin: 22px 0 18px;
+      overflow: hidden;
+    }
+    .wave::before, .wave::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 55%, #53a0ff 0 4px, transparent 5px),
+        radial-gradient(circle at 53% 45%, #53a0ff 0 4px, transparent 5px),
+        radial-gradient(circle at 84% 50%, #53a0ff 0 4px, transparent 5px),
+        repeating-linear-gradient(12deg, transparent 0 14px, rgba(94, 154, 255, .46) 15px 16px, transparent 17px 30px);
+      opacity: .9;
+    }
+    .wave::after {
+      transform: translateY(16px) scaleY(.68);
+      opacity: .35;
+    }
+    .proof-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .proof-chip {
+      min-height: 72px;
+      padding: 10px;
+      border: 1px solid rgba(122, 163, 255, .20);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .06);
+    }
+    .proof-chip span {
+      display: block;
+      color: #9fb5d8;
+      font-size: 11px;
+      margin-bottom: 6px;
+    }
+    .proof-chip strong {
+      color: #ffffff;
+      font-size: 13px;
+    }
+    .console-footer {
+      margin-top: 16px;
+      color: #9fb5d8;
+      font-size: 12px;
+    }
+    .right-stack {
+      display: grid;
+      gap: 12px;
+    }
+    .brief-panel, .firewall-card {
+      padding: 14px;
+    }
+    .asset-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 10px 0 12px;
+    }
+    .asset-tile {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #dce9ff, #0052ff);
+      box-shadow: inset 0 -10px 18px rgba(0, 0, 0, .10);
+    }
+    .asset-tile:nth-child(2) { background: linear-gradient(135deg, #f0eeff, #5b4bdb); }
+    .asset-tile:nth-child(3) { background: linear-gradient(135deg, #e9f7f1, #12715b); }
+    .check-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-top: 1px solid var(--soft-line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .check-row:first-of-type { border-top: 0; }
+    .safe-badge {
+      min-width: 48px;
+      text-align: center;
+      padding: 3px 7px;
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-weight: 780;
+    }
+    .visual-caption {
+      margin-top: 14px;
+      padding: 12px;
+      border: 1px solid rgba(0, 82, 255, .13);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .64);
+      color: var(--muted);
+      font-size: 13px;
+    }
     .hero-top {
       display: flex;
       align-items: flex-start;
@@ -492,6 +700,7 @@ function page() {
       }
       nav { justify-content: flex-start; }
       .hero-grid, .task-list { grid-template-columns: 1fr; }
+      .visual-stage { grid-template-columns: 1fr; }
       .proofs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       h1 { font-size: 42px; }
     }
@@ -533,7 +742,7 @@ function page() {
   </header>
   <main>
     <section class="hero-grid">
-      <div class="hero">
+      <div class="hero visual">
         <div>
           <div class="hero-top">
             <div>
@@ -551,6 +760,54 @@ function page() {
             <a class="button" href="/agent/firewall">Check Transaction</a>
           </div>
         </div>
+        <div class="visual-stage" aria-label="Agent proof dashboard preview">
+          <div class="radar-panel">
+            <div class="eyebrow">Opportunity Radar</div>
+            <div class="radar" aria-hidden="true"></div>
+            <div class="signal-list">
+              <div class="signal-item"><span><span class="signal-dot"></span> Base activity</span><strong>High</strong></div>
+              <div class="signal-item"><span><span class="signal-dot"></span> Zora minting</span><strong>Rising</strong></div>
+              <div class="signal-item"><span><span class="signal-dot"></span> Creator assets</span><strong>92</strong></div>
+            </div>
+          </div>
+
+          <div class="agent-console">
+            <div class="console-top">
+              <div class="console-brand"><span class="console-mark">ZG</span>Zora Genesis</div>
+              <div class="console-status"><span class="dot"></span> Agent online</div>
+            </div>
+            <div class="wave" aria-hidden="true"></div>
+            <div class="proof-grid">
+              <div class="proof-chip"><span>Radar</span><strong>Signals scored</strong></div>
+              <div class="proof-chip"><span>Publishing</span><strong>Approval-first</strong></div>
+              <div class="proof-chip"><span>Proof</span><strong>Base verified</strong></div>
+            </div>
+            <div class="console-footer">
+              <span>Network: Base</span>
+              <span>Status: all systems optimal</span>
+            </div>
+          </div>
+
+          <div class="right-stack">
+            <div class="brief-panel">
+              <div class="eyebrow">Zora-Ready Briefs</div>
+              <div class="asset-row" aria-hidden="true">
+                <div class="asset-tile"></div>
+                <div class="asset-tile"></div>
+                <div class="asset-tile"></div>
+              </div>
+              <div class="check-row"><span>Cover direction</span><span class="safe-badge">Ready</span></div>
+              <div class="check-row"><span>Distribution note</span><span class="safe-badge">Ready</span></div>
+            </div>
+            <div class="firewall-card">
+              <div class="eyebrow">Transaction Firewall</div>
+              <div class="check-row"><span>Approval scan</span><span class="safe-badge">Safe</span></div>
+              <div class="check-row"><span>Permission check</span><span class="safe-badge">Safe</span></div>
+              <div class="check-row"><span>Risk detection</span><span class="safe-badge">On</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="visual-caption">Signal radar, publishing proof, Zora asset briefs, and transaction review now appear as one product surface for Base reviewers and early users.</div>
         <div class="mini-strip" aria-label="Core product flow">
           <div class="mini"><span>Step 1</span><strong>Read Base/Zora signals</strong></div>
           <div class="mini"><span>Step 2</span><strong>Score asset opportunities</strong></div>
