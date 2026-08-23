@@ -31,6 +31,32 @@ function form(lang: Language) {
       </section>
 
       <section class="section">
+        <div class="cockpit">
+          <div class="radar-panel">
+            <div class="eyebrow">Escaneo</div>
+            <div class="radar" aria-hidden="true"></div>
+            <div class="check-row"><span>Hash</span><span class="safe-badge">Listo</span></div>
+            <div class="check-row"><span>Calldata</span><span class="safe-badge">Decode</span></div>
+          </div>
+          <div class="console-panel">
+            <div class="console-top"><span>Transaction Firewall</span><span>Solo lectura</span></div>
+            <div class="wave" aria-hidden="true"></div>
+            <div class="proof-grid">
+              <div class="proof-chip"><span>Firma</span><strong>No solicita</strong></div>
+              <div class="proof-chip"><span>Billetera</span><strong>No conecta</strong></div>
+              <div class="proof-chip"><span>Red</span><strong>Base</strong></div>
+            </div>
+          </div>
+          <div class="status-panel">
+            <div class="eyebrow">Controles</div>
+            <div class="check-row"><span>Aprobaciones</span><span class="safe-badge">Scan</span></div>
+            <div class="check-row"><span>Permisos</span><span class="safe-badge">Scan</span></div>
+            <div class="check-row"><span>Simulacion</span><span class="safe-badge">On</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
         <div class="grid two">
           <article class="card highlight">
             <h2>Revision rapida</h2>
@@ -114,6 +140,32 @@ function form(lang: Language) {
         <p class="lead">Paste a Base transaction hash or advanced transaction fields. This page does not connect a wallet, request a signature, or execute a transaction.</p>
       </div>
       <div class="stat"><strong>Read only</strong><span>no signature</span></div>
+    </section>
+
+    <section class="section">
+      <div class="cockpit">
+        <div class="radar-panel">
+          <div class="eyebrow">Scan Surface</div>
+          <div class="radar" aria-hidden="true"></div>
+          <div class="check-row"><span>Hash</span><span class="safe-badge">Ready</span></div>
+          <div class="check-row"><span>Calldata</span><span class="safe-badge">Decode</span></div>
+        </div>
+        <div class="console-panel">
+          <div class="console-top"><span>Transaction Firewall</span><span>Read only</span></div>
+          <div class="wave" aria-hidden="true"></div>
+          <div class="proof-grid">
+            <div class="proof-chip"><span>Signature</span><strong>Not requested</strong></div>
+            <div class="proof-chip"><span>Wallet</span><strong>Not connected</strong></div>
+            <div class="proof-chip"><span>Network</span><strong>Base</strong></div>
+          </div>
+        </div>
+        <div class="status-panel">
+          <div class="eyebrow">Controls</div>
+          <div class="check-row"><span>Approvals</span><span class="safe-badge">Scan</span></div>
+          <div class="check-row"><span>Permissions</span><span class="safe-badge">Scan</span></div>
+          <div class="check-row"><span>Simulation</span><span class="safe-badge">On</span></div>
+        </div>
+      </div>
     </section>
 
     <section class="section">

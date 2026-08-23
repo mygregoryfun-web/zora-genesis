@@ -940,7 +940,7 @@ function grantPage() {
       /<main>[\s\S]*?<\/main>/,
       `<main>
     <section class="hero-grid">
-      <div class="hero">
+      <div class="hero visual">
         <div>
           <div class="hero-top">
             <div>
@@ -976,6 +976,50 @@ function grantPage() {
         <div class="row"><span class="label">Publishing</span><span class="ok">Approval-first</span></div>
         <div class="row"><span class="label">Custody</span><span class="ok">Non-custodial</span></div>
       </aside>
+    </section>
+
+    <section class="section">
+      <div class="visual-stage" aria-label="Grant reviewer cockpit">
+        <div class="radar-panel">
+          <div class="eyebrow">Grant Fit Radar</div>
+          <div class="radar" aria-hidden="true"></div>
+          <div class="signal-list">
+            <div class="signal-item"><span><span class="signal-dot"></span> New assets</span><strong>Fit</strong></div>
+            <div class="signal-item"><span><span class="signal-dot"></span> Consumer app</span><strong>Fit</strong></div>
+            <div class="signal-item"><span><span class="signal-dot"></span> Agent publishing</span><strong>Live</strong></div>
+          </div>
+        </div>
+        <div class="agent-console">
+          <div class="console-top">
+            <div class="console-brand"><span class="console-mark">ZG</span>Base Grant Proof</div>
+            <div class="console-status"><span class="dot"></span> Reviewer ready</div>
+          </div>
+          <div class="wave" aria-hidden="true"></div>
+          <div class="proof-grid">
+            <div class="proof-chip"><span>Builder Code</span><strong>${escapeHtml(grantBrief.builderCode)}</strong></div>
+            <div class="proof-chip"><span>Wallet flow</span><strong>Connect later</strong></div>
+            <div class="proof-chip"><span>Safety</span><strong>Non-custodial</strong></div>
+          </div>
+          <div class="console-footer">
+            <span>Network: Base Mainnet</span>
+            <span>Publishing: approval-first</span>
+          </div>
+        </div>
+        <div class="right-stack">
+          <div class="brief-panel">
+            <div class="eyebrow">Reviewer Checks</div>
+            <div class="check-row"><span>Public dashboard</span><span class="safe-badge">Live</span></div>
+            <div class="check-row"><span>Proof links</span><span class="safe-badge">Live</span></div>
+            <div class="check-row"><span>Revenue model</span><span class="safe-badge">Ready</span></div>
+          </div>
+          <div class="firewall-card">
+            <div class="eyebrow">Risk Boundary</div>
+            <div class="check-row"><span>No custody</span><span class="safe-badge">On</span></div>
+            <div class="check-row"><span>No trading</span><span class="safe-badge">On</span></div>
+            <div class="check-row"><span>Manual approve</span><span class="safe-badge">On</span></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="section">

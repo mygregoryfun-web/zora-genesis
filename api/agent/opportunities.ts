@@ -20,13 +20,39 @@ export default async function handler(req: any, res: any) {
   const market = await fetchMarketData();
   const opportunities = generateOpportunities({ trends, market });
   const body = `
-    <section class="hero">
+    <section class="hero visual">
       <div>
         <div class="eyebrow">Opportunity Radar</div>
         <h1>Base/Zora builder signals ranked for action.</h1>
         <p class="lead">The agent turns Base activity, Zora creator momentum, consumer app demand, and prediction-market narratives into practical creator asset opportunities.</p>
       </div>
       <div class="stat"><strong>${opportunities.length}</strong><span>ranked opportunities</span></div>
+    </section>
+
+    <section class="section">
+      <div class="cockpit">
+        <div class="radar-panel">
+          <div class="eyebrow">Signal Sweep</div>
+          <div class="radar" aria-hidden="true"></div>
+          <div class="check-row"><span>Base activity</span><span class="safe-badge">High</span></div>
+          <div class="check-row"><span>Zora mints</span><span class="safe-badge">Rising</span></div>
+        </div>
+        <div class="console-panel">
+          <div class="console-top"><span>Zora Genesis Radar</span><span>Live scan</span></div>
+          <div class="wave" aria-hidden="true"></div>
+          <div class="proof-grid">
+            <div class="proof-chip"><span>Top score</span><strong>${Math.max(...opportunities.map((item) => item.score))}/100</strong></div>
+            <div class="proof-chip"><span>Primary fit</span><strong>New assets</strong></div>
+            <div class="proof-chip"><span>Boundary</span><strong>No trading advice</strong></div>
+          </div>
+        </div>
+        <div class="status-panel">
+          <div class="eyebrow">Builder Focus</div>
+          <div class="check-row"><span>Consumer apps</span><span class="safe-badge">Fit</span></div>
+          <div class="check-row"><span>Creator assets</span><span class="safe-badge">Fit</span></div>
+          <div class="check-row"><span>x402 briefs</span><span class="safe-badge">Next</span></div>
+        </div>
+      </div>
     </section>
 
     <section class="section">

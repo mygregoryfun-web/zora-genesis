@@ -104,6 +104,98 @@ function renderPage(plan: MonetizationPlan, generatedAt: string) {
       margin-bottom: 4px;
     }
     .summary span { color: var(--muted); font-size: 14px; }
+    .cockpit {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr) 210px;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .radar-panel, .console-panel, .status-panel {
+      border: 1px solid rgba(0, 82, 255, .18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .86);
+      box-shadow: 0 16px 40px rgba(23, 47, 94, .10);
+    }
+    .radar-panel, .status-panel { padding: 14px; }
+    .radar {
+      width: 132px;
+      aspect-ratio: 1;
+      margin: 10px auto;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, #ffffff 0 5px, #0052ff 6px 8px, transparent 9px),
+        repeating-radial-gradient(circle at center, rgba(0, 82, 255, .18) 0 1px, transparent 2px 24px),
+        conic-gradient(from 20deg, rgba(0, 82, 255, .06), rgba(0, 82, 255, .85), rgba(0, 82, 255, .06) 34%, rgba(0, 82, 255, .14));
+      border: 1px solid rgba(0, 82, 255, .18);
+    }
+    .console-panel {
+      min-height: 220px;
+      padding: 16px;
+      color: #f8fbff;
+      background:
+        radial-gradient(circle at 72% 42%, rgba(42, 117, 255, .24), transparent 28%),
+        linear-gradient(145deg, #071226 0%, #0c1730 58%, #13233f 100%);
+    }
+    .console-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 780;
+    }
+    .wave {
+      height: 70px;
+      margin: 18px 0;
+      background:
+        radial-gradient(circle at 18% 55%, #53a0ff 0 4px, transparent 5px),
+        radial-gradient(circle at 53% 45%, #53a0ff 0 4px, transparent 5px),
+        radial-gradient(circle at 84% 50%, #53a0ff 0 4px, transparent 5px),
+        repeating-linear-gradient(12deg, transparent 0 14px, rgba(94, 154, 255, .46) 15px 16px, transparent 17px 30px);
+    }
+    .proof-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .proof-chip {
+      min-height: 62px;
+      padding: 9px;
+      border: 1px solid rgba(122, 163, 255, .20);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .06);
+    }
+    .proof-chip span {
+      display: block;
+      color: #9fb5d8;
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
+    .proof-chip strong {
+      color: #ffffff;
+      font-size: 12px;
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .check-row:first-of-type { border-top: 0; }
+    .safe-badge {
+      min-width: 48px;
+      text-align: center;
+      padding: 3px 7px;
+      border-radius: 8px;
+      background: #e9f7f1;
+      color: var(--green);
+      font-weight: 780;
+    }
     .section { padding: 18px 0 0; }
     .section h2 {
       margin: 0 0 12px;
@@ -198,7 +290,7 @@ function renderPage(plan: MonetizationPlan, generatedAt: string) {
     }
     @media (max-width: 900px) {
       header, .hero { grid-template-columns: 1fr; flex-direction: column; }
-      .tiers, .products { grid-template-columns: 1fr; }
+      .tiers, .products, .cockpit { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -229,6 +321,32 @@ function renderPage(plan: MonetizationPlan, generatedAt: string) {
       <div class="summary">
         <strong>$19-$49/mo</strong>
         <span>Subscription path plus pay-per-brief and setup revenue.</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="cockpit">
+        <div class="radar-panel">
+          <div class="eyebrow">Revenue Radar</div>
+          <div class="radar" aria-hidden="true"></div>
+          <div class="check-row"><span>Free preview</span><span class="safe-badge">Live</span></div>
+          <div class="check-row"><span>Premium briefs</span><span class="safe-badge">Test</span></div>
+        </div>
+        <div class="console-panel">
+          <div class="console-top"><span>Creator Intelligence Studio</span><span>Approval-first</span></div>
+          <div class="wave" aria-hidden="true"></div>
+          <div class="proof-grid">
+            <div class="proof-chip"><span>Free</span><strong>Radar</strong></div>
+            <div class="proof-chip"><span>Pro</span><strong>$19/mo</strong></div>
+            <div class="proof-chip"><span>Studio</span><strong>$49/mo</strong></div>
+          </div>
+        </div>
+        <div class="status-panel">
+          <div class="eyebrow">Safety Limits</div>
+          <div class="check-row"><span>No custody</span><span class="safe-badge">On</span></div>
+          <div class="check-row"><span>No trading</span><span class="safe-badge">On</span></div>
+          <div class="check-row"><span>Manual approve</span><span class="safe-badge">On</span></div>
+        </div>
       </div>
     </section>
 

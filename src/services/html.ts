@@ -133,6 +133,121 @@ export function page(title: string, body: string) {
       gap: 22px;
       align-items: center;
     }
+    .hero.visual {
+      overflow: hidden;
+      position: relative;
+      border-color: #b8c8f0;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .96) 0%, rgba(239, 245, 255, .96) 48%, rgba(229, 239, 255, .96) 100%);
+    }
+    .hero.visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 82, 255, .10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 82, 255, .10) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, transparent 0, #000 28%, #000 100%);
+      pointer-events: none;
+    }
+    .hero.visual > * { position: relative; z-index: 1; }
+    .cockpit {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr) 190px;
+      gap: 12px;
+      align-items: stretch;
+    }
+    .radar-panel, .console-panel, .status-panel {
+      border: 1px solid rgba(0, 82, 255, .18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .82);
+      box-shadow: 0 16px 40px rgba(23, 47, 94, .10);
+    }
+    .radar-panel, .status-panel { padding: 14px; }
+    .radar {
+      width: 132px;
+      aspect-ratio: 1;
+      margin: 10px auto;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, #ffffff 0 5px, #0052ff 6px 8px, transparent 9px),
+        repeating-radial-gradient(circle at center, rgba(0, 82, 255, .18) 0 1px, transparent 2px 24px),
+        conic-gradient(from 20deg, rgba(0, 82, 255, .06), rgba(0, 82, 255, .85), rgba(0, 82, 255, .06) 34%, rgba(0, 82, 255, .14));
+      border: 1px solid rgba(0, 82, 255, .18);
+      box-shadow: inset 0 0 24px rgba(0, 82, 255, .18);
+    }
+    .console-panel {
+      min-height: 220px;
+      padding: 16px;
+      color: #f8fbff;
+      background:
+        radial-gradient(circle at 72% 42%, rgba(42, 117, 255, .24), transparent 28%),
+        linear-gradient(145deg, #071226 0%, #0c1730 58%, #13233f 100%);
+      border-color: rgba(95, 151, 255, .28);
+      box-shadow: 0 24px 54px rgba(7, 18, 38, .20);
+    }
+    .console-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 780;
+    }
+    .wave {
+      height: 70px;
+      margin: 18px 0;
+      background:
+        radial-gradient(circle at 18% 55%, #53a0ff 0 4px, transparent 5px),
+        radial-gradient(circle at 53% 45%, #53a0ff 0 4px, transparent 5px),
+        radial-gradient(circle at 84% 50%, #53a0ff 0 4px, transparent 5px),
+        repeating-linear-gradient(12deg, transparent 0 14px, rgba(94, 154, 255, .46) 15px 16px, transparent 17px 30px);
+      opacity: .9;
+    }
+    .proof-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .proof-chip {
+      min-height: 62px;
+      padding: 9px;
+      border: 1px solid rgba(122, 163, 255, .20);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .06);
+    }
+    .proof-chip span {
+      display: block;
+      color: #9fb5d8;
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
+    .proof-chip strong {
+      color: #ffffff;
+      font-size: 12px;
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-top: 1px solid var(--soft-line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .check-row:first-of-type { border-top: 0; }
+    .safe-badge {
+      min-width: 48px;
+      text-align: center;
+      padding: 3px 7px;
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-weight: 780;
+    }
     .eyebrow {
       color: var(--blue);
       font-size: 13px;
@@ -295,7 +410,7 @@ export function page(title: string, body: string) {
         padding: 18px 0;
       }
       nav { justify-content: flex-start; }
-      .hero, .grid, .grid.two { grid-template-columns: 1fr; }
+      .hero, .grid, .grid.two, .cockpit { grid-template-columns: 1fr; }
       h1 { font-size: 38px; }
     }
   </style>
