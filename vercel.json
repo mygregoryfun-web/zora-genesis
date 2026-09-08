@@ -20,6 +20,22 @@
       "dest": "/api/health.ts"
     },
     {
+      "src": "/preview",
+      "dest": "/api/preview.ts"
+    },
+    {
+      "src": "/video",
+      "dest": "/api/video.ts"
+    },
+    {
+      "src": "/api/video/generate",
+      "dest": "/api/ai-video-generate.ts"
+    },
+    {
+      "src": "/api/video/task",
+      "dest": "/api/ai-video-task.ts"
+    },
+    {
       "src": "/base-grant",
       "dest": "/api/home.ts"
     },
@@ -30,6 +46,10 @@
     {
       "src": "/agent/run",
       "dest": "/api/agent/run.ts"
+    },
+    {
+      "src": "/agent/draft",
+      "dest": "/api/agent/draft.ts"
     },
     {
       "src": "/agent/opportunities",
@@ -68,12 +88,24 @@
       "dest": "/api/health.ts"
     },
     {
+      "src": "/api/preview",
+      "dest": "/api/preview.ts"
+    },
+    {
+      "src": "/api/video",
+      "dest": "/api/video.ts"
+    },
+    {
       "src": "/api/agent/profile",
       "dest": "/api/agent/profile.ts"
     },
     {
       "src": "/api/agent/run",
       "dest": "/api/agent/run.ts"
+    },
+    {
+      "src": "/api/agent/draft",
+      "dest": "/api/agent/draft.ts"
     },
     {
       "src": "/api/agent/opportunities",

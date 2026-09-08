@@ -11,6 +11,23 @@ export type GeneratedImage = {
 };
 
 function buildPrompt(post: GeneratedPost) {
+  const socialChannels = ["facebook", "instagram", "x"];
+  const socialMode =
+    config.publishChannels.length > 0 &&
+    config.publishChannels.every((channel) => socialChannels.includes(channel));
+
+  if (socialMode) {
+    return [
+      `Create an original photorealistic editorial image for ${config.creatorName}.`,
+      "Subject: adult relationships, trust, pride, honesty, money, betrayal, personal boundaries, and emotional maturity.",
+      `Post title: ${post.title}`,
+      `Post context: ${post.post}`,
+      "Style: elegant, human, emotionally expressive, premium social media photography, warm but serious.",
+      "Composition: clear social media image, strong first impression, no text, no logos, no watermarks.",
+      "Safety: adult subjects only, fully clothed, tasteful, no explicit sexuality, no violence, no humiliating depiction.",
+    ].join("\n");
+  }
+
   return [
     `Create an original photorealistic editorial image for ${config.creatorName}.`,
     "Subject: on-chain creator culture, Base, Zora, Ethereum, NFTs, and digital markets.",

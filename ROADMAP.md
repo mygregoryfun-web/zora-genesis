@@ -1,65 +1,98 @@
 # Zora Genesis Roadmap
 
-## Current state
+## Current focus
 
-- The agent generates post text.
-- The agent generates an AI image from the post context.
-- Farcaster publishing with image embed works.
-- X publishing with image upload works after OAuth with `media.write`.
-- X access tokens are refreshed automatically with `X_REFRESH_TOKEN`.
-- Zora publishing stays manual/gasless through the Zora UI.
-- SDK-based Zora publishing is intentionally skipped unless a local EVM private key is configured.
+The agent is now focused on practical social publishing, not crypto platforms.
+
+Primary channels:
+
+- Facebook
+- Instagram
+- X.com
+
+Paused for now:
+
+- Zora automatic publishing
+- Farcaster
+- Other crypto-native channels
+
+## Current behavior
+
+- The agent generates Slovenian social posts for relationship/life themes.
+- The same core post is used for Facebook, Instagram, and X.
+- Facebook and Instagram receive the fuller version.
+- X receives a shortened version when needed because of the 280-character limit.
+- The agent generates an image from the post text.
+- The image is uploaded to a public URL before Facebook/Instagram publishing.
+- X image publishing is limited by X plan permissions; text posting remains supported.
+
+## Content direction
+
+Core themes:
+
+- Relationships
+- Trust
+- Betrayal
+- Cheating
+- Lying
+- Pride
+- Money
+- Self-worth
+- Boundaries
+- Emotional maturity
+
+Tone:
+
+- Slovenian
+- Direct
+- Human
+- Emotional but grounded
+- A little provocative, but not vulgar
+- Written for comments and discussion
 
 ## Next upgrade: brand-style QA gate
 
-Before publishing, the agent should review every generated image against brand rules.
+Before publishing, the agent should review every generated image and post against brand rules.
 
-Desired brand style:
+Desired style:
 
-- Warm, human, creator-led.
-- Optimistic and builder-focused.
-- Base/Zora native without looking spammy.
-- Premium but not corporate.
-- Realistic photographic/editorial feel.
-- Natural or cinematic light.
-- Clear subject and composition.
+- Warm, human, adult, emotionally expressive.
+- Elegant and tasteful.
+- Clear subject and strong first impression.
+- Suitable for Facebook and Instagram relationship discussions.
+- No cheap shock value.
 
-Reject or regenerate images that are:
+Reject or regenerate if:
 
-- Generic robot or stock-AI looking.
-- Dark dystopian cyberpunk.
-- Scammy crypto aesthetics.
-- Full of charts, clutter, fake dashboards, or hype visuals.
-- Containing text, logos, watermarks, or brand marks.
-- Showing distorted faces, hands, screens, or obvious AI artifacts.
-- Off-brand for Chef Marko / Base creator identity.
+- The image looks generic or artificial.
+- The image is too sexual, vulgar, or clickbait.
+- The post sounds robotic.
+- The post attacks one gender unfairly.
+- The post lacks a strong question for discussion.
+- The post is too long for the selected platform.
 
 Target flow:
 
-1. Generate post text.
-2. Generate image from the post text.
-3. Review image with a vision model.
-4. Score brand fit, quality, clarity, and artifact risk.
-5. If it fails, regenerate up to 2-3 times.
-6. Publish only when the image passes.
+1. User provides a topic.
+2. Agent creates one main post.
+3. Agent creates platform versions for Facebook, Instagram, and X.
+4. Agent generates a matching image.
+5. Agent reviews text and image for brand fit.
+6. Agent asks for approval or publishes, depending on mode.
 
-## Caching plan
+## Practical dashboard idea
 
-Use caching only where it is safe:
+Build a simple creator dashboard:
 
-- Cache brand-style review calls.
-- Cache repeated test/evaluation calls.
-- Include brand-rules version in the cache key.
+- Topic input
+- Facebook preview
+- Instagram preview
+- X preview
+- Image preview
+- Regenerate text button
+- Regenerate image button
+- Save draft button
+- Publish button
+- Channel status
 
-Do not cache:
-
-- Final live post generation.
-- Final live image generation.
-- Any step where fresh output is required.
-
-## Posting rules
-
-- X and Farcaster should receive text plus image.
-- The post text can be used as the image description/prompt context.
-- Zora remains manual/gasless unless a separate burner wallet is intentionally configured.
-- Never paste private keys into chat.
+The goal is to make the agent feel like a practical creator assistant, not a terminal bot.
