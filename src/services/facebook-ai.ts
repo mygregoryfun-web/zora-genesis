@@ -7,6 +7,8 @@ type GenerateFacebookPostInput = {
   memory: unknown[];
   topic?: string;
   language?: string;
+  tone?: string;
+  length?: string;
 };
 
 function languageName(language: string) {
@@ -31,9 +33,25 @@ function topicBrief(topic: string) {
   ].join("\n");
 }
 
+function toneName(tone: string) {
+  if (tone === "deep") return "deep, reflective, emotionally precise";
+  if (tone === "sharp") return "direct, provocative, but not insulting";
+  if (tone === "soft") return "warm, gentle, and reconciliatory";
+  if (tone === "story") return "story-like, intimate, and vivid";
+  return "warm, direct, slightly spicy, human, not preachy";
+}
+
+function lengthRule(length: string) {
+  if (length === "short") return "50 to 90 words.";
+  if (length === "long") return "180 to 300 words.";
+  return "100 to 170 words.";
+}
+
 export async function generateFacebookPost(data: GenerateFacebookPostInput): Promise<GeneratedPost> {
   const topic = data.topic?.trim() || config.facebookTopic;
   const language = languageName((data.language ?? "si").toLowerCase());
+  const tone = toneName((data.tone ?? "balanced").toLowerCase());
+  const length = lengthRule((data.length ?? "medium").toLowerCase());
 
   if (config.skipAI) {
     return {
@@ -54,6 +72,9 @@ You are writing for Fun Gregory's Facebook page in ${language}.
 
 ${topicBrief(topic)}
 
+Requested tone: ${tone}.
+Requested length: ${length}
+
 RECENT FACEBOOK MEMORY
 ${JSON.stringify(data.memory.slice(0, 12), null, 2)}
 
@@ -70,7 +91,7 @@ RULES
 - No cliches like "cas zaceli vse rane" or "vse se zgodi z razlogom".
 - Avoid repeating previous openings, titles, or angles from memory.
 - The post should be emotional but grounded, with a little edge.
-- 80 to 180 words.
+- Follow the requested length.
 - Maximum 3 hashtags.
 
 OUTPUT

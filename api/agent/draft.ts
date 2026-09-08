@@ -16,7 +16,12 @@ export default async function handler(req: any, res: any) {
   try {
     res.status(200).json({
       ok: true,
-      draft: await createSocialDraft({ topic: req.body?.topic, language: req.body?.language }),
+      draft: await createSocialDraft({
+        topic: req.body?.topic,
+        language: req.body?.language,
+        tone: req.body?.tone,
+        length: req.body?.length,
+      }),
     });
   } catch (error) {
     res.status(500).json({

@@ -22,13 +22,17 @@ function formatForInstagram(post: GeneratedPost) {
 type CreateSocialDraftInput = {
   topic?: string;
   language?: string;
+  tone?: string;
+  length?: string;
 };
 
 export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
   const memory = loadFacebookPosts();
   const topic = input.topic?.trim();
   const language = input.language?.trim().toLowerCase() || "si";
-  const post = await generateFacebookPost({ memory, topic, language }).catch((err) => {
+  const tone = input.tone?.trim().toLowerCase() || "balanced";
+  const length = input.length?.trim().toLowerCase() || "medium";
+  const post = await generateFacebookPost({ memory, topic, language, tone, length }).catch((err) => {
     const reason = err instanceof Error ? err.message : String(err);
     console.error("Facebook draft text generation failed, using fallback:", reason);
     return {
@@ -58,6 +62,8 @@ export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
     generatedAt: new Date().toISOString(),
     topic: topic || null,
     language,
+    tone,
+    length,
     source: post,
     image: image
       ? {

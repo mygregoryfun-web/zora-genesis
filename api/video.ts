@@ -22,7 +22,7 @@ function videoPage() {
 </head>
 <body>
   <main>
-    <header><div><h1>AI foto v video</h1><p>Nalozi sliko, opisi prizor, Runway ustvari pravi AI video za objave.</p></div><a href="/preview">Nazaj na predogled objave</a></header>
+    <header><div><h1>AI foto v video</h1><p>Nalozi sliko, opisi prizor, Runway ustvari pravi AI video za objave.</p></div><div class="button-row"><a href="/studio">Studio</a><a href="/preview">Predogled</a></div></header>
     <section class="layout">
       <aside class="panel controls">
         <label>Slika<input id="file" type="file" accept="image/*" /></label>
@@ -38,6 +38,7 @@ function videoPage() {
   </main>
   <script>
     const file=document.getElementById("file"),aspect=document.getElementById("aspect"),duration=document.getElementById("duration"),prompt=document.getElementById("prompt"),speechTopic=document.getElementById("speechTopic"),speechLanguage=document.getElementById("speechLanguage"),canvas=document.getElementById("canvas"),ctx=canvas.getContext("2d"),video=document.getElementById("video"),status=document.getElementById("status"),download=document.getElementById("download");let image=null,imageDataUrl="";
+    const params=new URLSearchParams(window.location.search);if(params.get("topic"))speechTopic.value=params.get("topic");if(params.get("language"))speechLanguage.value=params.get("language");if(params.get("text"))prompt.value=params.get("text");
     function setStatus(v){status.textContent=v}function ratio(){if(aspect.value==="16:9")return"1280:720";if(aspect.value==="1:1")return"960:960";return"720:1280"}function setCanvas(){if(aspect.value==="16:9"){canvas.width=1920;canvas.height=1080}else if(aspect.value==="1:1"){canvas.width=1080;canvas.height=1080}else{canvas.width=1080;canvas.height=1920}draw()}
     function draw(){ctx.fillStyle="#151312";ctx.fillRect(0,0,canvas.width,canvas.height);if(!image){ctx.fillStyle="#efe7de";ctx.font="700 42px Arial,sans-serif";ctx.textAlign="center";ctx.fillText("Nalozi sliko",canvas.width/2,canvas.height/2);ctx.textAlign="left";return}const ir=image.width/image.height;let w=canvas.width,h=w/ir;if(h<canvas.height){h=canvas.height;w=h*ir}ctx.drawImage(image,(canvas.width-w)/2,(canvas.height-h)/2,w,h)}
     file.addEventListener("change",()=>{const selected=file.files&&file.files[0];if(!selected)return;const reader=new FileReader();reader.onload=()=>{imageDataUrl=String(reader.result);const img=new Image();img.onload=()=>{image=img;draw();setStatus("Slika pripravljena.")};img.src=imageDataUrl};reader.readAsDataURL(selected)});

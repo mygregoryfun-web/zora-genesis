@@ -748,6 +748,11 @@ export function videoEditorPage() {
     let image = null;
     let raf = 0;
 
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("topic")) speechTopic.value = params.get("topic");
+    if (params.get("language")) speechLanguage.value = params.get("language");
+    if (params.get("text")) headline.value = params.get("text");
+
     function setStatus(value) {
       status.textContent = value;
     }
@@ -1083,10 +1088,15 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && url.pathname === "/agent/draft") {
     try {
-      const body = await readJsonBody<{ topic?: string; language?: string }>(req).catch(() => ({ topic: "", language: "si" }));
+      const body = await readJsonBody<{ topic?: string; language?: string; tone?: string; length?: string }>(req).catch(() => ({
+        topic: "",
+        language: "si",
+        tone: "balanced",
+        length: "medium",
+      }));
       sendJson(res, 200, {
         ok: true,
-        draft: await createSocialDraft({ topic: body.topic, language: body.language }),
+        draft: await createSocialDraft({ topic: body.topic, language: body.language, tone: body.tone, length: body.length }),
       });
     } catch (error) {
       sendJson(res, 500, {
