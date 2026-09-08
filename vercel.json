@@ -2,7 +2,31 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/**/*.ts",
+      "src": "api/home.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/health.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/preview.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/video.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/agent/draft.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/ai-video-generate.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/ai-video-task.ts",
       "use": "@vercel/node"
     }
   ],
@@ -40,48 +64,8 @@
       "dest": "/api/home.ts"
     },
     {
-      "src": "/agent/profile",
-      "dest": "/api/agent/profile.ts"
-    },
-    {
-      "src": "/agent/run",
-      "dest": "/api/agent/run.ts"
-    },
-    {
       "src": "/agent/draft",
       "dest": "/api/agent/draft.ts"
-    },
-    {
-      "src": "/agent/opportunities",
-      "dest": "/api/agent/opportunities.ts"
-    },
-    {
-      "src": "/agent/monetization",
-      "dest": "/api/agent/monetization.ts"
-    },
-    {
-      "src": "/agent/builder-code",
-      "dest": "/api/agent/builder-code.ts"
-    },
-    {
-      "src": "/agent/metrics",
-      "dest": "/api/agent/metrics.ts"
-    },
-    {
-      "src": "/agent/security",
-      "dest": "/api/agent/security.ts"
-    },
-    {
-      "src": "/agent/nft",
-      "dest": "/api/agent/nft.ts"
-    },
-    {
-      "src": "/agent/firewall",
-      "dest": "/api/agent/firewall.ts"
-    },
-    {
-      "src": "/agent/growth",
-      "dest": "/api/agent/growth.ts"
     },
     {
       "src": "/api/health",
@@ -96,48 +80,8 @@
       "dest": "/api/video.ts"
     },
     {
-      "src": "/api/agent/profile",
-      "dest": "/api/agent/profile.ts"
-    },
-    {
-      "src": "/api/agent/run",
-      "dest": "/api/agent/run.ts"
-    },
-    {
       "src": "/api/agent/draft",
       "dest": "/api/agent/draft.ts"
-    },
-    {
-      "src": "/api/agent/opportunities",
-      "dest": "/api/agent/opportunities.ts"
-    },
-    {
-      "src": "/api/agent/monetization",
-      "dest": "/api/agent/monetization.ts"
-    },
-    {
-      "src": "/api/agent/builder-code",
-      "dest": "/api/agent/builder-code.ts"
-    },
-    {
-      "src": "/api/agent/metrics",
-      "dest": "/api/agent/metrics.ts"
-    },
-    {
-      "src": "/api/agent/security",
-      "dest": "/api/agent/security.ts"
-    },
-    {
-      "src": "/api/agent/nft",
-      "dest": "/api/agent/nft.ts"
-    },
-    {
-      "src": "/api/agent/firewall",
-      "dest": "/api/agent/firewall.ts"
-    },
-    {
-      "src": "/api/agent/growth",
-      "dest": "/api/agent/growth.ts"
     }
   ]
 }
