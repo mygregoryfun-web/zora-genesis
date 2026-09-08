@@ -661,6 +661,22 @@ export function videoEditorPage() {
           </label>
         </div>
 
+        <div class="row">
+          <label>
+            Tema za govor
+            <input id="speechTopic" type="text" placeholder="Npr. ponos, izdaja, denar, zaupanje..." />
+          </label>
+          <label>
+            Jezik govora
+            <select id="speechLanguage">
+              <option value="si">SI</option>
+              <option value="eng">ENG</option>
+              <option value="esp">ESP</option>
+            </select>
+          </label>
+        </div>
+        <button id="generateSpeech" class="secondary" type="button">Ustvari govor</button>
+
         <label>
           Glavni napis
           <textarea id="headline" placeholder="Npr. Ponos pogosto ne brani resnice. Brani podobo."></textarea>
@@ -720,6 +736,8 @@ export function videoEditorPage() {
     const motion = document.getElementById("motion");
     const durationInput = document.getElementById("duration");
     const headline = document.getElementById("headline");
+    const speechTopic = document.getElementById("speechTopic");
+    const speechLanguage = document.getElementById("speechLanguage");
     const signature = document.getElementById("signature");
     const fontSize = document.getElementById("fontSize");
     const status = document.getElementById("status");
@@ -921,6 +939,37 @@ export function videoEditorPage() {
     signature.addEventListener("input", () => drawFrame(0));
     fontSize.addEventListener("input", () => drawFrame(0));
     document.getElementById("play").addEventListener("click", playPreview);
+    document.getElementById("generateSpeech").addEventListener("click", async () => {
+      const topic = speechTopic.value.trim();
+      if (!topic) {
+        setStatus("Najprej vpiši temo za govor.");
+        return;
+      }
+
+      const button = document.getElementById("generateSpeech");
+      button.disabled = true;
+      try {
+        setStatus("Ustvarjam govor...");
+        const response = await fetch("/agent/draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ topic, language: speechLanguage.value }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok) {
+          throw new Error(data.error || "Speech draft failed.");
+        }
+
+        const source = data.draft.source;
+        headline.value = source.post;
+        drawFrame(0);
+        setStatus("Govor je pripravljen in uporabljen kot opis videa.");
+      } catch (error) {
+        setStatus(error instanceof Error ? error.message : "Govor ni uspel.");
+      } finally {
+        button.disabled = false;
+      }
+    });
     document.getElementById("aiVideo").addEventListener("click", async () => {
       if (!imageDataUrl) {
         setStatus("Najprej naloži sliko.");
