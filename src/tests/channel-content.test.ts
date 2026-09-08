@@ -14,7 +14,7 @@ test("prepares concise X content with fewer hashtags", () => {
   assert.ok(post.title.length <= 72);
   assert.ok(post.post.length <= 190);
   assert.ok(post.hashtags.length <= 2);
-  assert.match(post.post, /Base activity is high|low transaction costs/i);
+  assert.match(post.post, /creator asset pulse|asset pulse|launch/i);
   assert.match(post.post, /Fun Gregory$/);
 });
 

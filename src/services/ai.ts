@@ -32,19 +32,6 @@ export function normalizeGeneratedPost(raw: unknown): GeneratedPost {
     }
   }
 
-  if (Array.isArray(candidate.hashtags)) {
-    candidate.hashtags = candidate.hashtags
-      .map((tag) => (typeof tag === "string" ? tag.trim() : ""))
-      .filter(Boolean)
-      .map((tag) => (tag.startsWith("#") ? tag : `#${tag}`))
-      .filter((tag) => /^#[\p{L}\p{N}_]+$/u.test(tag))
-      .slice(0, 3);
-  }
-
-  if (!Array.isArray(candidate.hashtags) || candidate.hashtags.length === 0) {
-    candidate.hashtags = ["#Odnosi", "#Zivljenje", "#Iskreno"];
-  }
-
   const parsed = GeneratedPostSchema.parse(candidate);
 
   const normalized = {

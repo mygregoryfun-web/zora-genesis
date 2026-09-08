@@ -1,19 +1,10 @@
 import axios from "axios";
 import { config } from "../config.js";
-import type { GeneratedPost } from "../types.js";
-import { normalizeGeneratedPost } from "./ai.js";
+import { GeneratedPostSchema, type GeneratedPost } from "../types.js";
 
 type GenerateFacebookPostInput = {
   memory: unknown[];
-  topic?: string;
-  language?: string;
 };
-
-function languageName(language: string) {
-  if (language === "eng") return "English";
-  if (language === "esp") return "Spanish";
-  return "Slovenian";
-}
 
 function topicBrief(topic: string) {
   if (topic === "relationships") {
@@ -32,27 +23,22 @@ function topicBrief(topic: string) {
 }
 
 export async function generateFacebookPost(data: GenerateFacebookPostInput): Promise<GeneratedPost> {
-  const topic = data.topic?.trim() || config.facebookTopic;
-  const language = languageName((data.language ?? "si").toLowerCase());
-
   if (config.skipAI) {
     return {
-      title: `[Dry-run] ${topic}`,
+      title: "[Dry-run] Odnosi",
       post: [
-        `Tema: ${topic}`,
-        "",
         "Najbolj boli, ko govoriš iz srca, druga stran pa sliši samo napad.",
         "",
-        "Vcasih odnos ne potrebuje velike obljube. Potrebuje samo trenutek, ko nekdo odlozi svoj ponos in rece: povej mi se enkrat, zdaj te poslusam.",
+        "Včasih odnos ne potrebuje velike obljube. Potrebuje samo trenutek, ko nekdo odloži svoj ponos in reče: povej mi še enkrat, zdaj te poslušam.",
       ].join("\n"),
       hashtags: ["#Odnosi", "#Zivljenje", "#Iskreno"],
     };
   }
 
   const prompt = `
-You are writing for Fun Gregory's Facebook page in ${language}.
+You are writing for Fun Gregory's Facebook page in Slovenian.
 
-${topicBrief(topic)}
+${topicBrief(config.facebookTopic)}
 
 RECENT FACEBOOK MEMORY
 ${JSON.stringify(data.memory.slice(0, 12), null, 2)}
@@ -61,7 +47,7 @@ TASK
 Write ONE original Facebook post.
 
 RULES
-- Write in ${language}.
+- Write in Slovenian.
 - Make it feel authored by a real person, not AI.
 - Start with a strong first line that stops scrolling.
 - Use short paragraphs.
@@ -101,7 +87,7 @@ Return ONLY valid JSON.
     );
 
     const content = res.data.choices[0].message.content;
-    return normalizeGeneratedPost(JSON.parse(content));
+    return GeneratedPostSchema.parse(JSON.parse(content));
   } catch (error: any) {
     console.error("Facebook post generation failed:");
     console.error(error.response?.data || error.message);

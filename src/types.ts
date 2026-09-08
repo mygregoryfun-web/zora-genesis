@@ -10,7 +10,7 @@ export const GeneratedPostSchema = z.object({
 
 export type GeneratedPost = z.infer<typeof GeneratedPostSchema>;
 
-export type PublishChannel = "facebook" | "instagram" | "x" | "farcaster" | "zora";
+export type PublishChannel = "x" | "farcaster" | "zora";
 
 export type PublishStatus = "published" | "skipped";
 

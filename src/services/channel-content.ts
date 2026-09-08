@@ -2,9 +2,7 @@ import type { GeneratedPost, PublishChannel } from "../types.js";
 import { config } from "../config.js";
 
 const CHANNEL_HASHTAGS: Record<PublishChannel, string[]> = {
-  facebook: ["#Odnosi", "#Zivljenje", "#Iskreno"],
-  instagram: ["#Odnosi", "#Zivljenje", "#Iskreno"],
-  x: ["#Odnosi", "#Iskreno"],
+  x: ["#Base", "#Zora"],
   farcaster: ["#Base", "#Zora", "#Onchain"],
   zora: ["#Base", "#Zora", "#CreatorAssets"],
 };
@@ -77,16 +75,8 @@ export function preparePostForChannel(post: GeneratedPost, channel: PublishChann
   if (channel === "x") {
     return {
       title: trimAtBoundary(post.title, 72),
-      post: appendSignature(post.post, 190),
+      post: appendSignature(ensureLeadProductAngle(post.post), 190),
       hashtags: hashtags.slice(0, 2),
-    };
-  }
-
-  if (channel === "facebook" || channel === "instagram") {
-    return {
-      title: trimAtBoundary(post.title, 96),
-      post: appendSignature(post.post, 1800),
-      hashtags,
     };
   }
 
