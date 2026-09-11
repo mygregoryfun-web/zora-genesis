@@ -23,7 +23,7 @@ function previewPage() {
 </head>
 <body>
   <main>
-    <header><div><h1>Predogled objave</h1><p>Vnesi temo, izberi jezik, agent pripravi tekst in sliko. Objavis rocno.</p></div><div class="actions"><a class="button secondary" href="/studio">Studio</a><a class="button secondary" href="/video">Foto v video</a><button id="generate">Ustvari osnutek</button></div></header>
+    <header><div><h1>Predogled objave</h1><p>Vnesi temo, izberi jezik, agent pripravi tekst in sliko. Objaviš ročno.</p></div><div class="actions"><a class="button secondary" href="/studio">Studio</a><a class="button secondary" href="/video">Foto v video</a><button id="generate">Ustvari osnutek</button></div></header>
     <section class="grid">
       <aside class="panel"><div class="image" id="image">Slika bo tukaj.</div></aside>
       <section class="panel">

@@ -8,7 +8,7 @@ const tiers = [
     id: "creator",
     name: "Creator",
     price: 19,
-    description: "Za posameznike, ki zelijo redne objave za FB, Instagram in X.",
+    description: "Za posameznike, ki želijo redne objave za FB, Instagram in X.",
     features: ["Content Studio", "Moj slog", "Tekst + slika", "Ročno objavljanje", "Osnovni video workflow"],
   },
   {
