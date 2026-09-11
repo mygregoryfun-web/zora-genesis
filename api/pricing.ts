@@ -33,7 +33,7 @@ const creditPacks = [
     name: "100 kreditov",
     price: 9,
     description: "Za testiranje tekstov, slik in nekaj kratkih video poskusov.",
-    features: ["100 Studio kreditov", "Tekst: 1 kredit", "Slika: 25 kreditov", "Video: 25 kreditov"],
+    features: ["100 Studio kreditov", "Tekst: 5 kreditov", "Izboljšava: 3 krediti", "Slika/video: 25 kreditov"],
   },
   {
     id: "credits-300",
@@ -115,7 +115,7 @@ function pricingPage() {
     <div class="section-head"><h2>Mesečne naročnine</h2><p>Za redno uporabo Studia in storitev za druge.</p></div>
     <section class="tiers">${tiers.map((tier) => tierCard(tier, billingReady)).join("")}</section>
 
-    <div class="section-head"><h2>Video in AI krediti</h2><p>Za uporabnike, ki želijo plačati samo porabo. Video in slika staneta po 25 kreditov, tekst 1 kredit.</p></div>
+    <div class="section-head"><h2>Video in AI krediti</h2><p>Za uporabnike, ki želijo plačati samo porabo. Tekst stane 5 kreditov, izboljšava 3, video in slika pa po 25 kreditov.</p></div>
     <section class="tiers">${creditPacks.map((pack) => creditCard(pack, billingReady)).join("")}</section>
 
     ${

@@ -88,6 +88,10 @@
       "dest": "/api/auth.ts?action=status"
     },
     {
+      "src": "/admin",
+      "dest": "/api/auth.ts?action=admin"
+    },
+    {
       "src": "/video",
       "dest": "/api/video.ts"
     },
@@ -142,6 +146,10 @@
     {
       "src": "/api/auth/status",
       "dest": "/api/auth.ts?action=status"
+    },
+    {
+      "src": "/api/admin",
+      "dest": "/api/auth.ts?action=admin"
     },
     {
       "src": "/api/video",
