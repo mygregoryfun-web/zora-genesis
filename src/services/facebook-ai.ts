@@ -63,6 +63,16 @@ function isSelfPresentationTopic(topic: string) {
   );
 }
 
+function isDirectInstructionTopic(topic: string) {
+  const normalized = normalizeForMatch(topic);
+  return (
+    isSelfPresentationTopic(topic) ||
+    /\b(napisi|napisite|sestavi|ustvari|naredi|pripravi|oblikuj|popravi|izboljsaj|odgovori|razlozi|predstavi|opisi|daj mi|rabim|potrebujem)\b/u.test(
+      normalized,
+    )
+  );
+}
+
 function topicBrief(topic: string) {
   const lowerTopic = topic.toLowerCase();
   const items = topicItems(topic);
@@ -83,6 +93,21 @@ function topicBrief(topic: string) {
       "Do not turn this into therapy, confession, or relationship drama.",
       "End with a simple invitation or question for people who want a post, image, or video draft.",
     ].join("\n");
+  }
+
+  if (isDirectInstructionTopic(topic)) {
+    return [
+      `User request: ${topic}.`,
+      topicItemLine,
+      "Intent: execute the user's instruction literally. This is a conversational request, not just a theme.",
+      "Audience: match the audience implied by the user's words. If the user asks for Facebook/Instagram, write for those platforms. If the user asks for an answer, write an answer.",
+      "Core rule: do what the user asked, not what a generic relationship-content generator would usually do.",
+      "If the user asks to present, explain, answer, rewrite, advertise, or prepare something, produce that exact artifact.",
+      "Do not turn practical instructions into therapy, confession, relationship drama, existential identity writing, or moral essays.",
+      "Use concrete, useful wording that the user could actually copy, edit, and publish.",
+    ]
+      .filter(Boolean)
+      .join("\n");
   }
 
   if (topic.toLowerCase().includes("denar")) {
@@ -211,6 +236,7 @@ function forbiddenSlop() {
   return [
     "LOW-QUALITY OUTPUT TO AVOID",
     "- Generic advice that could fit every relationship topic.",
+    "- Treating the user's instruction as a vague theme instead of doing the requested task.",
     "- Turning a practical request like 'present yourself / what do you do' into an existential essay about identity, fear, masks, or not being enough.",
     "- Canned scenes that were not in the user's topic, especially forgotten anniversaries, a partner looking at a phone, deleted messages, or a fake confession.",
     "- Safe school-essay structure: introduction, balanced middle, soft conclusion.",
@@ -347,6 +373,7 @@ Hashtags: ${input.draft.hashtags.join(" ")}
 REWRITE RULES
 - If the draft is shallow, replace it completely.
 - Respect the exact user topic. If the user named a person or values, keep that center instead of replacing it with a generic relationship conflict.
+- If the exact topic is an instruction or conversational request, obey it literally. Do not reinterpret it as a symbolic theme.
 - The final post must visibly stay on the exact topic words. Do not merely use the topic as inspiration.
 - Keep only ideas that feel alive and true.
 - Make the first line sharper and more specific.
@@ -541,6 +568,7 @@ ${topic}
 EDITORIAL QUALITY BAR
 - Do not write a safe summary of the topic. Take a clear angle.
 - If the exact topic asks to present yourself or explain what you do, write a practical introduction, not an inner-conflict essay.
+- If the exact topic is a practical instruction, produce the requested artifact directly.
 - The post must answer: what is really happening under the surface?
 - Include at least one concrete real-life scene or behaviour, but only if it naturally follows from the exact user topic.
 - Include cause and consequence: what drives it, and what it slowly creates.
@@ -558,6 +586,7 @@ RULES
 - Avoid empty lines that separate every sentence; group related thoughts.
 - Prefer concrete inner conflict over abstract advice.
 - Exception: for self/service presentation topics, prefer clear practical explanation over inner conflict.
+- Exception: for conversational instructions, obey the requested task before applying any content-style formula.
 - Use ordinary Slovenian words. Avoid decorative metaphors.
 - Use correct Slovenian diacritics: š, č, ž. Never write ASCII-only Slovenian such as "cas", "clovek", "laz", "poslusam", "bolecina".
 - Do not use formal address or instructional openings such as "vi", "vaš", "vaša partnerica", "razmišljaj", "razmišljajte", "predstavljaj si", or "poglejmo".
