@@ -45,13 +45,13 @@ export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
       title: topic || "Ko ponos preglasi resnico",
       post: [
         ...(topic ? [`Tema: ${topic}`, ""] : []),
-        "Najtezji trenutek v odnosu ni vedno prepir.",
+        "Najtežji trenutek v odnosu ni vedno prepir.",
         "",
-        "Vcasih je najtezje priznati, da nas ne vodi vec resnica, ampak ponos. Tisti notranji glas, ki ne zeli slisati, ne zeli razumeti in ne zeli popustiti. Takrat clovek ne brani ljubezni. Brani svojo podobo.",
+        "Včasih je najtežje priznati, da nas ne vodi več resnica, ampak ponos. Tisti notranji glas, ki ne želi slišati, ne želi razumeti in ne želi popustiti. Takrat človek ne brani ljubezni. Brani svojo podobo.",
         "",
-        "In ravno tam se zacnejo razdalje med ljudmi.",
+        "In ravno tam se začnejo razdalje med ljudmi.",
       ].join("\n"),
-      hashtags: ["#Odnosi", "#Zivljenje", "#Iskreno"],
+      hashtags: [],
     };
   });
   const image =

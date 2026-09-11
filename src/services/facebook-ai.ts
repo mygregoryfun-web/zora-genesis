@@ -26,9 +26,25 @@ function topicBrief(topic: string) {
       "Audience: adults who think about money, work, status, pressure, survival, and the hidden trap of believing money will solve the inside of a person.",
       "Core angle: money looks like freedom, but for many people it is also captivity because they trade time, health, peace, and relationships for it.",
       "Use concrete anchors: work, one third of the day, status, bills, fear, comparison, people doing bad things for money, money as paper/number/symbol.",
-      "Important line of thought: TOREJ DENAR NI SVOBODA, TEMVEC UJETOST.",
+      "Important line of thought: TOREJ DENAR NI SVOBODA, TEMVEČ UJETOST.",
       "Do not conclude that freedom is in the heart. Stay sharper: ask what we have sacrificed for money and whether it became our master.",
       "Do not make it soft or motivational. Make it uncomfortable and grounded.",
+    ].join("\n");
+  }
+
+  if (
+    lowerTopic.includes("ljubezen") ||
+    lowerTopic.includes("iskrenost") ||
+    lowerTopic.includes("pogum")
+  ) {
+    return [
+      `Theme: ${topic}.`,
+      "Audience: adults in a Facebook group about relationships, emotional truth, silence, vulnerability, pride, and closeness.",
+      "Core angle: love without honesty becomes performance; honesty without courage stays only an inner thought; courage is often the moment a person says what hurts before pride turns it into silence.",
+      "Explore the conflict: a person wants to be loved, but hides what is most true; wants closeness, but chooses sarcasm, silence, withdrawal, or pride because vulnerability feels dangerous.",
+      "Concrete scenes: a forgotten anniversary, a partner on the phone, a hurt that is disguised as coldness, a sentence swallowed, a look that says more than words, a quiet evening where nobody says what is really wrong.",
+      "Do not turn love, honesty, and courage into hashtags or motivational virtues. Treat them as forces inside a real relationship.",
+      "End with one direct question about what people protect more: love, pride, or the image of being strong.",
     ].join("\n");
   }
 
@@ -124,8 +140,11 @@ function forbiddenSlop() {
     "- Motivational endings where everything becomes growth, healing, peace, or self-love.",
     "- Fake depth: many abstract nouns, no concrete scene.",
     "- Moralizing from above: 'ženske morajo', 'moški morajo', 'ljudje bi morali'.",
-    "- Formal lecture language: 'razmišljajte', 'vaša partnerica', 'pod površjem', 'globok strah', 'v današnji družbi'.",
+    "- Formal lecture language: 'razmišljaj', 'razmišljajte', 'predstavljaj si', 'vaša partnerica', 'pod površjem', 'globok strah', 'v današnji družbi'.",
     "- Directly addressing the reader as 'vi' or 'vaš'. Use general human scenes instead.",
+    "- Therapy worksheet endings: 'kaj bi se zgodilo, če...', 'ta vprašanja niso enostavna', 'to nas oblikuje'.",
+    "- Metaphorical cages, chains, prisons, walls as the main idea. If there is distance, show it in behaviour.",
+    "- Generic virtue hashtags such as #ljubezen, #iskrenost, #pogum, #zivljenje, #odnosi when they do not add anything.",
     "- Clickbait without substance.",
     "- A text that is merely nice. Nice is not enough.",
   ].join("\n");
@@ -151,11 +170,14 @@ function voiceGuide(tone: string) {
     "- Do not use poetic fog. No soul compass, spectrum, energy, vibration, salto mortale, or similar strange phrasing.",
     "- Avoid soft filler such as 'praznina v srcu', 'notranja svoboda', 'ljubezen in mir' unless the topic is specifically love.",
     "- Do not sound spiritual, mystical, academic, corporate, or motivational.",
-    "- Use simple hard words: strah, laz, resnica, sram, ponos, bolecina, mir, odnos, clovek, ujetost.",
+    "- Do not sound like a self-help worksheet.",
+    "- Use correct Slovenian diacritics: š, č, ž. Never write 'cas', 'clovek', 'laz', 'bolecina', 'poslusam', or similar ASCII-only Slovenian.",
+    "- Use simple hard words: strah, laž, resnica, sram, ponos, bolečina, mir, odnos, človek, ujetost.",
     "- The first line should be a question or a strong claim.",
     "- End with a question for reflection.",
     "- Do not sound like a therapist, influencer, sales page, sermon, or AI assistant.",
-    "- Do not instruct the reader with 'razmišljajte', 'poglejmo', 'pomembno je'.",
+    "- Do not instruct the reader with 'razmišljaj', 'razmišljajte', 'predstavljaj si', 'poglejmo', 'pomembno je'.",
+    "- Avoid direct coaching questions like 'kaj bi se zgodilo, če...' unless they are rewritten as one sharp final question.",
     "- Do not use formal second-person plural like 'vi', 'vaš', 'vaša partnerica'.",
     "- No neat motivational ending. Leave the reader thinking.",
     "",
@@ -248,11 +270,15 @@ REWRITE RULES
 - Name the hidden driver: fear, shame, hunger for attention, wounded pride, boredom, revenge, comparison, need to feel chosen, need to be seen, or fear of losing control.
 - Add consequence: what this slowly does to trust, closeness, self-respect, or peace.
 - Use ordinary Slovenian. No polished essay tone.
-- No formal address. Do not use 'vi', 'vaš', 'vaša partnerica', or 'razmišljajte'.
-- Do not use generic depth phrases such as 'pod površjem', 'globok strah', or 'v današnji družbi'.
+- Use correct Slovenian diacritics: š, č, ž. Never write ASCII-only Slovenian such as "cas", "clovek", "laz", "poslusam", "bolecina".
+- No formal address. Do not use 'vi', 'vaš', 'vaša partnerica', 'razmišljaj', 'razmišljajte', or 'predstavljaj si'.
+- Do not use generic depth phrases such as 'pod površjem', 'globok strah', 'kletka osamljenosti', or 'v današnji družbi'.
+- Remove therapy-workbook endings such as 'kaj bi se zgodilo, če...', 'ta vprašanja niso enostavna', or 'to nas oblikuje'.
 - Keep it tasteful, but do not remove tension.
 - Do not use hashtags inside the post field.
-- Maximum 3 hashtags.
+- Hashtags are optional. It is better to return no hashtags than generic hashtags.
+- Never use generic hashtags such as #ljubezen, #iskrenost, #pogum, #zivljenje, #odnosi unless the topic truly requires them.
+- Maximum 2 hashtags.
 
 QUALITY CHECK BEFORE YOU RETURN
 The post must pass all five:
@@ -289,9 +315,9 @@ export async function generateFacebookPost(data: GenerateFacebookPostInput): Pro
         "",
         "Najbolj boli, ko govoriš iz srca, druga stran pa sliši samo napad.",
         "",
-        "Vcasih odnos ne potrebuje velike obljube. Potrebuje samo trenutek, ko nekdo odlozi svoj ponos in rece: povej mi se enkrat, zdaj te poslusam.",
+        "Včasih odnos ne potrebuje velike obljube. Potrebuje samo trenutek, ko nekdo odloži svoj ponos in reče: povej mi še enkrat, zdaj te poslušam.",
       ].join("\n"),
-      hashtags: ["#Odnosi", "#Zivljenje", "#Iskreno"],
+      hashtags: [],
     };
   }
 
@@ -332,16 +358,19 @@ RULES
 - Avoid empty lines that separate every sentence; group related thoughts.
 - Prefer concrete inner conflict over abstract advice.
 - Use ordinary Slovenian words. Avoid decorative metaphors.
-- Do not use formal address such as "vi", "vaš", "vaša partnerica", "razmišljajte", or "poglejmo".
+- Use correct Slovenian diacritics: š, č, ž. Never write ASCII-only Slovenian such as "cas", "clovek", "laz", "poslusam", "bolecina".
+- Do not use formal address or instructional openings such as "vi", "vaš", "vaša partnerica", "razmišljaj", "razmišljajte", "predstavljaj si", or "poglejmo".
 - Do not mention AI, Web3 projects, digital assets, or automation.
 - Do not claim personal events happened unless written generally.
-- No cliches like "cas zaceli vse rane", "vse se zgodi z razlogom", "postavi sebe na prvo mesto", or "zasluzis si boljse".
-- Do not use strange poetic phrases like "kompas srca", "spekter senc", "salto mortale", "vibracija", "energija", "dusevna lahkotnost", "praznina v srcu", or "kletka zelje".
+- No cliches like "čas zaceli vse rane", "vse se zgodi z razlogom", "postavi sebe na prvo mesto", or "zaslužiš si boljše".
+- Do not use strange poetic phrases like "kompas srca", "spekter senc", "salto mortale", "vibracija", "energija", "duševna lahkotnost", "praznina v srcu", "kletka želje", "kletka osamljenosti", or similar cage/prison metaphors.
 - Avoid repeating previous openings, titles, or angles from memory.
 - The post should be emotional but grounded, with a little edge and a clear moral tension.
 - Follow the requested length.
-- Maximum 3 hashtags.
-- Never use generic filler like "v današnjem svetu", "pomembno je", "vsak ima svojo resnico", "na koncu dneva", "komunikacija je ključ", or "vse se začne pri sebi".
+- Hashtags are optional. Use no hashtags if only generic ones come to mind.
+- Never use generic hashtags such as #ljubezen, #iskrenost, #pogum, #zivljenje, #odnosi.
+- Maximum 2 hashtags.
+- Never use generic filler like "v današnjem svetu", "pomembno je", "vsak ima svojo resnico", "na koncu dneva", "komunikacija je ključ", "kaj bi se zgodilo, če", "ta vprašanja niso enostavna", or "vse se začne pri sebi".
 - Never use generic depth filler like "pod površjem se skriva", "globok strah", or "v današnji družbi".
 
 OUTPUT

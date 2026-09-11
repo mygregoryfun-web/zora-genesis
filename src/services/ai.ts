@@ -41,8 +41,8 @@ export function normalizeGeneratedPost(raw: unknown): GeneratedPost {
       .slice(0, 3);
   }
 
-  if (!Array.isArray(candidate.hashtags) || candidate.hashtags.length === 0) {
-    candidate.hashtags = ["#Odnosi", "#Zivljenje", "#Iskreno"];
+  if (!Array.isArray(candidate.hashtags)) {
+    candidate.hashtags = [];
   }
 
   const parsed = GeneratedPostSchema.parse(candidate);

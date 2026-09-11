@@ -2,8 +2,8 @@ import type { GeneratedPost, PublishChannel } from "../types.js";
 import { config } from "../config.js";
 
 const CHANNEL_HASHTAGS: Record<PublishChannel, string[]> = {
-  facebook: ["#Odnosi", "#Zivljenje", "#Iskreno"],
-  instagram: ["#Odnosi", "#Zivljenje", "#Iskreno"],
+  facebook: ["#Odnosi", "#Življenje", "#Iskreno"],
+  instagram: ["#Odnosi", "#Življenje", "#Iskreno"],
   x: ["#Odnosi", "#Iskreno"],
   farcaster: ["#Base", "#Zora", "#Onchain"],
   zora: ["#Base", "#Zora", "#CreatorAssets"],
@@ -72,7 +72,10 @@ function appendSignature(text: string, maxLength: number) {
 }
 
 export function preparePostForChannel(post: GeneratedPost, channel: PublishChannel): GeneratedPost {
-  const hashtags = uniqueHashtags(post.hashtags, CHANNEL_HASHTAGS[channel]);
+  const hashtags =
+    channel === "facebook" || channel === "instagram" || channel === "x"
+      ? uniqueHashtags(post.hashtags, [])
+      : uniqueHashtags(post.hashtags, CHANNEL_HASHTAGS[channel]);
 
   if (channel === "x") {
     return {
