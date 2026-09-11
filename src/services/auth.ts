@@ -66,9 +66,11 @@ function parseCookies(header: unknown) {
   return cookies;
 }
 
-export function createSession(emailInput: unknown): StudioSession {
+export function createSession(emailInput: unknown, ownerCodeInput?: unknown): StudioSession {
   const email = normalizeEmail(emailInput);
-  const role: UserRole = config.ownerEmail && email === config.ownerEmail ? "owner" : "user";
+  const ownerCode = String(ownerCodeInput ?? "");
+  const ownerCodeMatches = Boolean(config.ownerLoginCode && ownerCode === config.ownerLoginCode);
+  const role: UserRole = config.ownerEmail && email === config.ownerEmail && ownerCodeMatches ? "owner" : "user";
   const now = new Date().toISOString();
 
   return {

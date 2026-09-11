@@ -23,6 +23,7 @@ export const config = {
   billingWalletAddress: process.env.BILLING_WALLET_ADDRESS ?? "",
   ownerEmail: (process.env.OWNER_EMAIL ?? "").trim().toLowerCase(),
   ownerWalletAddress: (process.env.OWNER_WALLET_ADDRESS ?? "").trim().toLowerCase(),
+  ownerLoginCode: process.env.OWNER_LOGIN_CODE ?? "",
   authSecret: process.env.AUTH_SECRET ?? "",
   trialCredits: Number(process.env.TRIAL_CREDITS ?? 50),
   creatorWalletAddress: process.env.ZORA_CREATOR_WALLET_ADDRESS ?? "",

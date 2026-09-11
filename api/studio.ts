@@ -33,6 +33,7 @@ function studioPage() {
     <section class="account" id="accountBox">
       <div class="login">
         <label>E-mail za prijavo<input id="email" type="email" placeholder="tvoj@email.com" /></label>
+        <label>Admin koda<input id="ownerCode" type="password" placeholder="Samo za lastnika" /></label>
       </div>
       <div class="signed">
         <strong id="accountName">Nisi prijavljen</strong>
@@ -102,12 +103,12 @@ function studioPage() {
   </main>
   <script>
     let draft=null,activeChannel="facebook",session=null;
-    const topic=document.getElementById("topic"),language=document.getElementById("language"),tone=document.getElementById("tone"),length=document.getElementById("length"),imageStyle=document.getElementById("imageStyle"),notes=document.getElementById("notes"),status=document.getElementById("status"),postText=document.getElementById("postText"),imageBox=document.getElementById("imageBox"),imageMeta=document.getElementById("imageMeta"),videoPrompt=document.getElementById("videoPrompt"),previewCard=document.getElementById("previewCard"),library=document.getElementById("library"),accountBox=document.getElementById("accountBox"),accountName=document.getElementById("accountName"),creditLine=document.getElementById("creditLine"),email=document.getElementById("email");
+    const topic=document.getElementById("topic"),language=document.getElementById("language"),tone=document.getElementById("tone"),length=document.getElementById("length"),imageStyle=document.getElementById("imageStyle"),notes=document.getElementById("notes"),status=document.getElementById("status"),postText=document.getElementById("postText"),imageBox=document.getElementById("imageBox"),imageMeta=document.getElementById("imageMeta"),videoPrompt=document.getElementById("videoPrompt"),previewCard=document.getElementById("previewCard"),library=document.getElementById("library"),accountBox=document.getElementById("accountBox"),accountName=document.getElementById("accountName"),creditLine=document.getElementById("creditLine"),email=document.getElementById("email"),ownerCode=document.getElementById("ownerCode");
     const savedDrafts=JSON.parse(localStorage.getItem("zg_drafts")||"[]");
     function setStatus(v){status.textContent=v}
     function renderAccount(){accountBox.classList.toggle("authed",!!session);accountName.textContent=session?session.email:"Nisi prijavljen";creditLine.textContent=session?(session.role==="owner"?"Admin račun: neomejena uporaba.":"Na voljo: "+session.credits+" kreditov."):"Krediti se naložijo po prijavi."}
     async function refreshSession(){const response=await fetch("/auth/status");const data=await response.json();session=data.session;renderAccount()}
-    async function login(){const value=email.value.trim();if(!value)return setStatus("Vpiši e-mail.");const response=await fetch("/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:value})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error||"Login failed");session=data.session;renderAccount();setStatus("Prijavljen. Krediti so pripravljeni.")}
+    async function login(){const value=email.value.trim();if(!value)return setStatus("Vpiši e-mail.");const response=await fetch("/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:value,ownerCode:ownerCode.value})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error||"Login failed");session=data.session;renderAccount();setStatus(session.role==="owner"?"Prijavljen kot admin.":"Prijavljen. Krediti so pripravljeni.")}
     async function logout(){await fetch("/auth/logout",{method:"POST"});session=null;renderAccount();setStatus("Odjavljen.")}
     function updateSession(data){if(data&&data.session){session=data.session;renderAccount()}}
     function topicValue(){return [topic.value.trim(),notes.value.trim()].filter(Boolean).join("\\n\\nDodatno: ")}

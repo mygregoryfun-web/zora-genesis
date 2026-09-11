@@ -24,7 +24,7 @@ export default function handler(req: any, res: any) {
       return;
     }
 
-    const session = createSession(email);
+    const session = createSession(email, req.body?.ownerCode);
     setSessionCookie(res, session);
     res.status(200).json({ ok: true, session: publicSession(session) });
     return;
