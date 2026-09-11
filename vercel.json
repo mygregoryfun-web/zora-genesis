@@ -22,15 +22,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "api/auth/login.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/auth/logout.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/auth/status.ts",
+      "src": "api/auth.ts",
       "use": "@vercel/node"
     },
     {
@@ -85,15 +77,15 @@
     },
     {
       "src": "/auth/login",
-      "dest": "/api/auth/login.ts"
+      "dest": "/api/auth.ts?action=login"
     },
     {
       "src": "/auth/logout",
-      "dest": "/api/auth/logout.ts"
+      "dest": "/api/auth.ts?action=logout"
     },
     {
       "src": "/auth/status",
-      "dest": "/api/auth/status.ts"
+      "dest": "/api/auth.ts?action=status"
     },
     {
       "src": "/video",
@@ -141,15 +133,15 @@
     },
     {
       "src": "/api/auth/login",
-      "dest": "/api/auth/login.ts"
+      "dest": "/api/auth.ts?action=login"
     },
     {
       "src": "/api/auth/logout",
-      "dest": "/api/auth/logout.ts"
+      "dest": "/api/auth.ts?action=logout"
     },
     {
       "src": "/api/auth/status",
-      "dest": "/api/auth/status.ts"
+      "dest": "/api/auth.ts?action=status"
     },
     {
       "src": "/api/video",
