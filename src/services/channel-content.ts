@@ -85,7 +85,7 @@ export function preparePostForChannel(post: GeneratedPost, channel: PublishChann
   if (channel === "facebook" || channel === "instagram") {
     return {
       title: trimAtBoundary(post.title, 96),
-      post: appendSignature(post.post, 1800),
+      post: appendSignature(post.post, 3600),
       hashtags,
     };
   }

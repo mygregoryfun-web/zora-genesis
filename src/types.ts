@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const GeneratedPostSchema = z.object({
   title: z.string().trim().min(1).max(120),
-  post: z.string().trim().min(1).max(1000),
+  post: z.string().trim().min(1).max(4500),
   hashtags: z.array(
     z.string().trim().regex(/^#[\p{L}\p{N}_]+$/u, "Hashtags must start with #"),
   ).max(3),

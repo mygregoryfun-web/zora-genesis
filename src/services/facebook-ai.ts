@@ -18,6 +18,8 @@ function languageName(language: string) {
 }
 
 function topicBrief(topic: string) {
+  const lowerTopic = topic.toLowerCase();
+
   if (topic.toLowerCase().includes("denar")) {
     return [
       `Theme: ${topic}.`,
@@ -27,6 +29,37 @@ function topicBrief(topic: string) {
       "Important line of thought: TOREJ DENAR NI SVOBODA, TEMVEC UJETOST.",
       "Do not conclude that freedom is in the heart. Stay sharper: ask what we have sacrificed for money and whether it became our master.",
       "Do not make it soft or motivational. Make it uncomfortable and grounded.",
+    ].join("\n");
+  }
+
+  if (
+    lowerTopic.includes("varanje") ||
+    lowerTopic.includes("prevara") ||
+    lowerTopic.includes("izdaja") ||
+    lowerTopic.includes("laganje")
+  ) {
+    return [
+      `Theme: ${topic}.`,
+      "Audience: adults in a Facebook group about relationships, trust, betrayal, cheating, lying, pride, shame, and emotional truth.",
+      "Core angle: do not reduce the topic to blame. Expose the inner mechanism: desire for validation, hidden emptiness, fear, ego, attention, revenge, silence, secrets, and the moment truth is replaced by self-justification.",
+      "Write with tension: what people say publicly versus what they secretly want; what looks harmless versus what slowly opens doors; dignity versus temptation; truth versus image.",
+      "Use concrete scenes: a message hidden, a look that lasts too long, dressing for attention, silence at home, deleted conversations, the body reacting before the mind admits the truth.",
+      "Do not moralize from above. Ask uncomfortable questions and make the reader recognize themself.",
+    ].join("\n");
+  }
+
+  if (
+    lowerTopic.includes("ponos") ||
+    lowerTopic.includes("ego") ||
+    lowerTopic.includes("samospo")
+  ) {
+    return [
+      `Theme: ${topic}.`,
+      "Audience: adults who have felt pride take over during conflict.",
+      "Core angle: pride is not strength; it often disguises fear, shame, hurt, and the need to win. It closes the ears, narrows the eyes, heats the chest, and makes a person obey an inner ruler.",
+      "Explore how pride works: it demands victory, invents excuses, rejects apology, turns truth into threat, and makes love look like weakness.",
+      "Contrast pride with dignity: dignity can set a boundary; pride needs someone to lose.",
+      "Do not write a motivational lesson. Write like someone exposing a hidden mechanism inside a person.",
     ].join("\n");
   }
 
@@ -40,8 +73,10 @@ function topicBrief(topic: string) {
 
   return [
     `Theme: ${topic}.`,
-    "Audience: adults who like honest, relatable Slovenian Facebook posts.",
-    "Tone: warm, direct, slightly spicy, human, not preachy.",
+    "Audience: adults who like honest, relatable Slovenian Facebook posts about relationships, human motives, desire, truth, pride, money, betrayal, and inner conflict.",
+    "Core angle: find the hidden mechanism under the topic. Do not stay on the surface. Ask what fear, need, shame, hunger, pride, comparison, or self-deception is driving the behaviour.",
+    "Use concrete examples instead of generic advice. Make the reader feel: this is uncomfortably true.",
+    "Tone: direct, psychologically curious, morally sharp, human, not preachy.",
   ].join("\n");
 }
 
@@ -55,9 +90,9 @@ function toneName(tone: string) {
 }
 
 function lengthRule(length: string) {
-  if (length === "short") return "50 to 90 words.";
-  if (length === "long") return "320 to 520 words.";
-  return "180 to 320 words.";
+  if (length === "short") return "90 to 150 words.";
+  if (length === "long") return "520 to 800 words.";
+  return "280 to 480 words.";
 }
 
 function voiceGuide(tone: string) {
@@ -104,10 +139,12 @@ function voiceGuide(tone: string) {
     "",
     "PREFERRED STRUCTURE:",
     "1. Start with a direct question or claim.",
-    "2. Explain the visible thing.",
-    "3. Expose the hidden lie or trap.",
-    "4. Use a few contrast lines.",
-    "5. End with one uncomfortable question.",
+    "2. Name the visible behaviour without pretending to be neutral.",
+    "3. Go underneath it: what need, fear, hunger, shame, pride, or lie is moving the person?",
+    "4. Show two or three concrete situations where this appears in real life.",
+    "5. Expose the hidden lie or trap.",
+    "6. Use a few contrast lines.",
+    "7. End with one uncomfortable question.",
   ].join("\n");
 }
 
@@ -148,11 +185,21 @@ ${JSON.stringify(data.memory.slice(0, 12), null, 2)}
 TASK
 Write ONE original Facebook post.
 
+EDITORIAL QUALITY BAR
+- Do not write a safe summary of the topic. Take a clear angle.
+- The post must answer: what is really happening under the surface?
+- Include at least one concrete real-life scene or behaviour.
+- Include cause and consequence: what drives it, and what it slowly creates.
+- Use a few sharp contrast lines when useful.
+- Make the reader feel that the text understands something real.
+- If the topic is controversial, keep it tasteful and human, but do not remove the tension.
+
 RULES
 - Write in ${language}.
 - Make it feel authored by a real person, not AI.
 - Start with a strong first line that stops scrolling.
 - Use short paragraphs.
+- Avoid empty lines that separate every sentence; group related thoughts.
 - Prefer concrete inner conflict over abstract advice.
 - Use ordinary Slovenian words. Avoid decorative metaphors.
 - Do not mention AI, Web3 projects, digital assets, or automation.
@@ -163,6 +210,7 @@ RULES
 - The post should be emotional but grounded, with a little edge and a clear moral tension.
 - Follow the requested length.
 - Maximum 3 hashtags.
+- Never use generic filler like "v današnjem svetu", "pomembno je", "vsak ima svojo resnico", "na koncu dneva", "komunikacija je ključ", or "vse se začne pri sebi".
 
 OUTPUT
 Return ONLY valid JSON.
