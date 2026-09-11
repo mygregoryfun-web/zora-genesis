@@ -49,6 +49,25 @@ function topicBrief(topic: string) {
   }
 
   if (
+    lowerTopic.includes("oblač") ||
+    lowerTopic.includes("obleč") ||
+    lowerTopic.includes("sexy") ||
+    lowerTopic.includes("zapeljiv") ||
+    lowerTopic.includes("nogavic") ||
+    lowerTopic.includes("pete")
+  ) {
+    return [
+      `Theme: ${topic}.`,
+      "Audience: adults in a Facebook discussion group about relationships, attraction, boundaries, attention, jealousy, dignity, and trust.",
+      "Core angle: do not shame women and do not excuse everything as harmless self-expression. Hold the contradiction: a woman can want to feel feminine and seen, but the same behaviour can also become a door to outside attention if the relationship is hungry, cold, or full of silence.",
+      "Explore the real question: is she dressing for herself, for her man, for other eyes, for lost confidence, for revenge, or because attention became a substitute for being loved at home?",
+      "Concrete scenes: black stockings, high heels, a dress chosen twice, a husband who no longer notices, a phone photo before leaving, male looks in public, comments online, silence when she comes home.",
+      "Tension: elegance versus temptation, femininity versus hunger for validation, freedom versus responsibility, attention versus trust.",
+      "Do not write like a counselor. Write like a sharp discussion starter that people will comment on.",
+    ].join("\n");
+  }
+
+  if (
     lowerTopic.includes("ponos") ||
     lowerTopic.includes("ego") ||
     lowerTopic.includes("samospo")
@@ -105,6 +124,8 @@ function forbiddenSlop() {
     "- Motivational endings where everything becomes growth, healing, peace, or self-love.",
     "- Fake depth: many abstract nouns, no concrete scene.",
     "- Moralizing from above: 'ženske morajo', 'moški morajo', 'ljudje bi morali'.",
+    "- Formal lecture language: 'razmišljajte', 'vaša partnerica', 'pod površjem', 'globok strah', 'v današnji družbi'.",
+    "- Directly addressing the reader as 'vi' or 'vaš'. Use general human scenes instead.",
     "- Clickbait without substance.",
     "- A text that is merely nice. Nice is not enough.",
   ].join("\n");
@@ -134,6 +155,8 @@ function voiceGuide(tone: string) {
     "- The first line should be a question or a strong claim.",
     "- End with a question for reflection.",
     "- Do not sound like a therapist, influencer, sales page, sermon, or AI assistant.",
+    "- Do not instruct the reader with 'razmišljajte', 'poglejmo', 'pomembno je'.",
+    "- Do not use formal second-person plural like 'vi', 'vaš', 'vaša partnerica'.",
     "- No neat motivational ending. Leave the reader thinking.",
     "",
     "STYLE EXAMPLES TO IMITATE WITHOUT COPYING:",
@@ -225,6 +248,8 @@ REWRITE RULES
 - Name the hidden driver: fear, shame, hunger for attention, wounded pride, boredom, revenge, comparison, need to feel chosen, need to be seen, or fear of losing control.
 - Add consequence: what this slowly does to trust, closeness, self-respect, or peace.
 - Use ordinary Slovenian. No polished essay tone.
+- No formal address. Do not use 'vi', 'vaš', 'vaša partnerica', or 'razmišljajte'.
+- Do not use generic depth phrases such as 'pod površjem', 'globok strah', or 'v današnji družbi'.
 - Keep it tasteful, but do not remove tension.
 - Do not use hashtags inside the post field.
 - Maximum 3 hashtags.
@@ -307,6 +332,7 @@ RULES
 - Avoid empty lines that separate every sentence; group related thoughts.
 - Prefer concrete inner conflict over abstract advice.
 - Use ordinary Slovenian words. Avoid decorative metaphors.
+- Do not use formal address such as "vi", "vaš", "vaša partnerica", "razmišljajte", or "poglejmo".
 - Do not mention AI, Web3 projects, digital assets, or automation.
 - Do not claim personal events happened unless written generally.
 - No cliches like "cas zaceli vse rane", "vse se zgodi z razlogom", "postavi sebe na prvo mesto", or "zasluzis si boljse".
@@ -316,6 +342,7 @@ RULES
 - Follow the requested length.
 - Maximum 3 hashtags.
 - Never use generic filler like "v današnjem svetu", "pomembno je", "vsak ima svojo resnico", "na koncu dneva", "komunikacija je ključ", or "vse se začne pri sebi".
+- Never use generic depth filler like "pod površjem se skriva", "globok strah", or "v današnji družbi".
 
 OUTPUT
 Return ONLY valid JSON.
