@@ -1,6 +1,6 @@
 import { generateFacebookPost } from "./facebook-ai.js";
 import { loadFacebookPosts } from "./facebook-memory.js";
-import { generateImageForPost, type GeneratedImage } from "./image.js";
+import { generateImageForPost, type GeneratedImage, type ImageStyle } from "./image.js";
 import { preparePostForChannel } from "./channel-content.js";
 import { formatForFacebook } from "./facebook.js";
 import { formatForX } from "./x.js";
@@ -24,6 +24,7 @@ type CreateSocialDraftInput = {
   language?: string;
   tone?: string;
   length?: string;
+  imageStyle?: ImageStyle;
 };
 
 export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
@@ -32,6 +33,7 @@ export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
   const language = input.language?.trim().toLowerCase() || "si";
   const tone = input.tone?.trim().toLowerCase() || "balanced";
   const length = input.length?.trim().toLowerCase() || "medium";
+  const imageStyle = input.imageStyle === "zora-cover" ? "zora-cover" : "social-editorial";
   const post = await generateFacebookPost({ memory, topic, language, tone, length }).catch((err) => {
     const reason = err instanceof Error ? err.message : String(err);
     console.error("Facebook draft text generation failed, using fallback:", reason);
@@ -48,7 +50,7 @@ export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
       hashtags: ["#Odnosi", "#Zivljenje", "#Iskreno"],
     };
   });
-  const image = await generateImageForPost(post).catch((err) => {
+  const image = await generateImageForPost(post, imageStyle).catch((err) => {
     const reason = err instanceof Error ? err.message : String(err);
     console.error("Image generation failed for preview draft:", reason);
     return null;
@@ -64,6 +66,7 @@ export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
     language,
     tone,
     length,
+    imageStyle,
     source: post,
     image: image
       ? {

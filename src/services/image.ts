@@ -10,13 +10,15 @@ export type GeneratedImage = {
   buffer: Buffer;
 };
 
-function buildPrompt(post: GeneratedPost) {
+export type ImageStyle = "social-editorial" | "zora-cover";
+
+function buildPrompt(post: GeneratedPost, imageStyle: ImageStyle = "social-editorial") {
   const socialChannels = ["facebook", "instagram", "x"];
   const socialMode =
     config.publishChannels.length > 0 &&
     config.publishChannels.every((channel) => socialChannels.includes(channel));
 
-  if (socialMode) {
+  if (imageStyle === "social-editorial" && socialMode) {
     return [
       `Create an original photorealistic editorial image for ${config.creatorName}.`,
       "Subject: adult relationships, trust, pride, honesty, money, betrayal, personal boundaries, and emotional maturity.",
@@ -38,8 +40,8 @@ function buildPrompt(post: GeneratedPost) {
   ].join("\n");
 }
 
-export async function generateImageForPost(post: GeneratedPost): Promise<GeneratedImage | null> {
-  const prompt = buildPrompt(post);
+export async function generateImageForPost(post: GeneratedPost, imageStyle: ImageStyle = "social-editorial"): Promise<GeneratedImage | null> {
+  const prompt = buildPrompt(post, imageStyle);
 
   if (config.skipImage) {
     console.log("SKIP_IMAGE enabled; not generating an image.");

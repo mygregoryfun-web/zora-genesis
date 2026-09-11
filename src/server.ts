@@ -1088,15 +1088,17 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && url.pathname === "/agent/draft") {
     try {
-      const body = await readJsonBody<{ topic?: string; language?: string; tone?: string; length?: string }>(req).catch(() => ({
+      const body = await readJsonBody<{ topic?: string; language?: string; tone?: string; length?: string; imageStyle?: "social-editorial" | "zora-cover" }>(req).catch(() => ({
         topic: "",
         language: "si",
         tone: "balanced",
         length: "medium",
+        imageStyle: "social-editorial",
       }));
+      const imageStyle = body.imageStyle === "zora-cover" ? "zora-cover" : "social-editorial";
       sendJson(res, 200, {
         ok: true,
-        draft: await createSocialDraft({ topic: body.topic, language: body.language, tone: body.tone, length: body.length }),
+        draft: await createSocialDraft({ topic: body.topic, language: body.language, tone: body.tone, length: body.length, imageStyle }),
       });
     } catch (error) {
       sendJson(res, 500, {
