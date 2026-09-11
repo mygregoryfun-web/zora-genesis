@@ -25,6 +25,7 @@ type CreateSocialDraftInput = {
   tone?: string;
   length?: string;
   imageStyle?: ImageStyle;
+  includeImage?: boolean;
 };
 
 export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
@@ -53,11 +54,14 @@ export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
       hashtags: ["#Odnosi", "#Zivljenje", "#Iskreno"],
     };
   });
-  const image = await generateImageForPost(post, imageStyle).catch((err) => {
-    const reason = err instanceof Error ? err.message : String(err);
-    console.error("Image generation failed for preview draft:", reason);
-    return null;
-  });
+  const image =
+    input.includeImage === false
+      ? null
+      : await generateImageForPost(post, imageStyle).catch((err) => {
+          const reason = err instanceof Error ? err.message : String(err);
+          console.error("Image generation failed for preview draft:", reason);
+          return null;
+        });
 
   const facebookPost = preparePostForChannel(post, "facebook");
   const instagramPost = preparePostForChannel(post, "instagram");

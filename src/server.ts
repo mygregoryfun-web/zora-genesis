@@ -1088,12 +1088,13 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && url.pathname === "/agent/draft") {
     try {
-      const body = await readJsonBody<{ topic?: string; language?: string; tone?: string; length?: string; imageStyle?: "social-editorial" | "artwork-cover" | "contradictory-art" }>(req).catch(() => ({
+      const body = await readJsonBody<{ topic?: string; language?: string; tone?: string; length?: string; imageStyle?: "social-editorial" | "artwork-cover" | "contradictory-art"; includeImage?: boolean }>(req).catch(() => ({
         topic: "",
         language: "si",
         tone: "my-style",
         length: "medium",
         imageStyle: "social-editorial",
+        includeImage: true,
       }));
       const imageStyle =
         body.imageStyle === "artwork-cover" || body.imageStyle === "contradictory-art"
@@ -1101,7 +1102,7 @@ const server = http.createServer(async (req, res) => {
           : "social-editorial";
       sendJson(res, 200, {
         ok: true,
-        draft: await createSocialDraft({ topic: body.topic, language: body.language, tone: body.tone, length: body.length, imageStyle }),
+        draft: await createSocialDraft({ topic: body.topic, language: body.language, tone: body.tone, length: body.length, imageStyle, includeImage: body.includeImage }),
       });
     } catch (error) {
       sendJson(res, 500, {

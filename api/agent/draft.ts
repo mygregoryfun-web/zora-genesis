@@ -22,6 +22,7 @@ export default async function handler(req: any, res: any) {
         tone: req.body?.tone,
         length: req.body?.length,
         imageStyle: req.body?.imageStyle,
+        includeImage: req.body?.includeImage,
       }),
     });
   } catch (error) {
