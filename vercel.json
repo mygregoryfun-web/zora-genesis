@@ -92,6 +92,14 @@
       "dest": "/api/auth.ts?action=admin"
     },
     {
+      "src": "/drafts/list",
+      "dest": "/api/auth.ts?action=drafts"
+    },
+    {
+      "src": "/drafts/save",
+      "dest": "/api/auth.ts?action=drafts-save"
+    },
+    {
       "src": "/video",
       "dest": "/api/video.ts"
     },
@@ -150,6 +158,14 @@
     {
       "src": "/api/admin",
       "dest": "/api/auth.ts?action=admin"
+    },
+    {
+      "src": "/api/drafts/list",
+      "dest": "/api/auth.ts?action=drafts"
+    },
+    {
+      "src": "/api/drafts/save",
+      "dest": "/api/auth.ts?action=drafts-save"
     },
     {
       "src": "/api/video",

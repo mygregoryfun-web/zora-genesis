@@ -17,7 +17,7 @@ export default async function handler(req: any, res: any) {
   try {
     const includeImage = req.body?.includeImage;
     const cost = CREDIT_COSTS.text + (includeImage === false ? 0 : CREDIT_COSTS.image);
-    const session = requireCredits(req, res, cost, includeImage === false ? "tekst" : "tekst in sliko");
+    const session = await requireCredits(req, res, cost, includeImage === false ? "tekst" : "tekst in sliko");
     if (!session) return;
 
     res.status(200).json({

@@ -23,7 +23,7 @@ export default async function handler(req: any, res: any) {
       res.status(400).json({ ok: false, error: "Missing post text." });
       return;
     }
-    const session = requireCredits(req, res, CREDIT_COSTS.image, "sliko");
+    const session = await requireCredits(req, res, CREDIT_COSTS.image, "sliko");
     if (!session) return;
 
     const imageStyle: ImageStyle =

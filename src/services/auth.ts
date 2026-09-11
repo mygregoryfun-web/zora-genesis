@@ -49,6 +49,106 @@ type UserStore = {
   users: Record<string, UserRecord>;
 };
 
+export type StoredDraft = {
+  id: string;
+  email: string;
+  topic: string;
+  title: string;
+  text: string;
+  draft: unknown;
+  createdAt: string;
+  updatedAt: string;
+};
+
+function hasSupabase() {
+  return Boolean(config.supabaseUrl && config.supabaseServiceRoleKey);
+}
+
+function supabaseEndpoint(table: string, query = "") {
+  return `${config.supabaseUrl.replace(/\/$/, "")}/rest/v1/${table}${query}`;
+}
+
+function fromSupabaseUser(row: any): UserRecord {
+  return {
+    email: row.email,
+    role: row.role,
+    credits: Number(row.credits ?? 0),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    totalSpent: Number(row.total_spent ?? 0),
+    loginCount: Number(row.login_count ?? 0),
+    lastLoginAt: row.last_login_at,
+  };
+}
+
+function toSupabaseUser(user: UserRecord) {
+  return {
+    email: user.email,
+    role: user.role,
+    credits: user.credits,
+    total_spent: user.totalSpent,
+    login_count: user.loginCount,
+    last_login_at: user.lastLoginAt,
+    created_at: user.createdAt,
+    updated_at: user.updatedAt,
+  };
+}
+
+function fromSupabaseDraft(row: any): StoredDraft {
+  return {
+    id: row.id,
+    email: row.email,
+    topic: row.topic ?? "",
+    title: row.title ?? "",
+    text: row.text ?? "",
+    draft: row.draft ?? null,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+async function supabaseFetch(table: string, init: RequestInit = {}, query = "") {
+  const response = await fetch(supabaseEndpoint(table, query), {
+    ...init,
+    headers: {
+      apikey: config.supabaseServiceRoleKey,
+      Authorization: `Bearer ${config.supabaseServiceRoleKey}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+      ...(init.headers ?? {}),
+    },
+  });
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(`Supabase ${table} request failed: ${response.status} ${detail}`);
+  }
+
+  if (response.status === 204) {
+    return null;
+  }
+
+  return response.json();
+}
+
+async function getSupabaseUser(email: string): Promise<UserRecord | null> {
+  const rows = await supabaseFetch(
+    "studio_users",
+    { method: "GET" },
+    `?email=eq.${encodeURIComponent(email)}&select=*&limit=1`,
+  );
+  return Array.isArray(rows) && rows[0] ? fromSupabaseUser(rows[0]) : null;
+}
+
+async function upsertSupabaseUser(user: UserRecord): Promise<UserRecord> {
+  const rows = await supabaseFetch(
+    "studio_users",
+    { method: "POST", body: JSON.stringify(toSupabaseUser(user)) },
+    "?on_conflict=email",
+  );
+  return Array.isArray(rows) && rows[0] ? fromSupabaseUser(rows[0]) : user;
+}
+
 function emptyStore(): UserStore {
   return { users: {} };
 }
@@ -83,7 +183,12 @@ function toRecord(session: StudioSession, existing?: UserRecord): UserRecord {
   };
 }
 
-export function listUsers() {
+export async function listUsers() {
+  if (hasSupabase()) {
+    const rows = await supabaseFetch("studio_users", { method: "GET" }, "?select=*&order=updated_at.desc");
+    return Array.isArray(rows) ? rows.map(fromSupabaseUser) : [];
+  }
+
   return Object.values(readStore().users).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
@@ -132,10 +237,28 @@ export function createSession(emailInput: unknown, ownerCodeInput?: unknown): St
   };
 }
 
-export function loginSession(emailInput: unknown, ownerCodeInput?: unknown): StudioSession {
+export async function loginSession(emailInput: unknown, ownerCodeInput?: unknown): Promise<StudioSession> {
   const session = createSession(emailInput, ownerCodeInput);
   if (session.role === "owner") {
     return session;
+  }
+
+  if (hasSupabase()) {
+    const existing = await getSupabaseUser(session.email);
+    const now = new Date().toISOString();
+    const stored: UserRecord = existing
+      ? {
+          ...existing,
+          loginCount: existing.loginCount + 1,
+          lastLoginAt: now,
+          updatedAt: now,
+        }
+      : {
+          ...toRecord(session),
+          loginCount: 1,
+          lastLoginAt: now,
+        };
+    return upsertSupabaseUser(stored);
   }
 
   const store = readStore();
@@ -207,15 +330,19 @@ export function publicSession(session: StudioSession | null) {
   };
 }
 
-export function requireCredits(req: any, res: any, cost: number, label: string) {
+export async function requireCredits(req: any, res: any, cost: number, label: string) {
   const session = getSession(req);
   if (!session) {
     res.status(401).json({ ok: false, error: "Najprej se prijavi z e-mailom.", code: "AUTH_REQUIRED" });
     return null;
   }
 
-  const store = readStore();
-  const stored = session.role === "owner" ? null : store.users[session.email];
+  const store = hasSupabase() ? emptyStore() : readStore();
+  const stored = session.role === "owner"
+    ? null
+    : hasSupabase()
+      ? await getSupabaseUser(session.email)
+      : store.users[session.email];
   const effectiveSession: StudioSession = stored
     ? {
         email: stored.email,
@@ -242,14 +369,60 @@ export function requireCredits(req: any, res: any, cost: number, label: string) 
     updatedAt: new Date().toISOString(),
   };
   if (updated.role !== "owner") {
-    const existing = store.users[updated.email];
-    store.users[updated.email] = {
+    const existing = stored ?? undefined;
+    const record = {
       ...toRecord(updated, existing),
       totalSpent: (existing?.totalSpent ?? 0) + cost,
       updatedAt: updated.updatedAt,
     };
-    writeStore(store);
+    if (hasSupabase()) {
+      await upsertSupabaseUser(record);
+    } else {
+      store.users[updated.email] = record;
+      writeStore(store);
+    }
   }
   setSessionCookie(res, updated);
   return updated;
+}
+
+export async function listDraftsForSession(session: StudioSession) {
+  if (session.role !== "owner" && hasSupabase()) {
+    const rows = await supabaseFetch(
+      "studio_drafts",
+      { method: "GET" },
+      `?email=eq.${encodeURIComponent(session.email)}&select=*&order=updated_at.desc&limit=50`,
+    );
+    return Array.isArray(rows) ? rows.map(fromSupabaseDraft) : [];
+  }
+
+  return [];
+}
+
+export async function saveDraftForSession(session: StudioSession, input: {
+  topic?: unknown;
+  title?: unknown;
+  text?: unknown;
+  draft?: unknown;
+}) {
+  if (!hasSupabase()) {
+    throw new Error("Supabase is not configured yet.");
+  }
+
+  if (session.role === "owner") {
+    throw new Error("Owner drafts are not stored in the shared user library.");
+  }
+
+  const now = new Date().toISOString();
+  const row = {
+    email: session.email,
+    topic: String(input.topic ?? "").slice(0, 500),
+    title: String(input.title ?? "").slice(0, 200),
+    text: String(input.text ?? ""),
+    draft: input.draft ?? null,
+    updated_at: now,
+  };
+
+  const rows = await supabaseFetch("studio_drafts", { method: "POST", body: JSON.stringify(row) });
+  return Array.isArray(rows) && rows[0] ? fromSupabaseDraft(rows[0]) : null;
 }

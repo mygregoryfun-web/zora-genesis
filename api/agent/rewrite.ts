@@ -17,7 +17,7 @@ export default async function handler(req: any, res: any) {
       res.status(400).json({ ok: false, error: "Missing post text." });
       return;
     }
-    const session = requireCredits(req, res, CREDIT_COSTS.rewrite, "izboljšavo teksta");
+    const session = await requireCredits(req, res, CREDIT_COSTS.rewrite, "izboljšavo teksta");
     if (!session) return;
 
     res.status(200).json({

@@ -2,15 +2,17 @@ import {
   clearSessionCookie,
   getSession,
   isValidEmail,
+  listDraftsForSession,
   listUsers,
   loginSession,
   publicSession,
+  saveDraftForSession,
   setSessionCookie,
 } from "../src/services/auth.js";
 
 export const config = { maxDuration: 10 };
 
-export default function handler(req: any, res: any) {
+export default async function handler(req: any, res: any) {
   const action = String(req.query?.action ?? "").toLowerCase();
 
   if (req.method === "GET" && action === "admin") {
@@ -20,7 +22,7 @@ export default function handler(req: any, res: any) {
       return;
     }
 
-    const rows = listUsers();
+    const rows = await listUsers();
     res.setHeader("content-type", "text/html; charset=utf-8");
     res.status(200).send(`<!doctype html>
 <html lang="sl"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -47,9 +49,32 @@ body{margin:0;font-family:Inter,system-ui,sans-serif;background:#f6f7f9;color:#1
       return;
     }
 
-    const session = loginSession(email, req.body?.ownerCode);
+    const session = await loginSession(email, req.body?.ownerCode);
     setSessionCookie(res, session);
     res.status(200).json({ ok: true, session: publicSession(session) });
+    return;
+  }
+
+  if (req.method === "GET" && action === "drafts") {
+    const session = getSession(req);
+    if (!session) {
+      res.status(401).json({ ok: false, error: "Najprej se prijavi." });
+      return;
+    }
+
+    res.status(200).json({ ok: true, drafts: await listDraftsForSession(session) });
+    return;
+  }
+
+  if (req.method === "POST" && action === "drafts-save") {
+    const session = getSession(req);
+    if (!session) {
+      res.status(401).json({ ok: false, error: "Najprej se prijavi." });
+      return;
+    }
+
+    const draft = await saveDraftForSession(session, req.body ?? {});
+    res.status(200).json({ ok: true, draft });
     return;
   }
 

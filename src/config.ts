@@ -28,6 +28,8 @@ export const config = {
   authSecret: process.env.AUTH_SECRET ?? "",
   trialCredits: Number(process.env.TRIAL_CREDITS ?? 50),
   userStoreFile: process.env.USER_STORE_FILE ?? (process.env.VERCEL ? "/tmp/zora-genesis-users.json" : "src/memory/studio-users.json"),
+  supabaseUrl: process.env.SUPABASE_URL ?? "",
+  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
   creatorWalletAddress: process.env.ZORA_CREATOR_WALLET_ADDRESS ?? "",
   zoraApiKey: process.env.ZORA_API_KEY ?? "",
   walletPrivateKey: process.env.WALLET_PRIVATE_KEY ?? "",

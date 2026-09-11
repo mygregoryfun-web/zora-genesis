@@ -12,7 +12,7 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const session = requireCredits(req, res, CREDIT_COSTS.video, "video");
+    const session = await requireCredits(req, res, CREDIT_COSTS.video, "video");
     if (!session) return;
     const task = await createRunwayImageToVideoTask(req.body as RunwayVideoInput);
     res.status(200).json({ ok: true, session: publicSession(session), task });
