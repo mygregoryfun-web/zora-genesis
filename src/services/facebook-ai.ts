@@ -17,8 +17,43 @@ function languageName(language: string) {
   return "Slovenian";
 }
 
+function topicItems(topic: string) {
+  return topic
+    .split(/[,\n;]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeForMatch(text: string) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "");
+}
+
+function topicKeyword(item: string) {
+  const normalized = normalizeForMatch(item).replace(/[^\p{L}\p{N}\s]/gu, " ").trim();
+  const firstWord = normalized.split(/\s+/).find((word) => word.length >= 4);
+  return firstWord ?? normalized;
+}
+
+function missingTopicItems(post: GeneratedPost, topic: string) {
+  const items = topicItems(topic).filter((item) => topicKeyword(item).length >= 4);
+  if (items.length < 2) {
+    return [];
+  }
+
+  const haystack = normalizeForMatch(`${post.title}\n${post.post}`);
+  return items.filter((item) => !haystack.includes(topicKeyword(item)));
+}
+
 function topicBrief(topic: string) {
   const lowerTopic = topic.toLowerCase();
+  const items = topicItems(topic);
+  const topicItemLine =
+    items.length > 1
+      ? `User supplied these exact topic elements: ${items.join(" | ")}. Treat them as the source material. The post must stay about these elements and must not replace them with a canned relationship scene.`
+      : "";
 
   if (topic.toLowerCase().includes("denar")) {
     return [
@@ -35,17 +70,25 @@ function topicBrief(topic: string) {
   if (
     lowerTopic.includes("ljubezen") ||
     lowerTopic.includes("iskrenost") ||
-    lowerTopic.includes("pogum")
+    lowerTopic.includes("pogum") ||
+    lowerTopic.includes("žena") ||
+    lowerTopic.includes("zvestoba") ||
+    lowerTopic.includes("spoštovanje")
   ) {
     return [
       `Theme: ${topic}.`,
+      topicItemLine,
       "Audience: adults in a Facebook group about relationships, emotional truth, silence, vulnerability, pride, and closeness.",
-      "Core angle: love without honesty becomes performance; honesty without courage stays only an inner thought; courage is often the moment a person says what hurts before pride turns it into silence.",
-      "Explore the conflict: a person wants to be loved, but hides what is most true; wants closeness, but chooses sarcasm, silence, withdrawal, or pride because vulnerability feels dangerous.",
-      "Concrete scenes: a forgotten anniversary, a partner on the phone, a hurt that is disguised as coldness, a sentence swallowed, a look that says more than words, a quiet evening where nobody says what is really wrong.",
-      "Do not turn love, honesty, and courage into hashtags or motivational virtues. Treat them as forces inside a real relationship.",
-      "End with one direct question about what people protect more: love, pride, or the image of being strong.",
-    ].join("\n");
+      "Core angle: when the user names a person, a wife, love, respect, loyalty, or fidelity, write about the weight of those words in a real partnership: what they demand, what they protect, and how quickly they become empty if they are only spoken.",
+      "Mandatory topic fidelity: the final post must visibly use the important words from the user's topic, especially names and values such as wife, love, respect, and loyalty.",
+      "Do not force a conflict scene. If the topic is about a wife, love, respect, and loyalty, the post can be appreciative, reflective, and serious instead of suspicious or dramatic.",
+      "Explore the difference between saying 'I love you' and living in a way that makes the other person feel chosen, respected, and safe.",
+      "Concrete details must come from the user's topic. Do not invent a forgotten anniversary, partner on the phone, deleted messages, sarcasm, silence, cheating, or rejection unless the user explicitly mentions them.",
+      "If the topic includes a personal name such as Viktorija, preserve it naturally and respectfully. Do not turn it into a fictional confession unless the user asked for that.",
+      "End with one direct question about what proves love more: words, loyalty, respect, or everyday behaviour.",
+    ]
+      .filter(Boolean)
+      .join("\n");
   }
 
   if (
@@ -108,11 +151,15 @@ function topicBrief(topic: string) {
 
   return [
     `Theme: ${topic}.`,
+    topicItemLine,
     "Audience: adults who like honest, relatable Slovenian Facebook posts about relationships, human motives, desire, truth, pride, money, betrayal, and inner conflict.",
     "Core angle: find the hidden mechanism under the topic. Do not stay on the surface. Ask what fear, need, shame, hunger, pride, comparison, or self-deception is driving the behaviour.",
+    "Mandatory topic fidelity: use the user's actual words as anchors. If the user gives comma-separated words, do not ignore them or replace them with a generic relationship scene.",
     "Use concrete examples instead of generic advice. Make the reader feel: this is uncomfortably true.",
     "Tone: direct, psychologically curious, morally sharp, human, not preachy.",
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function toneName(tone: string) {
@@ -134,6 +181,7 @@ function forbiddenSlop() {
   return [
     "LOW-QUALITY OUTPUT TO AVOID",
     "- Generic advice that could fit every relationship topic.",
+    "- Canned scenes that were not in the user's topic, especially forgotten anniversaries, a partner looking at a phone, deleted messages, or a fake confession.",
     "- Safe school-essay structure: introduction, balanced middle, soft conclusion.",
     "- Empty phrases such as 'pomembno je, da se pogovorimo', 'vsak ima svojo pot', 'v današnjem svetu', 'komunikacija je ključ'.",
     "- Therapy-sounding paragraphs that diagnose everyone but expose nothing.",
@@ -245,6 +293,9 @@ The first draft below may be too generic. Your job is to make it actually usable
 ORIGINAL THEME
 ${input.topicBrief}
 
+EXACT USER TOPIC
+${input.topic}
+
 REQUESTED LANGUAGE
 ${input.language}
 
@@ -264,11 +315,14 @@ Hashtags: ${input.draft.hashtags.join(" ")}
 
 REWRITE RULES
 - If the draft is shallow, replace it completely.
+- Respect the exact user topic. If the user named a person or values, keep that center instead of replacing it with a generic relationship conflict.
+- The final post must visibly stay on the exact topic words. Do not merely use the topic as inspiration.
 - Keep only ideas that feel alive and true.
 - Make the first line sharper and more specific.
-- Add at least two concrete human moments: a sentence not answered, a phone turned down, silence at home, a look, a hidden desire, a pride reaction, a money pressure, a small lie, a body reaction.
+- Add concrete human moments only when they grow naturally from the user's topic.
 - Name the hidden driver: fear, shame, hunger for attention, wounded pride, boredom, revenge, comparison, need to feel chosen, need to be seen, or fear of losing control.
 - Add consequence: what this slowly does to trust, closeness, self-respect, or peace.
+- Do not invent forgotten anniversaries, phone scenes, deleted messages, cheating, rejection, sarcasm, or silence unless the exact topic mentions them.
 - Use ordinary Slovenian. No polished essay tone.
 - Use correct Slovenian diacritics: š, č, ž. Never write ASCII-only Slovenian such as "cas", "clovek", "laz", "poslusam", "bolecina".
 - No formal address. Do not use 'vi', 'vaš', 'vaša partnerica', 'razmišljaj', 'razmišljajte', or 'predstavljaj si'.
@@ -297,6 +351,61 @@ Return ONLY valid JSON:
 `;
 
   return callOpenRouter(prompt, 0.48);
+}
+
+async function topicFidelityRewrite(input: {
+  draft: GeneratedPost;
+  topic: string;
+  missingItems: string[];
+  language: string;
+  tone: string;
+  length: string;
+}) {
+  const prompt = `
+You are Fun Gregory's strict topic-fidelity editor.
+
+The draft below drifted away from the user's exact topic. Rewrite it so it stays on topic.
+
+EXACT USER TOPIC
+${input.topic}
+
+MISSING OR WEAK TOPIC ELEMENTS
+${input.missingItems.join(", ")}
+
+REQUESTED LANGUAGE
+${input.language}
+
+REQUESTED TONE
+${input.tone}
+
+REQUESTED LENGTH
+${input.length}
+
+BAD DRAFT
+Title: ${input.draft.title}
+Post:
+${input.draft.post}
+Hashtags: ${input.draft.hashtags.join(" ")}
+
+RULES
+- Stay tightly inside the exact user topic. The post must clearly include the important topic elements.
+- If the topic includes a personal name, use it respectfully and naturally.
+- If the topic includes "žena", write about wife/partnership, not a generic partner conflict.
+- If the topic includes "ljubezen", "spoštovanje", or "zvestoba", make those the backbone of the text.
+- Do not invent a forgotten anniversary, phone scene, deleted messages, cheating, rejection, sarcasm, or silence unless the exact topic says so.
+- Do not write therapy advice. Write a usable Facebook/Instagram post with a clear point.
+- Use correct Slovenian diacritics: š, č, ž.
+- No hashtags unless they are specific and useful. Generic hashtags are worse than none.
+
+Return ONLY valid JSON:
+{
+  "title": "",
+  "post": "",
+  "hashtags": []
+}
+`;
+
+  return callOpenRouter(prompt, 0.35);
 }
 
 export async function generateFacebookPost(data: GenerateFacebookPostInput): Promise<GeneratedPost> {
@@ -339,10 +448,13 @@ ${JSON.stringify(data.memory.slice(0, 12), null, 2)}
 TASK
 Write ONE original Facebook post.
 
+EXACT USER TOPIC
+${topic}
+
 EDITORIAL QUALITY BAR
 - Do not write a safe summary of the topic. Take a clear angle.
 - The post must answer: what is really happening under the surface?
-- Include at least one concrete real-life scene or behaviour.
+- Include at least one concrete real-life scene or behaviour, but only if it naturally follows from the exact user topic.
 - Include cause and consequence: what drives it, and what it slowly creates.
 - Use a few sharp contrast lines when useful.
 - Make the reader feel that the text understands something real.
@@ -365,6 +477,8 @@ RULES
 - No cliches like "čas zaceli vse rane", "vse se zgodi z razlogom", "postavi sebe na prvo mesto", or "zaslužiš si boljše".
 - Do not use strange poetic phrases like "kompas srca", "spekter senc", "salto mortale", "vibracija", "energija", "duševna lahkotnost", "praznina v srcu", "kletka želje", "kletka osamljenosti", or similar cage/prison metaphors.
 - Avoid repeating previous openings, titles, or angles from memory.
+- Do not invent forgotten anniversaries, phone scenes, deleted messages, cheating, rejection, sarcasm, or silence unless the exact user topic mentions them.
+- If the exact topic contains comma-separated words, treat every word as useful context. Do not ignore a personal name, "žena", "spoštovanje", or "zvestoba".
 - The post should be emotional but grounded, with a little edge and a clear moral tension.
 - Follow the requested length.
 - Hashtags are optional. Use no hashtags if only generic ones come to mind.
@@ -385,7 +499,12 @@ Return ONLY valid JSON.
 
   try {
     const draft = await callOpenRouter(prompt, toneKey === "my-style" ? 0.55 : 0.8);
-    return await editorialRewrite({ draft, topic, topicBrief: brief, language, tone, length });
+    const edited = await editorialRewrite({ draft, topic, topicBrief: brief, language, tone, length });
+    const missingItems = missingTopicItems(edited, topic);
+    if (missingItems.length > 0) {
+      return topicFidelityRewrite({ draft: edited, topic, missingItems, language, tone, length });
+    }
+    return edited;
   } catch (error: any) {
     console.error("Facebook post generation failed:");
     console.error(error.response?.data || error.message);
