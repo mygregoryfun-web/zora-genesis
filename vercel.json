@@ -18,6 +18,10 @@
       "use": "@vercel/node"
     },
     {
+      "src": "api/pricing.ts",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api/video.ts",
       "use": "@vercel/node"
     },
@@ -56,6 +60,10 @@
       "dest": "/api/studio.ts"
     },
     {
+      "src": "/pricing",
+      "dest": "/api/pricing.ts"
+    },
+    {
       "src": "/video",
       "dest": "/api/video.ts"
     },
@@ -86,6 +94,10 @@
     {
       "src": "/api/studio",
       "dest": "/api/studio.ts"
+    },
+    {
+      "src": "/api/pricing",
+      "dest": "/api/pricing.ts"
     },
     {
       "src": "/api/video",

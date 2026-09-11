@@ -25,7 +25,7 @@ function studioPage() {
   <main>
     <header>
       <div><h1>Content Studio</h1><p>Ena tema noter. Tekst, slika, video prompt in objava za Facebook, Instagram ali X ven.</p></div>
-      <div class="actions"><a class="button secondary" href="/preview">Predogled</a><a class="button secondary" href="/video">Video editor</a><button id="generate">Generiraj</button></div>
+      <div class="actions"><a class="button secondary" href="/pricing">Naročnine</a><a class="button secondary" href="/preview">Predogled</a><a class="button secondary" href="/video">Video editor</a><button id="generate">Generiraj</button></div>
     </header>
 
     <section class="layout">

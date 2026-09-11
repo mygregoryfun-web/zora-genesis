@@ -20,6 +20,7 @@ export const config = {
   comfyTimeoutMs: Number(process.env.COMFY_TIMEOUT_MS ?? 300000),
   creatorName: process.env.ZORA_CREATOR_NAME ?? "Fun Gregory",
   publishSignature: process.env.PUBLISH_SIGNATURE ?? process.env.ZORA_CREATOR_NAME ?? "Fun Gregory",
+  billingWalletAddress: process.env.BILLING_WALLET_ADDRESS ?? "",
   creatorWalletAddress: process.env.ZORA_CREATOR_WALLET_ADDRESS ?? "",
   zoraApiKey: process.env.ZORA_API_KEY ?? "",
   walletPrivateKey: process.env.WALLET_PRIVATE_KEY ?? "",
