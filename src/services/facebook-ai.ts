@@ -47,6 +47,22 @@ function missingTopicItems(post: GeneratedPost, topic: string) {
   return items.filter((item) => !haystack.includes(topicKeyword(item)));
 }
 
+function isSelfPresentationTopic(topic: string) {
+  const normalized = normalizeForMatch(topic);
+  return (
+    /\bpredstav(i|itev|i se|i sebe|ljam|ljamo)\b/u.test(normalized) ||
+    normalized.includes("predstavi sebe") ||
+    normalized.includes("kaj pocnes") ||
+    normalized.includes("kaj delas") ||
+    normalized.includes("kdo si") ||
+    normalized.includes("kdo sem") ||
+    normalized.includes("o meni") ||
+    normalized.includes("o nas") ||
+    normalized.includes("predstavitev studia") ||
+    normalized.includes("predstavitev projekta")
+  );
+}
+
 function topicBrief(topic: string) {
   const lowerTopic = topic.toLowerCase();
   const items = topicItems(topic);
@@ -54,6 +70,20 @@ function topicBrief(topic: string) {
     items.length > 1
       ? `User supplied these exact topic elements: ${items.join(" | ")}. Treat them as the source material. The post must stay about these elements and must not replace them with a canned relationship scene.`
       : "";
+
+  if (isSelfPresentationTopic(topic)) {
+    return [
+      `Theme: ${topic}.`,
+      "Intent: write a clear self/service introduction, not a psychological essay.",
+      "Audience: people on Facebook/Instagram who need help creating posts, images, and video drafts for social media.",
+      "Core angle: introduce Content Studio / Fun Gregory as a practical AI-assisted workspace that turns a topic into a usable post, image idea, and optional video draft, while the user stays in control and publishes manually.",
+      "Must answer plainly: who it is for, what it does, what problem it solves, how the workflow feels, and why it saves time.",
+      "Use first person singular or plural naturally if useful, for example: 'Pomagam ustvariti...', 'Studio pripravi...', 'Idejo spremeni v osnutek...'.",
+      "Do not write about existential identity, childhood, fear of not being enough, dinner with friends, hidden anxiety, masks, layers, or searching for the true self.",
+      "Do not turn this into therapy, confession, or relationship drama.",
+      "End with a simple invitation or question for people who want a post, image, or video draft.",
+    ].join("\n");
+  }
 
   if (topic.toLowerCase().includes("denar")) {
     return [
@@ -181,6 +211,7 @@ function forbiddenSlop() {
   return [
     "LOW-QUALITY OUTPUT TO AVOID",
     "- Generic advice that could fit every relationship topic.",
+    "- Turning a practical request like 'present yourself / what do you do' into an existential essay about identity, fear, masks, or not being enough.",
     "- Canned scenes that were not in the user's topic, especially forgotten anniversaries, a partner looking at a phone, deleted messages, or a fake confession.",
     "- Safe school-essay structure: introduction, balanced middle, soft conclusion.",
     "- Empty phrases such as 'pomembno je, da se pogovorimo', 'vsak ima svojo pot', 'v današnjem svetu', 'komunikacija je ključ'.",
@@ -353,6 +384,62 @@ Return ONLY valid JSON:
   return callOpenRouter(prompt, 0.48);
 }
 
+async function presentationRewrite(input: {
+  draft: GeneratedPost;
+  topic: string;
+  topicBrief: string;
+  language: string;
+  tone: string;
+  length: string;
+}) {
+  const prompt = `
+You are Fun Gregory's practical Slovenian social media editor.
+
+The user asked for a self/service introduction. Rewrite the draft into a useful post that presents what the studio/agent does.
+
+EXACT USER TOPIC
+${input.topic}
+
+THEME BRIEF
+${input.topicBrief}
+
+REQUESTED LANGUAGE
+${input.language}
+
+REQUESTED TONE
+${input.tone}
+
+REQUESTED LENGTH
+${input.length}
+
+BAD OR ROUGH DRAFT
+Title: ${input.draft.title}
+Post:
+${input.draft.post}
+Hashtags: ${input.draft.hashtags.join(" ")}
+
+RULES
+- Write a practical introduction, not a confession.
+- Explain what the studio/agent does: creates social media text, image prompts/images, and video drafts from a topic.
+- Mention that the user reviews and publishes manually.
+- Make it useful for Facebook/Instagram readers who might want help with posts.
+- Keep it human, clear, confident, and concrete.
+- Do not write about existential identity, fear of not being enough, dinner with friends, hidden anxiety, masks, layers, or searching for the true self.
+- Do not create relationship drama unless the exact topic asks for it.
+- Use correct Slovenian diacritics: š, č, ž.
+- No generic hashtags unless they are genuinely useful.
+
+Return ONLY valid JSON:
+{
+  "title": "",
+  "post": "",
+  "hashtags": []
+}
+`;
+
+  return callOpenRouter(prompt, 0.35);
+}
+
 async function topicFidelityRewrite(input: {
   draft: GeneratedPost;
   topic: string;
@@ -453,6 +540,7 @@ ${topic}
 
 EDITORIAL QUALITY BAR
 - Do not write a safe summary of the topic. Take a clear angle.
+- If the exact topic asks to present yourself or explain what you do, write a practical introduction, not an inner-conflict essay.
 - The post must answer: what is really happening under the surface?
 - Include at least one concrete real-life scene or behaviour, but only if it naturally follows from the exact user topic.
 - Include cause and consequence: what drives it, and what it slowly creates.
@@ -469,6 +557,7 @@ RULES
 - Use short paragraphs.
 - Avoid empty lines that separate every sentence; group related thoughts.
 - Prefer concrete inner conflict over abstract advice.
+- Exception: for self/service presentation topics, prefer clear practical explanation over inner conflict.
 - Use ordinary Slovenian words. Avoid decorative metaphors.
 - Use correct Slovenian diacritics: š, č, ž. Never write ASCII-only Slovenian such as "cas", "clovek", "laz", "poslusam", "bolecina".
 - Do not use formal address or instructional openings such as "vi", "vaš", "vaša partnerica", "razmišljaj", "razmišljajte", "predstavljaj si", or "poglejmo".
@@ -499,6 +588,9 @@ Return ONLY valid JSON.
 
   try {
     const draft = await callOpenRouter(prompt, toneKey === "my-style" ? 0.55 : 0.8);
+    if (isSelfPresentationTopic(topic)) {
+      return presentationRewrite({ draft, topic, topicBrief: brief, language, tone, length });
+    }
     const edited = await editorialRewrite({ draft, topic, topicBrief: brief, language, tone, length });
     const missingItems = missingTopicItems(edited, topic);
     if (missingItems.length > 0) {
