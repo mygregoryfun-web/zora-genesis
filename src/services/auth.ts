@@ -16,7 +16,7 @@ export type StudioSession = {
 export const CREDIT_COSTS = {
   text: 5,
   rewrite: 3,
-  image: 25,
+  image: 15,
   video: 25,
 } as const;
 
