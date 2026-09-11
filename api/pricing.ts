@@ -27,6 +27,30 @@ const tiers = [
   },
 ];
 
+const creditPacks = [
+  {
+    id: "credits-100",
+    name: "100 kreditov",
+    price: 9,
+    description: "Za testiranje tekstov, slik in nekaj kratkih video poskusov.",
+    features: ["100 Studio kreditov", "Tekst: 1 kredit", "Slika: 25 kreditov", "Video: 25 kreditov"],
+  },
+  {
+    id: "credits-300",
+    name: "300 kreditov",
+    price: 24,
+    description: "Za aktivno ustvarjanje objav z več slikami in videi.",
+    features: ["300 Studio kreditov", "Do 12 slik ali videov", "Primerno za FB/Instagram kampanjo", "Brez mesečne obveze"],
+  },
+  {
+    id: "credits-1000",
+    name: "1000 kreditov",
+    price: 69,
+    description: "Za resno video testiranje in več profilov.",
+    features: ["1000 Studio kreditov", "Do 40 slik ali videov", "Najboljše za agencijsko uporabo", "Ročno objavljanje"],
+  },
+];
+
 function escapeHtml(value: unknown) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -47,6 +71,18 @@ function tierCard(tier: (typeof tiers)[number], billingReady: boolean) {
   </article>`;
 }
 
+function creditCard(pack: (typeof creditPacks)[number], billingReady: boolean) {
+  return `<article class="tier">
+    <div>
+      <h2>${escapeHtml(pack.name)}</h2>
+      <p>${escapeHtml(pack.description)}</p>
+    </div>
+    <div class="price"><strong>${pack.price} USDC</strong><span>enkratno</span></div>
+    <ul>${pack.features.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+    <button class="pay" data-plan="${escapeHtml(pack.id)}" data-amount="${pack.price}" ${billingReady ? "" : "disabled"}>Kupi kredite</button>
+  </article>`;
+}
+
 function pricingPage() {
   const receiver = config.billingWalletAddress;
   const billingReady = /^0x[a-fA-F0-9]{40}$/.test(receiver);
@@ -63,7 +99,7 @@ function pricingPage() {
     main{width:min(1180px,calc(100% - 28px));margin:0 auto;padding:22px 0 42px}header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);padding:16px 0;margin-bottom:18px}
     h1{font-size:clamp(32px,5vw,54px);line-height:1;margin:0;letter-spacing:0}h2{font-size:22px;margin:0}p{color:var(--muted);line-height:1.45;margin:8px 0 0}a,button{font:inherit}a{color:var(--green);font-weight:760;text-decoration:none}
     .button,button{min-height:42px;border:1px solid var(--accent);border-radius:8px;padding:0 14px;background:var(--accent);color:#fff;font-weight:780;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.button.secondary{background:var(--paper);color:var(--ink);border-color:var(--line)}button:disabled{opacity:.55;cursor:not-allowed}
-    .tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tier{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px;box-shadow:0 1px 2px rgba(24,21,18,.04)}.price strong{font-size:28px}.price span{color:var(--muted);margin-left:6px}ul{margin:0;padding-left:19px;color:var(--muted);line-height:1.55}.pay{width:100%}
+    .section-head{margin:22px 0 12px}.section-head h2{font-size:18px}.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tier{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px;box-shadow:0 1px 2px rgba(24,21,18,.04)}.price strong{font-size:28px}.price span{color:var(--muted);margin-left:6px}ul{margin:0;padding-left:19px;color:var(--muted);line-height:1.55}.pay{width:100%}
     .notice,.receipt{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px;color:var(--muted)}.notice strong{color:var(--ink)}.warn{border-color:#e5b0a9;background:#fff7f5;color:var(--danger)}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;word-break:break-all;color:var(--ink)}
     .receipt{display:none}.receipt.show{display:block}.actions{display:flex;gap:8px;flex-wrap:wrap}.tiny{font-size:12px;color:var(--muted)}
     @media(max-width:880px){header{flex-direction:column}.tiers{grid-template-columns:1fr}}
@@ -76,7 +112,11 @@ function pricingPage() {
       <div class="actions"><a class="button secondary" href="/studio">Studio</a><a class="button secondary" href="/video">Video</a></div>
     </header>
 
+    <div class="section-head"><h2>Mesečne naročnine</h2><p>Za redno uporabo Studia in storitev za druge.</p></div>
     <section class="tiers">${tiers.map((tier) => tierCard(tier, billingReady)).join("")}</section>
+
+    <div class="section-head"><h2>Video in AI krediti</h2><p>Za uporabnike, ki želijo plačati samo porabo. Video in slika staneta po 25 kreditov, tekst 1 kredit.</p></div>
+    <section class="tiers">${creditPacks.map((pack) => creditCard(pack, billingReady)).join("")}</section>
 
     ${
       billingReady

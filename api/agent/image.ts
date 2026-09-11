@@ -1,4 +1,5 @@
 import { generateImageForPost, type ImageStyle } from "../../src/services/image.js";
+import { CREDIT_COSTS, publicSession, requireCredits } from "../../src/services/auth.js";
 import type { GeneratedPost } from "../../src/types.js";
 
 export const config = {
@@ -22,6 +23,8 @@ export default async function handler(req: any, res: any) {
       res.status(400).json({ ok: false, error: "Missing post text." });
       return;
     }
+    const session = requireCredits(req, res, CREDIT_COSTS.image, "sliko");
+    if (!session) return;
 
     const imageStyle: ImageStyle =
       req.body?.imageStyle === "artwork-cover" || req.body?.imageStyle === "contradictory-art"
@@ -37,6 +40,7 @@ export default async function handler(req: any, res: any) {
 
     res.status(200).json({
       ok: true,
+      session: publicSession(session),
       image: image
         ? {
             prompt: image.prompt,

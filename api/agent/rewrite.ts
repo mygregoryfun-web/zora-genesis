@@ -1,4 +1,5 @@
 import { rewriteSocialPost } from "../../src/services/social-rewrite.js";
+import { CREDIT_COSTS, publicSession, requireCredits } from "../../src/services/auth.js";
 
 export const config = {
   maxDuration: 60,
@@ -16,9 +17,12 @@ export default async function handler(req: any, res: any) {
       res.status(400).json({ ok: false, error: "Missing post text." });
       return;
     }
+    const session = requireCredits(req, res, CREDIT_COSTS.rewrite, "izboljšavo teksta");
+    if (!session) return;
 
     res.status(200).json({
       ok: true,
+      session: publicSession(session),
       post: await rewriteSocialPost({
         title: req.body?.title,
         post,
