@@ -9,6 +9,7 @@ export const config = {
   openRouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
   openAiApiKey: process.env.OPENAI_API_KEY ?? "",
   model: process.env.MODEL ?? "openai/gpt-4o-mini",
+  socialModel: process.env.SOCIAL_MODEL ?? process.env.MODEL ?? "openai/gpt-4o-mini",
   imageModel: process.env.IMAGE_MODEL ?? "gpt-image-1",
   imageProvider: process.env.IMAGE_PROVIDER ?? "openai",
   comfyApiKey: process.env.COMFY_API_KEY ?? "",

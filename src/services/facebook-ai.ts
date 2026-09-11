@@ -95,6 +95,21 @@ function lengthRule(length: string) {
   return "280 to 480 words.";
 }
 
+function forbiddenSlop() {
+  return [
+    "LOW-QUALITY OUTPUT TO AVOID",
+    "- Generic advice that could fit every relationship topic.",
+    "- Safe school-essay structure: introduction, balanced middle, soft conclusion.",
+    "- Empty phrases such as 'pomembno je, da se pogovorimo', 'vsak ima svojo pot', 'v današnjem svetu', 'komunikacija je ključ'.",
+    "- Therapy-sounding paragraphs that diagnose everyone but expose nothing.",
+    "- Motivational endings where everything becomes growth, healing, peace, or self-love.",
+    "- Fake depth: many abstract nouns, no concrete scene.",
+    "- Moralizing from above: 'ženske morajo', 'moški morajo', 'ljudje bi morali'.",
+    "- Clickbait without substance.",
+    "- A text that is merely nice. Nice is not enough.",
+  ].join("\n");
+}
+
 function voiceGuide(tone: string) {
   if (tone !== "my-style") {
     return [
@@ -148,12 +163,98 @@ function voiceGuide(tone: string) {
   ].join("\n");
 }
 
+async function callOpenRouter(prompt: string, temperature: number) {
+  const res = await axios.post(
+    "https://openrouter.ai/api/v1/chat/completions",
+    {
+      model: config.socialModel,
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" },
+      temperature,
+    },
+    {
+      timeout: config.requestTimeoutMs,
+      headers: {
+        Authorization: `Bearer ${config.openRouterApiKey}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  return normalizeGeneratedPost(JSON.parse(res.data.choices[0].message.content));
+}
+
+async function editorialRewrite(input: {
+  draft: GeneratedPost;
+  topic: string;
+  topicBrief: string;
+  language: string;
+  tone: string;
+  length: string;
+}) {
+  const prompt = `
+You are Fun Gregory's strict Slovenian editor.
+
+The first draft below may be too generic. Your job is to make it actually usable for Facebook.
+
+ORIGINAL THEME
+${input.topicBrief}
+
+REQUESTED LANGUAGE
+${input.language}
+
+REQUESTED TONE
+${input.tone}
+
+REQUESTED LENGTH
+${input.length}
+
+${forbiddenSlop()}
+
+FIRST DRAFT
+Title: ${input.draft.title}
+Post:
+${input.draft.post}
+Hashtags: ${input.draft.hashtags.join(" ")}
+
+REWRITE RULES
+- If the draft is shallow, replace it completely.
+- Keep only ideas that feel alive and true.
+- Make the first line sharper and more specific.
+- Add at least two concrete human moments: a sentence not answered, a phone turned down, silence at home, a look, a hidden desire, a pride reaction, a money pressure, a small lie, a body reaction.
+- Name the hidden driver: fear, shame, hunger for attention, wounded pride, boredom, revenge, comparison, need to feel chosen, need to be seen, or fear of losing control.
+- Add consequence: what this slowly does to trust, closeness, self-respect, or peace.
+- Use ordinary Slovenian. No polished essay tone.
+- Keep it tasteful, but do not remove tension.
+- Do not use hashtags inside the post field.
+- Maximum 3 hashtags.
+
+QUALITY CHECK BEFORE YOU RETURN
+The post must pass all five:
+1. It has a clear opinion.
+2. It contains concrete scenes, not just abstract advice.
+3. It exposes a hidden motive or lie.
+4. It does not sound like a generic AI post.
+5. The ending question is uncomfortable enough to invite comments.
+
+Return ONLY valid JSON:
+{
+  "title": "",
+  "post": "",
+  "hashtags": []
+}
+`;
+
+  return callOpenRouter(prompt, 0.48);
+}
+
 export async function generateFacebookPost(data: GenerateFacebookPostInput): Promise<GeneratedPost> {
   const topic = data.topic?.trim() || config.facebookTopic;
   const language = languageName((data.language ?? "si").toLowerCase());
   const toneKey = (data.tone ?? "my-style").toLowerCase();
   const tone = toneName(toneKey);
   const length = lengthRule((data.length ?? "medium").toLowerCase());
+  const brief = topicBrief(topic);
 
   if (config.skipAI) {
     return {
@@ -172,12 +273,14 @@ export async function generateFacebookPost(data: GenerateFacebookPostInput): Pro
   const prompt = `
 You are writing for Fun Gregory's Facebook page in ${language}.
 
-${topicBrief(topic)}
+${brief}
 
 Requested tone: ${tone}.
 Requested length: ${length}
 
 ${voiceGuide(toneKey)}
+
+${forbiddenSlop()}
 
 RECENT FACEBOOK MEMORY
 ${JSON.stringify(data.memory.slice(0, 12), null, 2)}
@@ -193,6 +296,8 @@ EDITORIAL QUALITY BAR
 - Use a few sharp contrast lines when useful.
 - Make the reader feel that the text understands something real.
 - If the topic is controversial, keep it tasteful and human, but do not remove the tension.
+- Write as if the reader might disagree in the comments. Give them something specific to react to.
+- Do not solve the topic too quickly. Let the contradiction stay alive.
 
 RULES
 - Write in ${language}.
@@ -223,25 +328,8 @@ Return ONLY valid JSON.
 `;
 
   try {
-    const res = await axios.post(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        model: config.model,
-        messages: [{ role: "user", content: prompt }],
-        response_format: { type: "json_object" },
-        temperature: toneKey === "my-style" ? 0.55 : 0.8,
-      },
-      {
-        timeout: config.requestTimeoutMs,
-        headers: {
-          Authorization: `Bearer ${config.openRouterApiKey}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const content = res.data.choices[0].message.content;
-    return normalizeGeneratedPost(JSON.parse(content));
+    const draft = await callOpenRouter(prompt, toneKey === "my-style" ? 0.55 : 0.8);
+    return await editorialRewrite({ draft, topic, topicBrief: brief, language, tone, length });
   } catch (error: any) {
     console.error("Facebook post generation failed:");
     console.error(error.response?.data || error.message);
