@@ -12,6 +12,8 @@ const actionPrompts: Record<string, string> = {
   shorter: "Make it shorter while keeping the strongest idea.",
   longer: "Make it longer with more rhythm, contrast, and a stronger ending question.",
   question: "Keep the post mostly intact but improve the final question so it invites comments.",
+  "auto-fix":
+    "Fix the post automatically. Make it follow the user's request more tightly, remove generic AI phrasing, make it useful and concrete, keep Slovenian diacritics, and preserve the intended channel.",
 };
 
 function languageName(language: string) {
