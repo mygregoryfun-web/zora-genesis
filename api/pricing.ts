@@ -100,9 +100,10 @@ function pricingPage() {
     h1{font-size:clamp(32px,5vw,54px);line-height:1;margin:0;letter-spacing:0}h2{font-size:22px;margin:0}p{color:var(--muted);line-height:1.45;margin:8px 0 0}a,button{font:inherit}a{color:var(--green);font-weight:760;text-decoration:none}
     .button,button{min-height:42px;border:1px solid var(--accent);border-radius:8px;padding:0 14px;background:var(--accent);color:#fff;font-weight:780;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.button.secondary{background:var(--paper);color:var(--ink);border-color:var(--line)}button:disabled{opacity:.55;cursor:not-allowed}
     .section-head{margin:22px 0 12px}.section-head h2{font-size:18px}.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tier{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px;box-shadow:0 1px 2px rgba(24,21,18,.04)}.price strong{font-size:28px}.price span{color:var(--muted);margin-left:6px}ul{margin:0;padding-left:19px;color:var(--muted);line-height:1.55}.pay{width:100%}
+    .wallet-guide{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px}.wallet-guide h2{font-size:20px;margin:0 0 8px}.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}.step{border:1px solid var(--line);border-radius:8px;background:#fff;padding:12px}.step strong{display:block;color:var(--ink);margin-bottom:5px}.safe{border-color:#b7e4d3;background:#f4fbf7;color:#1e6f62}.danger-note{border-color:#e5b0a9;background:#fff7f5;color:var(--danger)}
     .notice,.receipt{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px;color:var(--muted)}.notice strong{color:var(--ink)}.warn{border-color:#e5b0a9;background:#fff7f5;color:var(--danger)}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;word-break:break-all;color:var(--ink)}
     .receipt{display:none}.receipt.show{display:block}.actions{display:flex;gap:8px;flex-wrap:wrap}.tiny{font-size:12px;color:var(--muted)}
-    @media(max-width:880px){header{flex-direction:column}.tiers{grid-template-columns:1fr}}
+    @media(max-width:880px){header{flex-direction:column}.tiers,.steps{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -117,6 +118,19 @@ function pricingPage() {
 
     <div class="section-head"><h2>Video in AI krediti</h2><p>Za uporabnike, ki želijo plačati samo porabo. Tekst stane 5 kreditov, izboljšava 3, video in slika pa po 25 kreditov.</p></div>
     <section class="tiers">${creditPacks.map((pack) => creditCard(pack, billingReady)).join("")}</section>
+
+    <section class="wallet-guide">
+      <h2>Kako plačaš z digitalno denarnico?</h2>
+      <p>Za plačilo potrebuješ denarnico, ki podpira Base omrežje, na primer MetaMask, Coinbase Wallet ali Rabby. Plačilo poteka v USDC na Base omrežju.</p>
+      <div class="steps">
+        <div class="step"><strong>1. Odpri denarnico</strong><span>Namesti ali odpri MetaMask, Coinbase Wallet ali Rabby v istem brskalniku.</span></div>
+        <div class="step"><strong>2. Izberi Base</strong><span>Če nisi na Base omrežju, te bo stran prosila za preklop. Preklop potrdi v denarnici.</span></div>
+        <div class="step"><strong>3. Imej USDC na Base</strong><span>Za plačilo rabiš USDC na Base in malo ETH na Base za omrežno provizijo.</span></div>
+        <div class="step"><strong>4. Potrdi plačilo</strong><span>Klikni plačilni gumb, preveri znesek v denarnici in potrdi transakcijo.</span></div>
+      </div>
+      <div class="notice safe"><strong>Varno:</strong> Studio nikoli ne zahteva seed phrase, private keya ali dovoljenja za upravljanje vseh sredstev. Potrdiš samo konkretno USDC transakcijo.</div>
+      <div class="notice danger-note"><strong>Pazi:</strong> če stran ali denarnica kadarkoli zahteva seed phrase ali private key, prekini. Tega se nikoli ne vpisuje v nobeno spletno stran.</div>
+    </section>
 
     ${
       billingReady
