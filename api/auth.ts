@@ -8,6 +8,7 @@ import {
   publicSession,
   saveDraftForSession,
   setSessionCookie,
+  storageMode,
 } from "../src/services/auth.js";
 
 export const config = { maxDuration: 10 };
@@ -23,13 +24,17 @@ export default async function handler(req: any, res: any) {
     }
 
     const rows = await listUsers();
+    const storage = storageMode();
+    const storageNotice = storage === "supabase"
+      ? `<section class="card ok"><strong>Shramba je aktivna:</strong> uporabniki, krediti in knjižnica objav se shranjujejo v Supabase bazo.</section>`
+      : `<section class="card warn"><strong>Pomembno:</strong> trenutna shramba je primerna za MVP in testiranje. Na Vercel Hobby brez prave baze datoteka v <code>/tmp</code> ni trajna garancija proti ponovni registraciji po cold-startu ali redeployu. Za oglase rabimo Supabase, Neon ali Vercel KV.</section>`;
     res.setHeader("content-type", "text/html; charset=utf-8");
     res.status(200).send(`<!doctype html>
 <html lang="sl"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Studio Admin</title><style>
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:#f6f7f9;color:#15171a}main{width:min(1120px,calc(100% - 24px));margin:0 auto;padding:22px 0}header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}h1{margin:0;font-size:30px}a{color:#147a6c;font-weight:750;text-decoration:none}.card{background:#fff;border:1px solid #d8dee8;border-radius:8px;padding:14px;margin-bottom:12px}.warn{border-color:#f2c7c3;background:#fff7f5;color:#9f2d20}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #d8dee8;border-radius:8px;overflow:hidden}th,td{text-align:left;border-bottom:1px solid #eef2f6;padding:10px;font-size:14px}th{background:#f8fafc;color:#475467}code{font-family:ui-monospace,Consolas,monospace}.num{text-align:right}.muted{color:#667085}</style></head>
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:#f6f7f9;color:#15171a}main{width:min(1120px,calc(100% - 24px));margin:0 auto;padding:22px 0}header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}h1{margin:0;font-size:30px}a{color:#147a6c;font-weight:750;text-decoration:none}.card{background:#fff;border:1px solid #d8dee8;border-radius:8px;padding:14px;margin-bottom:12px}.warn{border-color:#f2c7c3;background:#fff7f5;color:#9f2d20}.ok{border-color:#b7e4d3;background:#f3fcf8;color:#146c43}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #d8dee8;border-radius:8px;overflow:hidden}th,td{text-align:left;border-bottom:1px solid #eef2f6;padding:10px;font-size:14px}th{background:#f8fafc;color:#475467}code{font-family:ui-monospace,Consolas,monospace}.num{text-align:right}.muted{color:#667085}</style></head>
 <body><main><header><div><h1>Studio Admin</h1><p class="muted">Pregled prijav in kreditov.</p></div><a href="/studio">Studio</a></header>
-<section class="card warn"><strong>Pomembno:</strong> trenutna shramba je primerna za MVP in testiranje. Na Vercel Hobby brez prave baze datoteka v <code>/tmp</code> ni trajna garancija proti ponovni registraciji po cold-startu ali redeployu. Za oglase rabimo Supabase, Neon ali Vercel KV.</section>
+${storageNotice}
 <section class="card"><strong>Uporabniki:</strong> ${rows.length}</section>
 <table><thead><tr><th>E-mail</th><th>Vloga</th><th class="num">Krediti</th><th class="num">Porabljeno</th><th class="num">Prijave</th><th>Zadnja prijava</th><th>Posodobljeno</th></tr></thead>
 <tbody>${rows.map((user) => `<tr><td>${escapeHtml(user.email)}</td><td>${escapeHtml(user.role)}</td><td class="num">${user.credits}</td><td class="num">${user.totalSpent}</td><td class="num">${user.loginCount}</td><td>${escapeHtml(user.lastLoginAt)}</td><td>${escapeHtml(user.updatedAt)}</td></tr>`).join("") || `<tr><td colspan="7" class="muted">Ni še prijavljenih uporabnikov v trenutni shrambi.</td></tr>`}</tbody></table>

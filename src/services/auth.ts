@@ -64,6 +64,10 @@ function hasSupabase() {
   return Boolean(config.supabaseUrl && config.supabaseServiceRoleKey);
 }
 
+export function storageMode() {
+  return hasSupabase() ? "supabase" : "temporary";
+}
+
 function supabaseEndpoint(table: string, query = "") {
   return `${config.supabaseUrl.replace(/\/$/, "")}/rest/v1/${table}${query}`;
 }
