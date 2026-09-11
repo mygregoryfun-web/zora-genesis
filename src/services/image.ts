@@ -10,7 +10,7 @@ export type GeneratedImage = {
   buffer: Buffer;
 };
 
-export type ImageStyle = "social-editorial" | "zora-cover";
+export type ImageStyle = "social-editorial" | "artwork-cover" | "contradictory-art";
 
 function buildPrompt(post: GeneratedPost, imageStyle: ImageStyle = "social-editorial") {
   const socialChannels = ["facebook", "instagram", "x"];
@@ -30,13 +30,28 @@ function buildPrompt(post: GeneratedPost, imageStyle: ImageStyle = "social-edito
     ].join("\n");
   }
 
+  if (imageStyle === "contradictory-art") {
+    return [
+      `Create an original photorealistic editorial image for ${config.creatorName}.`,
+      "Subject: derive the actual subject from the post title and post context.",
+      `Post title: ${post.title}`,
+      `Post context: ${post.post}`,
+      "Core concept: show a visual contradiction or inner conflict from the post, such as attraction versus consequence, beauty versus distance, pride versus truth, money versus captivity, freedom versus control, elegance versus temptation.",
+      "Style: sophisticated editorial art photography, cinematic natural light, subtle symbolic tension, emotionally intelligent, no text, no logos, no watermarks.",
+      "Composition: visually striking but tasteful, one clear human-centered scene, with contrast in posture, light, distance, reflection, or environment.",
+      "Safety: adult subjects only, fully clothed, tasteful, elegant, no explicit sexuality, no fetish framing, no humiliating depiction.",
+      "Avoid: technology-finance, trading, and market-interface imagery.",
+    ].join("\n");
+  }
+
   return [
     `Create an original photorealistic editorial image for ${config.creatorName}.`,
-    "Subject: on-chain creator culture, Base, Zora, Ethereum, NFTs, and digital markets.",
+    "Subject: derive the actual subject from the post title and post context. Do not include technology-finance, trading, or market-interface imagery.",
     `Post title: ${post.title}`,
     `Post context: ${post.post}`,
-    "Style: sophisticated crypto-native photography, cinematic natural light, no text, no logos, no watermarks.",
-    "Composition: visually interesting, human-curated, suitable as a Zora artwork cover.",
+    "Style: sophisticated editorial photography, cinematic natural light, premium creator-artwork feel, no text, no logos, no watermarks.",
+    "Composition: visually interesting, human-curated, suitable as a social artwork cover while staying faithful to the post subject.",
+    "Safety: adult subjects only, fully clothed, tasteful, elegant, no explicit sexuality, no fetish framing, no humiliating depiction.",
   ].join("\n");
 }
 

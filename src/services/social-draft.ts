@@ -33,7 +33,10 @@ export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
   const language = input.language?.trim().toLowerCase() || "si";
   const tone = input.tone?.trim().toLowerCase() || "my-style";
   const length = input.length?.trim().toLowerCase() || "medium";
-  const imageStyle = input.imageStyle === "zora-cover" ? "zora-cover" : "social-editorial";
+  const imageStyle =
+    input.imageStyle === "artwork-cover" || input.imageStyle === "contradictory-art"
+      ? input.imageStyle
+      : "social-editorial";
   const post = await generateFacebookPost({ memory, topic, language, tone, length }).catch((err) => {
     const reason = err instanceof Error ? err.message : String(err);
     console.error("Facebook draft text generation failed, using fallback:", reason);

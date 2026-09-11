@@ -4,7 +4,7 @@ function studioPage() {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Zora Genesis Studio</title>
+  <title>Content Studio</title>
   <style>
     :root{color-scheme:light;--bg:#f5f1eb;--paper:#fffdf9;--ink:#181512;--muted:#6d675f;--line:#ddd3c7;--accent:#8d4b34;--green:#1e6f62;--blue:#285e9c;--soft:#eee5da;--warn:#9b5f00}
     *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
@@ -37,7 +37,7 @@ function studioPage() {
           <label>Dolzina<select id="length"><option value="medium">Srednja</option><option value="short">Kratka</option><option value="long">Daljsa</option></select></label>
         </div>
         <label>Ton<select id="tone"><option value="my-style">Moj slog</option><option value="balanced">Topel + direkten</option><option value="deep">Globok</option><option value="sharp">Bolj oster</option><option value="soft">Nezen</option><option value="story">Kot zgodba</option></select></label>
-        <label>Slog slike<select id="imageStyle"><option value="social-editorial">Social editorial</option><option value="zora-cover">Zora artwork cover</option></select></label>
+        <label>Slog slike<select id="imageStyle"><option value="social-editorial">Social editorial</option><option value="artwork-cover">Artwork cover</option><option value="contradictory-art">Kontradiktorni art</option></select></label>
         <label>Dodatna navodila<textarea id="notes" class="prompt" placeholder="Npr. naj bo bolj za mojo FB skupino, brez moraliziranja, z mocnim zacetkom..."></textarea></label>
         <div class="tools"><button id="addTopic" class="secondary" type="button">Dodaj tema</button><button id="clear" class="secondary" type="button">Pocisti</button></div>
         <div class="queue" id="queue"></div>

@@ -155,7 +155,7 @@ RULES
 - Use short paragraphs.
 - Prefer concrete inner conflict over abstract advice.
 - Use ordinary Slovenian words. Avoid decorative metaphors.
-- Do not mention AI, crypto, Zora, Base, or automation.
+- Do not mention AI, Web3 projects, digital assets, or automation.
 - Do not claim personal events happened unless written generally.
 - No cliches like "cas zaceli vse rane", "vse se zgodi z razlogom", "postavi sebe na prvo mesto", or "zasluzis si boljse".
 - Do not use strange poetic phrases like "kompas srca", "spekter senc", "salto mortale", "vibracija", "energija", "dusevna lahkotnost", "praznina v srcu", or "kletka zelje".
