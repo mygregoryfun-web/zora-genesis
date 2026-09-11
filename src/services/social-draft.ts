@@ -31,7 +31,7 @@ export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
   const memory = loadFacebookPosts();
   const topic = input.topic?.trim();
   const language = input.language?.trim().toLowerCase() || "si";
-  const tone = input.tone?.trim().toLowerCase() || "balanced";
+  const tone = input.tone?.trim().toLowerCase() || "my-style";
   const length = input.length?.trim().toLowerCase() || "medium";
   const imageStyle = input.imageStyle === "zora-cover" ? "zora-cover" : "social-editorial";
   const post = await generateFacebookPost({ memory, topic, language, tone, length }).catch((err) => {

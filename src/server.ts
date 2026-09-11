@@ -1091,7 +1091,7 @@ const server = http.createServer(async (req, res) => {
       const body = await readJsonBody<{ topic?: string; language?: string; tone?: string; length?: string; imageStyle?: "social-editorial" | "zora-cover" }>(req).catch(() => ({
         topic: "",
         language: "si",
-        tone: "balanced",
+        tone: "my-style",
         length: "medium",
         imageStyle: "social-editorial",
       }));

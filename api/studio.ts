@@ -36,7 +36,7 @@ function studioPage() {
           <label>Jezik<select id="language"><option value="si">SI</option><option value="eng">ENG</option><option value="esp">ESP</option></select></label>
           <label>Dolzina<select id="length"><option value="medium">Srednja</option><option value="short">Kratka</option><option value="long">Daljsa</option></select></label>
         </div>
-        <label>Ton<select id="tone"><option value="balanced">Topel + direkten</option><option value="deep">Globok</option><option value="sharp">Bolj oster</option><option value="soft">Nezen</option><option value="story">Kot zgodba</option></select></label>
+        <label>Ton<select id="tone"><option value="my-style">Moj slog</option><option value="balanced">Topel + direkten</option><option value="deep">Globok</option><option value="sharp">Bolj oster</option><option value="soft">Nezen</option><option value="story">Kot zgodba</option></select></label>
         <label>Slog slike<select id="imageStyle"><option value="social-editorial">Social editorial</option><option value="zora-cover">Zora artwork cover</option></select></label>
         <label>Dodatna navodila<textarea id="notes" class="prompt" placeholder="Npr. naj bo bolj za mojo FB skupino, brez moraliziranja, z mocnim zacetkom..."></textarea></label>
         <div class="tools"><button id="addTopic" class="secondary" type="button">Dodaj tema</button><button id="clear" class="secondary" type="button">Pocisti</button></div>
