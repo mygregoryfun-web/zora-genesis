@@ -12,6 +12,7 @@ import {
   updateUserForAdmin,
 } from "../src/services/auth.js";
 import { getAdminSystemStatus } from "../src/services/admin-dashboard.js";
+import { claimPaymentForSession } from "../src/services/billing.js";
 
 export const config = { maxDuration: 10 };
 
@@ -136,6 +137,39 @@ function renderSystem(data){
       ok: true,
       user: await updateUserForAdmin(req.body ?? {}),
     });
+    return;
+  }
+
+  if (req.method === "POST" && action === "billing-claim") {
+    const session = getSession(req);
+    if (!session) {
+      res.status(401).json({ ok: false, error: "Najprej se prijavi v Studio." });
+      return;
+    }
+
+    try {
+      const result = await claimPaymentForSession(session, req.body ?? {});
+      const updatedSession = {
+        email: result.user.email,
+        role: result.user.role,
+        credits: result.user.credits,
+        createdAt: result.user.createdAt,
+        updatedAt: result.user.updatedAt,
+      };
+      setSessionCookie(res, updatedSession);
+      res.status(200).json({
+        ok: true,
+        addedCredits: result.addedCredits,
+        product: result.product,
+        payment: result.payment,
+        session: publicSession(updatedSession),
+      });
+    } catch (error) {
+      res.status(400).json({
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
     return;
   }
 

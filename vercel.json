@@ -22,10 +22,6 @@
       "use": "@vercel/node"
     },
     {
-      "src": "api/billing.ts",
-      "use": "@vercel/node"
-    },
-    {
       "src": "api/auth.ts",
       "use": "@vercel/node"
     },
@@ -81,7 +77,7 @@
     },
     {
       "src": "/billing/claim",
-      "dest": "/api/billing.ts"
+      "dest": "/api/auth.ts?action=billing-claim"
     },
     {
       "src": "/auth/login",
@@ -161,7 +157,7 @@
     },
     {
       "src": "/api/billing/claim",
-      "dest": "/api/billing.ts"
+      "dest": "/api/auth.ts?action=billing-claim"
     },
     {
       "src": "/api/auth/login",
