@@ -92,6 +92,10 @@
       "dest": "/api/auth.ts?action=admin"
     },
     {
+      "src": "/admin/users/update",
+      "dest": "/api/auth.ts?action=admin-user-update"
+    },
+    {
       "src": "/drafts/list",
       "dest": "/api/auth.ts?action=drafts"
     },
@@ -158,6 +162,10 @@
     {
       "src": "/api/admin",
       "dest": "/api/auth.ts?action=admin"
+    },
+    {
+      "src": "/api/admin/users/update",
+      "dest": "/api/auth.ts?action=admin-user-update"
     },
     {
       "src": "/api/drafts/list",

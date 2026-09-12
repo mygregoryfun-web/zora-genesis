@@ -196,6 +196,55 @@ export async function listUsers() {
   return Object.values(readStore().users).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
+export async function updateUserForAdmin(input: {
+  email?: unknown;
+  role?: unknown;
+  credits?: unknown;
+}) {
+  const email = normalizeEmail(input.email);
+  if (!isValidEmail(email)) {
+    throw new Error("Vpiši veljaven e-mail uporabnika.");
+  }
+
+  const role: UserRole = input.role === "owner" ? "owner" : "user";
+  const credits = Math.max(0, Math.floor(Number(input.credits ?? 0)));
+  if (!Number.isFinite(credits)) {
+    throw new Error("Krediti morajo biti število.");
+  }
+
+  const now = new Date().toISOString();
+
+  if (hasSupabase()) {
+    const existing = await getSupabaseUser(email);
+    if (!existing) {
+      throw new Error("Uporabnik s tem e-mailom še ne obstaja.");
+    }
+
+    return upsertSupabaseUser({
+      ...existing,
+      role,
+      credits,
+      updatedAt: now,
+    });
+  }
+
+  const store = readStore();
+  const existing = store.users[email];
+  if (!existing) {
+    throw new Error("Uporabnik s tem e-mailom še ne obstaja.");
+  }
+
+  const updated: UserRecord = {
+    ...existing,
+    role,
+    credits,
+    updatedAt: now,
+  };
+  store.users[email] = updated;
+  writeStore(store);
+  return updated;
+}
+
 export function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
