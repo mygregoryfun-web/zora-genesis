@@ -76,6 +76,10 @@
       "dest": "/api/pricing.ts"
     },
     {
+      "src": "/billing/claim",
+      "dest": "/api/billing.ts"
+    },
+    {
       "src": "/auth/login",
       "dest": "/api/auth.ts?action=login"
     },
@@ -150,6 +154,10 @@
     {
       "src": "/api/pricing",
       "dest": "/api/pricing.ts"
+    },
+    {
+      "src": "/api/billing/claim",
+      "dest": "/api/billing.ts"
     },
     {
       "src": "/api/auth/login",

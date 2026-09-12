@@ -23,5 +23,21 @@ create table if not exists public.studio_drafts (
 create index if not exists studio_drafts_email_updated_idx
   on public.studio_drafts(email, updated_at desc);
 
+create table if not exists public.studio_payments (
+  tx_hash text primary key,
+  email text not null references public.studio_users(email) on delete cascade,
+  product_id text not null,
+  amount_usdc numeric not null,
+  credits integer not null,
+  from_address text not null,
+  to_address text not null,
+  status text not null default 'confirmed',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists studio_payments_email_created_idx
+  on public.studio_payments(email, created_at desc);
+
 alter table public.studio_users enable row level security;
 alter table public.studio_drafts enable row level security;
+alter table public.studio_payments enable row level security;

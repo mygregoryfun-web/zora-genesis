@@ -1,14 +1,17 @@
+import { billingProductsPublic, USDC_BASE_ADDRESS } from "../src/services/billing.js";
 import { config } from "../src/config.js";
 
-const usdcBaseAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+const usdcBaseAddress = USDC_BASE_ADDRESS;
 const baseChainId = "0x2105";
 const baseChainIdDecimal = "8453";
+const products = billingProductsPublic();
 
 const tiers = [
   {
     id: "creator",
     name: "Creator",
     price: 19,
+    credits: 250,
     description: "Za posameznike, ki želijo redne objave za FB, Instagram in X.",
     features: ["Content Studio", "Moj slog", "Tekst + slika", "Ročno objavljanje", "Osnovni video workflow"],
   },
@@ -16,6 +19,7 @@ const tiers = [
     id: "studio",
     name: "Studio",
     price: 49,
+    credits: 800,
     description: "Za ustvarjalce, strani in manjse skupine, ki rabijo vec idej in boljsi workflow.",
     features: ["Vse iz Creator", "Vec stilov slik", "Kontradiktorni art", "Video osnutki", "Prioritetne izboljsave promptov"],
   },
@@ -23,6 +27,7 @@ const tiers = [
     id: "agency",
     name: "Agency",
     price: 149,
+    credits: 3000,
     description: "Za uporabo z vec profili ali za storitev, ki jo prodajas naprej.",
     features: ["Vse iz Studio", "Vec brand glasov", "White-label priprava", "Mesecni setup support", "Rocni pregled workflowa"],
   },
@@ -33,6 +38,7 @@ const creditPacks = [
     id: "credits-100",
     name: "100 kreditov",
     price: 9,
+    credits: 100,
     description: "Za testiranje tekstov, slik in nekaj kratkih video poskusov.",
     features: ["100 Studio kreditov", "Tekst: 5 kreditov", "Izboljšava: 3 krediti", "Slika: 15 kreditov", "Video: 25 kreditov"],
   },
@@ -40,6 +46,7 @@ const creditPacks = [
     id: "credits-300",
     name: "300 kreditov",
     price: 24,
+    credits: 300,
     description: "Za aktivno ustvarjanje objav z več slikami in videi.",
     features: ["300 Studio kreditov", "Do 12 slik ali videov", "Primerno za FB/Instagram kampanjo", "Brez mesečne obveze"],
   },
@@ -47,6 +54,7 @@ const creditPacks = [
     id: "credits-1000",
     name: "1000 kreditov",
     price: 69,
+    credits: 1000,
     description: "Za resno video testiranje in več profilov.",
     features: ["1000 Studio kreditov", "Do 40 slik ali videov", "Najboljše za agencijsko uporabo", "Ročno objavljanje"],
   },
@@ -66,7 +74,7 @@ function tierCard(tier: (typeof tiers)[number], billingReady: boolean) {
       <h2>${escapeHtml(tier.name)}</h2>
       <p>${escapeHtml(tier.description)}</p>
     </div>
-    <div class="price"><strong>${tier.price} USDC</strong><span>/ mesec</span></div>
+    <div class="price"><strong>${tier.price} USDC</strong><span>/ mesec</span><em>${tier.credits} kreditov</em></div>
     <ul>${tier.features.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
     <div class="pay-row">
       <button class="pay" data-plan="${escapeHtml(tier.id)}" data-label="${escapeHtml(tier.name)}" data-amount="${tier.price}" ${billingReady ? "" : "disabled"}>Plačaj v brskalniku</button>
@@ -81,7 +89,7 @@ function creditCard(pack: (typeof creditPacks)[number], billingReady: boolean) {
       <h2>${escapeHtml(pack.name)}</h2>
       <p>${escapeHtml(pack.description)}</p>
     </div>
-    <div class="price"><strong>${pack.price} USDC</strong><span>enkratno</span></div>
+    <div class="price"><strong>${pack.price} USDC</strong><span>enkratno</span><em>${pack.credits} kreditov</em></div>
     <ul>${pack.features.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
     <div class="pay-row">
       <button class="pay" data-plan="${escapeHtml(pack.id)}" data-label="${escapeHtml(pack.name)}" data-amount="${pack.price}" ${billingReady ? "" : "disabled"}>Plačaj v brskalniku</button>
@@ -106,11 +114,11 @@ function pricingPage() {
     main{width:min(1180px,calc(100% - 28px));margin:0 auto;padding:22px 0 42px}header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);padding:16px 0;margin-bottom:18px}
     h1{font-size:clamp(32px,5vw,54px);line-height:1;margin:0;letter-spacing:0}h2{font-size:22px;margin:0}p{color:var(--muted);line-height:1.45;margin:8px 0 0}a,button{font:inherit}a{color:var(--green);font-weight:760;text-decoration:none}
     .button,button{min-height:42px;border:1px solid var(--accent);border-radius:8px;padding:0 14px;background:var(--accent);color:#fff;font-weight:780;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.button.secondary{background:var(--paper);color:var(--ink);border-color:var(--line)}button:disabled{opacity:.55;cursor:not-allowed}
-    .section-head{margin:22px 0 12px}.section-head h2{font-size:18px}.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tier{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px;box-shadow:0 1px 2px rgba(24,21,18,.04)}.price strong{font-size:28px}.price span{color:var(--muted);margin-left:6px}ul{margin:0;padding-left:19px;color:var(--muted);line-height:1.55}.pay-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pay,.qr-pay{width:100%}
+    .section-head{margin:22px 0 12px}.section-head h2{font-size:18px}.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tier{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px;box-shadow:0 1px 2px rgba(24,21,18,.04)}.price strong{font-size:28px}.price span{color:var(--muted);margin-left:6px}.price em{display:block;font-style:normal;color:var(--green);font-weight:780;margin-top:4px}ul{margin:0;padding-left:19px;color:var(--muted);line-height:1.55}.pay-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pay,.qr-pay{width:100%}
     .wallet-guide{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px}.wallet-guide h2{font-size:20px;margin:0 0 8px}.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}.step{border:1px solid var(--line);border-radius:8px;background:#fff;padding:12px}.step strong{display:block;color:var(--ink);margin-bottom:5px}.safe{border-color:#b7e4d3;background:#f4fbf7;color:#1e6f62}.danger-note{border-color:#e5b0a9;background:#fff7f5;color:var(--danger)}
     .notice,.receipt{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px;color:var(--muted)}.notice strong{color:var(--ink)}.warn{border-color:#e5b0a9;background:#fff7f5;color:var(--danger)}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;word-break:break-all;color:var(--ink)}
-    .receipt{display:none}.receipt.show{display:block}.qr-panel{display:none;margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px}.qr-panel.show{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:center}.qr-frame{width:220px;height:220px;border:1px solid var(--line);border-radius:8px;background:#fff;display:grid;place-items:center}.qr-frame img{width:200px;height:200px}.qr-details{display:grid;gap:8px}.qr-details h2{font-size:20px}.wallet-link{width:max-content}.actions{display:flex;gap:8px;flex-wrap:wrap}.tiny{font-size:12px;color:var(--muted)}
-    @media(max-width:880px){header{flex-direction:column}.tiers,.steps,.qr-panel.show{grid-template-columns:1fr}.qr-frame{width:100%;height:auto;aspect-ratio:1;max-width:260px}.qr-frame img{width:min(220px,86vw);height:min(220px,86vw)}.pay-row{grid-template-columns:1fr}}
+    .receipt{display:none}.receipt.show{display:block}.claim{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px}.claim-grid{display:grid;grid-template-columns:180px minmax(0,1fr) auto;gap:10px;align-items:end}.claim label{display:grid;gap:5px;color:var(--muted);font-size:13px;font-weight:760}.claim input,.claim select{min-height:42px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#fff}.qr-panel{display:none;margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px}.qr-panel.show{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:center}.qr-frame{width:220px;height:220px;border:1px solid var(--line);border-radius:8px;background:#fff;display:grid;place-items:center}.qr-frame img{width:200px;height:200px}.qr-details{display:grid;gap:8px}.qr-details h2{font-size:20px}.wallet-link{width:max-content}.actions{display:flex;gap:8px;flex-wrap:wrap}.tiny{font-size:12px;color:var(--muted)}
+    @media(max-width:880px){header{flex-direction:column}.tiers,.steps,.qr-panel.show,.claim-grid{grid-template-columns:1fr}.qr-frame{width:100%;height:auto;aspect-ratio:1;max-width:260px}.qr-frame img{width:min(220px,86vw);height:min(220px,86vw)}.pay-row{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -155,6 +163,17 @@ function pricingPage() {
       </div>
     </div>
 
+    <section class="claim">
+      <h2>Potrdi plačilo in dodaj kredite</h2>
+      <p>Po plačilu prilepi transaction hash. Sistem preveri USDC transfer na Base in kredite doda tvojemu prijavljenemu računu.</p>
+      <div class="claim-grid">
+        <label>Paket<select id="claimProduct">${products.map((product) => `<option value="${escapeHtml(product.id)}">${escapeHtml(product.name)} - ${product.priceUsdc} USDC / ${product.credits} kreditov</option>`).join("")}</select></label>
+        <label>Transaction hash<input id="claimTx" placeholder="0x..." /></label>
+        <button id="claimPayment" type="button">Potrdi plačilo</button>
+      </div>
+      <p class="tiny" id="claimStatus">Najprej moraš biti prijavljen v Studiu z e-mailom, potem lahko potrdiš plačilo.</p>
+    </section>
+
     <div class="receipt" id="receipt">
       <strong>Plačilo poslano.</strong>
       <p>Transaction hash:</p>
@@ -176,6 +195,10 @@ function pricingPage() {
     const qrText = document.getElementById("qrText");
     const walletUri = document.getElementById("walletUri");
     const walletLink = document.getElementById("walletLink");
+    const claimProduct = document.getElementById("claimProduct");
+    const claimTx = document.getElementById("claimTx");
+    const claimStatus = document.getElementById("claimStatus");
+    const claimPayment = document.getElementById("claimPayment");
 
     function pad64(value) {
       return value.toLowerCase().replace(/^0x/, "").padStart(64, "0");
@@ -209,6 +232,26 @@ function pricingPage() {
       qrImage.src = "https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=" + encodeURIComponent(uri);
       qrPanel.classList.add("show");
       qrPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    async function claim() {
+      claimPayment.disabled = true;
+      claimStatus.textContent = "Preverjam transakcijo na Base...";
+      try {
+        const response = await fetch("/billing/claim", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: claimProduct.value, txHash: claimTx.value.trim() }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || "Plačila ni bilo mogoče potrditi.");
+        claimStatus.textContent = "Plačilo potrjeno. Dodano: " + data.addedCredits + " kreditov. Novo stanje: " + data.session.credits + " kreditov.";
+        claimTx.value = "";
+      } catch (error) {
+        claimStatus.textContent = error instanceof Error ? error.message : String(error);
+      } finally {
+        claimPayment.disabled = false;
+      }
     }
 
     async function ensureBase(ethereum) {
@@ -267,6 +310,7 @@ function pricingPage() {
 
     document.querySelectorAll(".pay").forEach((button) => button.addEventListener("click", () => pay(button)));
     document.querySelectorAll(".qr-pay").forEach((button) => button.addEventListener("click", () => renderQr(button)));
+    claimPayment.addEventListener("click", claim);
   </script>
 </body>
 </html>`;

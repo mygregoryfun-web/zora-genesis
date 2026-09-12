@@ -245,6 +245,48 @@ export async function updateUserForAdmin(input: {
   return updated;
 }
 
+export async function addCreditsToUser(emailInput: unknown, creditsInput: unknown) {
+  const email = normalizeEmail(emailInput);
+  if (!isValidEmail(email)) {
+    throw new Error("Vpiši veljaven e-mail uporabnika.");
+  }
+
+  const addedCredits = Math.max(0, Math.floor(Number(creditsInput ?? 0)));
+  if (!Number.isFinite(addedCredits) || addedCredits <= 0) {
+    throw new Error("Krediti morajo biti pozitivno število.");
+  }
+
+  const now = new Date().toISOString();
+
+  if (hasSupabase()) {
+    const existing = await getSupabaseUser(email);
+    if (!existing) {
+      throw new Error("Uporabnik s tem e-mailom še ne obstaja.");
+    }
+
+    return upsertSupabaseUser({
+      ...existing,
+      credits: existing.credits + addedCredits,
+      updatedAt: now,
+    });
+  }
+
+  const store = readStore();
+  const existing = store.users[email];
+  if (!existing) {
+    throw new Error("Uporabnik s tem e-mailom še ne obstaja.");
+  }
+
+  const updated: UserRecord = {
+    ...existing,
+    credits: existing.credits + addedCredits,
+    updatedAt: now,
+  };
+  store.users[email] = updated;
+  writeStore(store);
+  return updated;
+}
+
 export function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
