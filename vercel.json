@@ -96,6 +96,10 @@
       "dest": "/api/auth.ts?action=admin-user-update"
     },
     {
+      "src": "/admin/system/status",
+      "dest": "/api/auth.ts?action=admin-system-status"
+    },
+    {
       "src": "/drafts/list",
       "dest": "/api/auth.ts?action=drafts"
     },
@@ -166,6 +170,10 @@
     {
       "src": "/api/admin/users/update",
       "dest": "/api/auth.ts?action=admin-user-update"
+    },
+    {
+      "src": "/api/admin/system/status",
+      "dest": "/api/auth.ts?action=admin-system-status"
     },
     {
       "src": "/api/drafts/list",
