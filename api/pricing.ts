@@ -2,6 +2,7 @@ import { config } from "../src/config.js";
 
 const usdcBaseAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const baseChainId = "0x2105";
+const baseChainIdDecimal = "8453";
 
 const tiers = [
   {
@@ -67,7 +68,10 @@ function tierCard(tier: (typeof tiers)[number], billingReady: boolean) {
     </div>
     <div class="price"><strong>${tier.price} USDC</strong><span>/ mesec</span></div>
     <ul>${tier.features.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-    <button class="pay" data-plan="${escapeHtml(tier.id)}" data-amount="${tier.price}" ${billingReady ? "" : "disabled"}>Plačaj z denarnico</button>
+    <div class="pay-row">
+      <button class="pay" data-plan="${escapeHtml(tier.id)}" data-label="${escapeHtml(tier.name)}" data-amount="${tier.price}" ${billingReady ? "" : "disabled"}>Plačaj v brskalniku</button>
+      <button class="qr-pay secondary" data-plan="${escapeHtml(tier.id)}" data-label="${escapeHtml(tier.name)}" data-amount="${tier.price}" ${billingReady ? "" : "disabled"}>QR za telefon</button>
+    </div>
   </article>`;
 }
 
@@ -79,7 +83,10 @@ function creditCard(pack: (typeof creditPacks)[number], billingReady: boolean) {
     </div>
     <div class="price"><strong>${pack.price} USDC</strong><span>enkratno</span></div>
     <ul>${pack.features.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-    <button class="pay" data-plan="${escapeHtml(pack.id)}" data-amount="${pack.price}" ${billingReady ? "" : "disabled"}>Kupi kredite</button>
+    <div class="pay-row">
+      <button class="pay" data-plan="${escapeHtml(pack.id)}" data-label="${escapeHtml(pack.name)}" data-amount="${pack.price}" ${billingReady ? "" : "disabled"}>Plačaj v brskalniku</button>
+      <button class="qr-pay secondary" data-plan="${escapeHtml(pack.id)}" data-label="${escapeHtml(pack.name)}" data-amount="${pack.price}" ${billingReady ? "" : "disabled"}>QR za telefon</button>
+    </div>
   </article>`;
 }
 
@@ -99,11 +106,11 @@ function pricingPage() {
     main{width:min(1180px,calc(100% - 28px));margin:0 auto;padding:22px 0 42px}header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);padding:16px 0;margin-bottom:18px}
     h1{font-size:clamp(32px,5vw,54px);line-height:1;margin:0;letter-spacing:0}h2{font-size:22px;margin:0}p{color:var(--muted);line-height:1.45;margin:8px 0 0}a,button{font:inherit}a{color:var(--green);font-weight:760;text-decoration:none}
     .button,button{min-height:42px;border:1px solid var(--accent);border-radius:8px;padding:0 14px;background:var(--accent);color:#fff;font-weight:780;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.button.secondary{background:var(--paper);color:var(--ink);border-color:var(--line)}button:disabled{opacity:.55;cursor:not-allowed}
-    .section-head{margin:22px 0 12px}.section-head h2{font-size:18px}.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tier{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px;box-shadow:0 1px 2px rgba(24,21,18,.04)}.price strong{font-size:28px}.price span{color:var(--muted);margin-left:6px}ul{margin:0;padding-left:19px;color:var(--muted);line-height:1.55}.pay{width:100%}
+    .section-head{margin:22px 0 12px}.section-head h2{font-size:18px}.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tier{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px;box-shadow:0 1px 2px rgba(24,21,18,.04)}.price strong{font-size:28px}.price span{color:var(--muted);margin-left:6px}ul{margin:0;padding-left:19px;color:var(--muted);line-height:1.55}.pay-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pay,.qr-pay{width:100%}
     .wallet-guide{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px}.wallet-guide h2{font-size:20px;margin:0 0 8px}.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}.step{border:1px solid var(--line);border-radius:8px;background:#fff;padding:12px}.step strong{display:block;color:var(--ink);margin-bottom:5px}.safe{border-color:#b7e4d3;background:#f4fbf7;color:#1e6f62}.danger-note{border-color:#e5b0a9;background:#fff7f5;color:var(--danger)}
     .notice,.receipt{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px;color:var(--muted)}.notice strong{color:var(--ink)}.warn{border-color:#e5b0a9;background:#fff7f5;color:var(--danger)}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;word-break:break-all;color:var(--ink)}
-    .receipt{display:none}.receipt.show{display:block}.actions{display:flex;gap:8px;flex-wrap:wrap}.tiny{font-size:12px;color:var(--muted)}
-    @media(max-width:880px){header{flex-direction:column}.tiers,.steps{grid-template-columns:1fr}}
+    .receipt{display:none}.receipt.show{display:block}.qr-panel{display:none;margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px}.qr-panel.show{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:center}.qr-frame{width:220px;height:220px;border:1px solid var(--line);border-radius:8px;background:#fff;display:grid;place-items:center}.qr-frame img{width:200px;height:200px}.qr-details{display:grid;gap:8px}.qr-details h2{font-size:20px}.wallet-link{width:max-content}.actions{display:flex;gap:8px;flex-wrap:wrap}.tiny{font-size:12px;color:var(--muted)}
+    @media(max-width:880px){header{flex-direction:column}.tiers,.steps,.qr-panel.show{grid-template-columns:1fr}.qr-frame{width:100%;height:auto;aspect-ratio:1;max-width:260px}.qr-frame img{width:min(220px,86vw);height:min(220px,86vw)}.pay-row{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -123,7 +130,7 @@ function pricingPage() {
       <h2>Kako plačaš z digitalno denarnico?</h2>
       <p>Za plačilo potrebuješ denarnico, ki podpira Base omrežje, na primer MetaMask, Coinbase Wallet ali Rabby. Plačilo poteka v USDC na Base omrežju.</p>
       <div class="steps">
-        <div class="step"><strong>1. Odpri denarnico</strong><span>Namesti ali odpri MetaMask, Coinbase Wallet ali Rabby v istem brskalniku.</span></div>
+        <div class="step"><strong>1. Odpri denarnico</strong><span>Uporabi browser wallet ali mobilno denarnico, kjer lahko poskeniraš QR kodo.</span></div>
         <div class="step"><strong>2. Izberi Base</strong><span>Če nisi na Base omrežju, te bo stran prosila za preklop. Preklop potrdi v denarnici.</span></div>
         <div class="step"><strong>3. Imej USDC na Base</strong><span>Za plačilo rabiš USDC na Base in malo ETH na Base za omrežno provizijo.</span></div>
         <div class="step"><strong>4. Potrdi plačilo</strong><span>Klikni plačilni gumb, preveri znesek v denarnici in potrdi transakcijo.</span></div>
@@ -138,6 +145,16 @@ function pricingPage() {
         : `<div class="notice warn"><strong>Plačila še niso aktivna.</strong> Nastavi <code>BILLING_WALLET_ADDRESS</code> na svež varen prejemni wallet in redeployaj projekt.</div>`
     }
 
+    <div class="qr-panel" id="qrPanel">
+      <div class="qr-frame"><img id="qrImage" alt="QR koda za USDC plačilo na Base" /></div>
+      <div class="qr-details">
+        <h2 id="qrTitle">Plačilo z mobilno denarnico</h2>
+        <p id="qrText">Poskeniraj QR kodo z denarnico in pred potrditvijo preveri znesek, USDC contract, Base omrežje in prejemni naslov.</p>
+        <a class="button wallet-link" id="walletLink" href="#">Odpri v denarnici</a>
+        <div><span class="tiny">Wallet URI</span><br /><code id="walletUri"></code></div>
+      </div>
+    </div>
+
     <div class="receipt" id="receipt">
       <strong>Plačilo poslano.</strong>
       <p>Transaction hash:</p>
@@ -150,8 +167,15 @@ function pricingPage() {
     const receiver = ${JSON.stringify(receiver)};
     const usdc = ${JSON.stringify(usdcBaseAddress)};
     const baseChainId = ${JSON.stringify(baseChainId)};
+    const baseChainIdDecimal = ${JSON.stringify(baseChainIdDecimal)};
     const receipt = document.getElementById("receipt");
     const txHash = document.getElementById("txHash");
+    const qrPanel = document.getElementById("qrPanel");
+    const qrImage = document.getElementById("qrImage");
+    const qrTitle = document.getElementById("qrTitle");
+    const qrText = document.getElementById("qrText");
+    const walletUri = document.getElementById("walletUri");
+    const walletLink = document.getElementById("walletLink");
 
     function pad64(value) {
       return value.toLowerCase().replace(/^0x/, "").padStart(64, "0");
@@ -159,6 +183,32 @@ function pricingPage() {
 
     function usdcAmount(value) {
       return (BigInt(value) * 1000000n).toString(16).padStart(64, "0");
+    }
+
+    function usdcAmountDecimal(value) {
+      return (BigInt(value) * 1000000n).toString();
+    }
+
+    function paymentUri(amount) {
+      return "ethereum:" + usdc + "@" + baseChainIdDecimal + "/transfer?address=" + receiver + "&uint256=" + usdcAmountDecimal(amount);
+    }
+
+    function renderQr(button) {
+      if (!/^0x[a-fA-F0-9]{40}$/.test(receiver)) {
+        alert("Billing wallet se ni nastavljen.");
+        return;
+      }
+
+      const amount = button.dataset.amount;
+      const label = button.dataset.label || button.dataset.plan || "paket";
+      const uri = paymentUri(amount);
+      qrTitle.textContent = label + " - " + amount + " USDC";
+      qrText.textContent = "Poskeniraj QR kodo z mobilno denarnico. Pred potrditvijo preveri Base omrežje, USDC, znesek " + amount + " USDC in prejemni naslov.";
+      walletUri.textContent = uri;
+      walletLink.href = uri;
+      qrImage.src = "https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=" + encodeURIComponent(uri);
+      qrPanel.classList.add("show");
+      qrPanel.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
     async function ensureBase(ethereum) {
@@ -184,7 +234,7 @@ function pricingPage() {
 
     async function pay(button) {
       if (!window.ethereum) {
-        alert("Najprej odpri stran v brskalniku z walletom, npr. MetaMask ali Coinbase Wallet.");
+        renderQr(button);
         return;
       }
       if (!/^0x[a-fA-F0-9]{40}$/.test(receiver)) {
@@ -216,6 +266,7 @@ function pricingPage() {
     }
 
     document.querySelectorAll(".pay").forEach((button) => button.addEventListener("click", () => pay(button)));
+    document.querySelectorAll(".qr-pay").forEach((button) => button.addEventListener("click", () => renderQr(button)));
   </script>
 </body>
 </html>`;
