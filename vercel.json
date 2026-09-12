@@ -22,6 +22,10 @@
       "use": "@vercel/node"
     },
     {
+      "src": "api/billing.ts",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api/auth.ts",
       "use": "@vercel/node"
     },
