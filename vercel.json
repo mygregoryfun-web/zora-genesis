@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "site-assets/zora-genesis-creator-hero.png",
+      "use": "@vercel/static"
+    },
+    {
       "src": "api/home.ts",
       "use": "@vercel/node"
     },
@@ -51,6 +55,10 @@
     }
   ],
   "routes": [
+    {
+      "src": "/assets/zora-genesis-creator-hero.png",
+      "dest": "/site-assets/zora-genesis-creator-hero.png"
+    },
     {
       "src": "/",
       "dest": "/api/home.ts"

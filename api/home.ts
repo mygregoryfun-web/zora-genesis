@@ -176,6 +176,49 @@ function page() {
       text-decoration: none;
     }
     main { padding: 22px 0 10px; }
+    .photo-hero {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-height: 400px;
+      margin-bottom: 18px;
+      overflow: hidden;
+      color: #fff;
+      background: #1b2428;
+    }
+    .photo-hero img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 44%;
+    }
+    .photo-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(8, 17, 22, .87), rgba(8, 17, 22, .66) 39%, rgba(8, 17, 22, .06) 72%);
+    }
+    .photo-hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 610px;
+      padding: 32px 42px;
+    }
+    .photo-hero .eyebrow { color: #a7f4d8; }
+    .photo-hero h1 { font-size: 52px; }
+    .photo-hero .lead { color: #f0f4f5; }
+    .photo-hero .button:not(.primary) {
+      background: rgba(255, 255, 255, .94);
+      border-color: transparent;
+    }
+    .dashboard-title {
+      margin: 0;
+      max-width: 760px;
+      font-size: 42px;
+      line-height: 1.08;
+    }
     .hero-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 384px;
@@ -866,6 +909,14 @@ function page() {
       h1 { font-size: 42px; }
     }
     @media (max-width: 760px) {
+      .photo-hero { min-height: 400px; align-items: flex-end; }
+      .photo-hero img { object-position: 68% center; }
+      .photo-hero::after {
+        background: linear-gradient(0deg, rgba(8, 17, 22, .92), rgba(8, 17, 22, .36) 75%);
+      }
+      .photo-hero-content { padding: 28px 22px; }
+      .photo-hero h1 { font-size: 40px; }
+      .dashboard-title { font-size: 32px; }
       .metrics, .grid, .mini-strip, .proofs, .ops-grid, .board, .insight-strip {
         grid-template-columns: 1fr;
       }
@@ -906,16 +957,28 @@ function page() {
     </nav>
   </header>
   <main>
+    <section class="photo-hero" aria-label="Zora Genesis creator workspace">
+      <img src="/assets/zora-genesis-creator-hero.png" alt="Digital creator working on colorful artwork in a studio" fetchpriority="high" />
+      <div class="photo-hero-content">
+        <div class="eyebrow">Base + Zora creator intelligence</div>
+        <h1>Zora Genesis</h1>
+        <p class="lead">Turn creator signals into asset ideas, ready-to-review posts, and practical launch briefs.</p>
+        <div class="actions">
+          <a class="button primary" href="/agent/opportunities">Explore opportunities</a>
+          <a class="button" href="/agent/draft">Prepare a draft</a>
+        </div>
+      </div>
+    </section>
     <section class="hero-grid">
       <div class="hero visual">
         <div>
           <div class="hero-top">
             <div>
               <div class="eyebrow">Live Base Builder Grant Prototype</div>
-              <h1>Creator signals into Zora-ready assets.</h1>
+              <h2 class="dashboard-title">Creator signals into Zora-ready assets.</h2>
               <p class="lead">Zora Genesis tracks Base and Zora narratives, scores creator asset opportunities, drafts channel-ready posts, and keeps publishing approval-first.</p>
             </div>
-            <div class="status-pill"><span class="dot"></span>Live on Base</div>
+            <div class="status-pill"><span class="dot"></span>Base app</div>
           </div>
           <div class="actions">
             <a class="button primary" href="/agent/opportunities">Open Opportunity Radar</a>
@@ -930,16 +993,16 @@ function page() {
             <div class="eyebrow">Opportunity Radar</div>
             <div class="radar" aria-hidden="true"></div>
             <div class="signal-list">
-              <div class="signal-item"><span><span class="signal-dot"></span> Base activity</span><strong>High</strong></div>
-              <div class="signal-item"><span><span class="signal-dot"></span> Zora minting</span><strong>Rising</strong></div>
-              <div class="signal-item"><span><span class="signal-dot"></span> Creator assets</span><strong>92</strong></div>
+              <div class="signal-item"><span><span class="signal-dot"></span> Base narratives</span><strong>Tracked</strong></div>
+              <div class="signal-item"><span><span class="signal-dot"></span> Zora ideas</span><strong>Drafted</strong></div>
+              <div class="signal-item"><span><span class="signal-dot"></span> Signal scores</span><strong>Available</strong></div>
             </div>
           </div>
 
           <div class="agent-console">
             <div class="console-top">
               <div class="console-brand"><span class="console-mark">ZG</span>Zora Genesis</div>
-              <div class="console-status"><span class="dot"></span> Agent online</div>
+              <div class="console-status"><span class="dot"></span> Workflow preview</div>
             </div>
             <div class="wave" aria-hidden="true"></div>
             <div class="proof-grid">
@@ -949,7 +1012,7 @@ function page() {
             </div>
             <div class="console-footer">
               <span>Network: Base</span>
-              <span>Status: all systems optimal</span>
+              <span>Status: review before publishing</span>
             </div>
           </div>
 
@@ -966,9 +1029,9 @@ function page() {
             </div>
             <div class="firewall-card">
               <div class="eyebrow">Transaction Firewall</div>
-              <div class="check-row"><span>Approval scan</span><span class="safe-badge">Safe</span></div>
-              <div class="check-row"><span>Permission check</span><span class="safe-badge">Safe</span></div>
-              <div class="check-row"><span>Risk detection</span><span class="safe-badge">On</span></div>
+              <div class="check-row"><span>Approval scan</span><span class="safe-badge">Available</span></div>
+              <div class="check-row"><span>Permission check</span><span class="safe-badge">Available</span></div>
+              <div class="check-row"><span>Risk review</span><span class="safe-badge">Manual</span></div>
             </div>
           </div>
         </div>
@@ -997,8 +1060,8 @@ function page() {
     </section>
 
     <section class="metrics" aria-label="Agent metrics">
-      <div class="metric blue"><span>Published memory</span><strong id="post-count">28</strong></div>
-      <div class="metric green"><span>Active channels</span><strong>Zora / FC / X</strong></div>
+      <div class="metric blue"><span>Saved posts on this server</span><strong id="post-count">Loading</strong></div>
+      <div class="metric green"><span>Publishing integrations</span><strong>Zora / FC / X</strong></div>
       <div class="metric amber"><span>Primary Base track</span><strong>New assets</strong></div>
       <div class="metric violet"><span>Revenue experiment</span><strong>Premium briefs</strong></div>
     </section>
@@ -1181,11 +1244,15 @@ function page() {
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
         const metrics = data && data.metrics;
-        if (!metrics) return;
         const count = document.getElementById("post-count");
-        if (count) count.textContent = String(metrics.publishedPostCount);
+        if (count) count.textContent = metrics && Number.isInteger(metrics.publishedPostCount)
+          ? String(metrics.publishedPostCount)
+          : "Unavailable";
       })
-      .catch(() => {});
+      .catch(() => {
+        const count = document.getElementById("post-count");
+        if (count) count.textContent = "Unavailable";
+      });
   </script>
 </body>
 </html>`;
