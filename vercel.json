@@ -136,6 +136,10 @@
       "dest": "/api/home.ts"
     },
     {
+      "src": "/agent/(metrics|opportunities|monetization|nft|security|firewall|profile|builder-code|growth)",
+      "dest": "/api/home.ts"
+    },
+    {
       "src": "/agent/draft",
       "dest": "/api/agent/draft.ts"
     },

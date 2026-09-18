@@ -1,4 +1,26 @@
+import metricsHandler from "./agent/metrics.js";
+import opportunitiesHandler from "./agent/opportunities.js";
+import monetizationHandler from "./agent/monetization.js";
+import nftHandler from "./agent/nft.js";
+import securityHandler from "./agent/security.js";
+import firewallHandler from "./agent/firewall.js";
+import profileHandler from "./agent/profile.js";
+import builderCodeHandler from "./agent/builder-code.js";
+import growthHandler from "./agent/growth.js";
+
 const productionUrl = "https://zora-genesis-t1j9.vercel.app";
+
+const publicAgentHandlers: Record<string, (req: any, res: any) => unknown> = {
+  "/agent/metrics": metricsHandler,
+  "/agent/opportunities": opportunitiesHandler,
+  "/agent/monetization": monetizationHandler,
+  "/agent/nft": nftHandler,
+  "/agent/security": securityHandler,
+  "/agent/firewall": firewallHandler,
+  "/agent/profile": profileHandler,
+  "/agent/builder-code": builderCodeHandler,
+  "/agent/growth": growthHandler,
+};
 
 const grantBrief = {
   builderCode: "bc_lk15eqwc",
@@ -1240,7 +1262,7 @@ function page() {
     <span>Live production URL: <a href="${productionUrl}">${productionUrl}</a></span>
   </footer>
   <script>
-    fetch("/agent/metrics")
+    fetch("/agent/metrics?format=json")
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
         const metrics = data && data.metrics;
@@ -1412,7 +1434,9 @@ function grantPage() {
 }
 
 export default function handler(req: any, res: any) {
-  res.setHeader("content-type", "text/html; charset=utf-8");
   const url = new URL(req.url ?? "/", productionUrl);
+  const agentHandler = publicAgentHandlers[url.pathname];
+  if (agentHandler) return agentHandler(req, res);
+  res.setHeader("content-type", "text/html; charset=utf-8");
   res.status(200).send(url.pathname === "/base-grant" ? grantPage() : page());
 }
