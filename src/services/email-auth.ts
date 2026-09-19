@@ -8,13 +8,16 @@ async function authRequest(path: string, body: unknown) {
     !config.authSecret && "AUTH_SECRET",
   ].filter(Boolean);
   if (missing.length) throw new Error(`Email authentication is not configured. Missing: ${missing.join(", ")}.`);
+  const headers: Record<string, string> = {
+    apikey: config.supabaseServiceRoleKey,
+    "Content-Type": "application/json",
+  };
+  if (!config.supabaseServiceRoleKey.startsWith("sb_")) {
+    headers.Authorization = `Bearer ${config.supabaseServiceRoleKey}`;
+  }
   const response = await fetch(`${config.supabaseUrl.replace(/\/$/, "")}/auth/v1/${path}`, {
     method: "POST",
-    headers: {
-      apikey: config.supabaseServiceRoleKey,
-      Authorization: `Bearer ${config.supabaseServiceRoleKey}`,
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify(body), signal: AbortSignal.timeout(15000),
   });
   if (!response.ok) {

@@ -6,14 +6,15 @@ import { createSession, encodeSession, getSession } from "../services/auth.js";
 
 test("email OTP requires a confirmed matching email from Supabase", async () => {
   const old = { url: config.supabaseUrl, key: config.supabaseServiceRoleKey, secret: config.authSecret, fetch: globalThis.fetch };
-  config.supabaseUrl = "https://database.example"; config.supabaseServiceRoleKey = "test"; config.authSecret = "test-secret";
+  config.supabaseUrl = "https://database.example"; config.supabaseServiceRoleKey = "sb_secret_test"; config.authSecret = "test-secret";
   try {
     let result: any = { access_token: "test", user: { email: "member@example.com", email_confirmed_at: "2026-09-14T00:00:00Z" } };
     globalThis.fetch = async (url, init) => {
       if (String(url).includes("studio_account_restrictions")) return new Response("[]");
       const body = JSON.parse(String(init?.body));
       assert.equal(body.email, "member@example.com");
-      assert.equal((init?.headers as Record<string, string>).Authorization, "Bearer test");
+      assert.equal((init?.headers as Record<string, string>).Authorization, undefined);
+      assert.equal((init?.headers as Record<string, string>).apikey, "sb_secret_test");
       if (String(url).endsWith("/verify")) { assert.equal(body.type, "email"); assert.equal(body.token, "123456"); }
       return new Response(JSON.stringify(result));
     };

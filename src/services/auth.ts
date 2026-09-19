@@ -138,15 +138,18 @@ function fromSupabaseDraft(row: any): StoredDraft {
 }
 
 export async function supabaseFetch(table: string, init: RequestInit = {}, query = "") {
+  const headers: Record<string, string> = {
+    apikey: config.supabaseServiceRoleKey,
+    "Content-Type": "application/json",
+    Prefer: "return=representation",
+    ...(init.headers as Record<string, string> | undefined),
+  };
+  if (!config.supabaseServiceRoleKey.startsWith("sb_")) {
+    headers.Authorization = `Bearer ${config.supabaseServiceRoleKey}`;
+  }
   const response = await fetch(supabaseEndpoint(table, query), {
     ...init,
-    headers: {
-      apikey: config.supabaseServiceRoleKey,
-      Authorization: `Bearer ${config.supabaseServiceRoleKey}`,
-      "Content-Type": "application/json",
-      Prefer: "return=representation",
-      ...(init.headers ?? {}),
-    },
+    headers,
   });
 
   if (!response.ok) {
