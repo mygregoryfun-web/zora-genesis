@@ -86,17 +86,47 @@ function polishGeneratedText(text: string) {
     [/\bBuildingthe\b/gu, "Building the"],
     [/\blaunchpad-liteflow\b/giu, "launchpad-lite flow"],
     [/\bsynergy between\b/giu, "connection between"],
-    [/\bsynergy\b/giu, "overlap"],
+    [/\bsynergy\b/giu, "connection"],
     [/\bstreamlined mechanisms\b/giu, "simple launch flows"],
     [/\bperfectly aligns\b/giu, "fits"],
     [/\bhealthy engagement\b/giu, "active use"],
     [/\bthese capabilities\b/giu, "these tools"],
+    [/\bcan open doors for\b/giu, "can make it cheaper for"],
     [/\bopen doors for\b/giu, "make it cheaper for"],
+    [/\bopens doors for creator tools\b/giu, "helps creator tools take shape"],
+    [/\bopens doors for\b/giu, "helps"],
+    [/\bunlock the potential of the ecosystem\b/giu, "build in the ecosystem"],
+    [/\bunlock the potential of\b/giu, "build in"],
     [/\bfertile ground for\b/giu, "useful setup for"],
     [/\bvibrant environment\b/giu, "active market"],
     [/\bincreasingly vibrant environment\b/giu, "active market"],
     [/\bstrong market demand\b/giu, "clear builder interest"],
     [/\binnovative projects\b/giu, "specific products"],
+    [/\bnext-generation\b/giu, "new"],
+    [/\bnext generation\b/giu, "new"],
+    [/\bgame-changing\b/giu, "important"],
+    [/\bgame changing\b/giu, "important"],
+    [/\bworld-class\b/giu, "strong"],
+    [/\bworld class\b/giu, "strong"],
+    [/\bvibrant ecosystem\b/giu, "active market"],
+    [/\brobust ecosystem\b/giu, "active ecosystem"],
+    [/\bdynamic landscape\b/giu, "market"],
+    [/\bcutting-edge\b/giu, "new"],
+    [/\bstate-of-the-art\b/giu, "new"],
+    [/\bunlocking potential\b/giu, "building"],
+    [/\bpowerful combination\b/giu, "useful combination"],
+    [/\bseamless experience\b/giu, "simple experience"],
+    [/\bstrategic opportunity\b/giu, "useful chance"],
+    [/\bcompelling opportunity\b/giu, "useful chance"],
+    [/\bcompelling opportunityfor\b/giu, "useful chance for"],
+    [/\bopportunityfor\b/giu, "opportunity for"],
+    [/\buseful chancefor\b/giu, "useful chance for"],
+    [/\buscompefulling\b/giu, "useful"],
+    [/\bchaopportunceity\b/giu, "chance"],
+    [/\bsynergy\b/giu, "connection"],
+    [/\ba active\b/giu, "an active"],
+    [/\bcreates a active\b/giu, "creates an active"],
+    [/\bcan helps\b/giu, "can help"],
   ];
 
   return replacements.reduce(
@@ -147,7 +177,17 @@ export async function generatePost(data: GeneratePostInput): Promise<GeneratedPo
   const prompt = `
 You are Zora Genesis AI.
 
-You are an elite crypto analyst and autonomous AI creator focused on:
+You are a grounded crypto analyst and practical creator-focused writer. Your job is to explain real patterns in plain language, not to sound like polished startup marketing copy.
+
+Hard rules:
+- No generic VC or startup buzzwords.
+- No phrases such as vibrant ecosystem, synergy, compelling opportunity, strategic opportunity, unlocking potential, world-class, next-generation, cutting-edge, seamless experience, or robust ecosystem.
+- No abstract hype.
+- Use concrete, human wording.
+- Prefer short, clear sentences over polished slogans.
+- Keep the tone sharp, specific, and useful.
+
+Focus on:
 
 - Base ecosystem
 - Zora

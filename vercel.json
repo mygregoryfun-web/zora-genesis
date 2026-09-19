@@ -6,6 +6,14 @@
       "use": "@vercel/static"
     },
     {
+      "src": "site-assets/fun-studio-video-creator-hero.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "site-assets/fun-studio-creator-background.png",
+      "use": "@vercel/static"
+    },
+    {
       "src": "api/home.ts",
       "use": "@vercel/node"
     },
@@ -60,6 +68,14 @@
       "dest": "/site-assets/zora-genesis-creator-hero.png"
     },
     {
+      "src": "/assets/fun-studio-video-creator-hero.png",
+      "dest": "/site-assets/fun-studio-video-creator-hero.png"
+    },
+    {
+      "src": "/assets/fun-studio-creator-background.png",
+      "dest": "/site-assets/fun-studio-creator-background.png"
+    },
+    {
       "src": "/",
       "dest": "/api/home.ts"
     },
@@ -90,6 +106,10 @@
     {
       "src": "/auth/login",
       "dest": "/api/auth.ts?action=login"
+    },
+    {
+      "src": "/auth/verify-email",
+      "dest": "/api/auth.ts?action=verify-email"
     },
     {
       "src": "/auth/logout",
@@ -174,6 +194,14 @@
     {
       "src": "/api/auth/login",
       "dest": "/api/auth.ts?action=login"
+    },
+    {
+      "src": "/api/auth/verify-email",
+      "dest": "/api/auth.ts?action=verify-email"
+    },
+    {
+      "src": "/api/auth",
+      "dest": "/api/auth.ts"
     },
     {
       "src": "/api/auth/logout",

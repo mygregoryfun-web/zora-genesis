@@ -111,6 +111,18 @@ async function savePayment(record: PaymentRecord) {
   return Array.isArray(rows) && rows[0] ? rows[0] as PaymentRecord : record;
 }
 
+async function updatePaymentStatus(txHash: string, status: "confirmed" | "needs_review") {
+  const rows = await supabaseFetch(
+    "studio_payments",
+    {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    },
+    `?tx_hash=eq.${encodeURIComponent(txHash)}`,
+  );
+  return Array.isArray(rows) && rows[0] ? rows[0] as PaymentRecord : null;
+}
+
 export function billingProductsPublic() {
   return BILLING_PRODUCTS.map((product) => ({ ...product }));
 }
@@ -138,6 +150,9 @@ export async function claimPaymentForSession(session: StudioSession, input: {
   }
 
   const used = await existingPayment(txHash);
+  if (used?.status === "needs_review") {
+    throw new Error("Ta transaction hash je že zabeležen, vendar potrebuje ročen pregled. Piši skrbniku.");
+  }
   if (used) {
     throw new Error("Ta transaction hash je že bil uporabljen za dodajanje kreditov.");
   }
@@ -186,7 +201,6 @@ export async function claimPaymentForSession(session: StudioSession, input: {
     throw new Error("V tej transakciji nisem našel pravega USDC plačila na billing wallet.");
   }
 
-  const updatedUser = await addCreditsToUser(session.email, product.credits);
   const payment = await savePayment({
     tx_hash: txHash,
     email: session.email,
@@ -195,12 +209,22 @@ export async function claimPaymentForSession(session: StudioSession, input: {
     credits: product.credits,
     from_address: matched.from,
     to_address: receiver,
-    status: "confirmed",
+    status: "verified",
     created_at: new Date().toISOString(),
   });
 
+  let updatedUser;
+  try {
+    updatedUser = await addCreditsToUser(session.email, product.credits);
+  } catch (error) {
+    await updatePaymentStatus(txHash, "needs_review").catch(() => null);
+    throw error;
+  }
+
+  const confirmedPayment = await updatePaymentStatus(txHash, "confirmed") ?? payment;
+
   return {
-    payment,
+    payment: confirmedPayment,
     product,
     addedCredits: product.credits,
     user: updatedUser,

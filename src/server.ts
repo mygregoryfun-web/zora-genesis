@@ -14,7 +14,13 @@ import { generateGrowthPlan } from "./services/growth.js";
 import { scanContractSecurity, type SecurityNetwork } from "./services/contract-security.js";
 import { createNftDraft } from "./services/nft-draft.js";
 import { createSocialDraft } from "./services/social-draft.js";
-import { createRunwayImageToVideoTask, getRunwayTask, type RunwayVideoInput } from "./services/runway-video.js";
+import { type RunwayVideoInput } from "./services/runway-video.js";
+import { clearSessionCookie, createSession, currentSession, getSession, isValidEmail, loginSession, publicSession, setSessionCookie } from "./services/auth.js";
+import { sendEmailCode, verifyEmailCode } from "./services/email-auth.js";
+import { generateStudioVideo, getStudioVideo } from "./services/studio-video.js";
+// The local tsx server reuses the Vercel page implementation; api/ is intentionally outside tsconfig rootDir.
+// @ts-ignore Local dev-only page module is compiled by tsx, not the src build.
+import { studioPage } from "../api/studio.js";
 
 function sendJson(res: http.ServerResponse, statusCode: number, data: unknown) {
   res.writeHead(statusCode, {
@@ -711,7 +717,7 @@ export function videoEditorPage() {
               <span>49 EUR za vec variant in boljse modele.</span>
             </div>
           </div>
-          <p class="credit-note">Najboljsa prva integracija: Runway Dev API. Poceni osnutek je priblizno 25 do 60 Runway kreditov za 5 sekund, odvisno od modela.</p>
+          <p class="credit-note">Najboljša prva integracija: Runway Dev API. Poceni osnutek je približno 25 do 60 Runway kreditov za 5 sekund, odvisno od modela.</p>
           <button class="secondary" type="button" disabled>Zakup kreditov bo aktiven po Stripe povezavi</button>
         </section>
       </aside>
@@ -1086,6 +1092,63 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "GET" && url.pathname === "/studio") {
+    sendHtml(res, 200, studioPage());
+    return;
+  }
+
+  if (req.method === "GET" && (url.pathname === "/auth/status" || url.pathname === "/api/auth" && url.searchParams.get("action") === "status")) {
+    const session = await currentSession(req);
+    if (session) setSessionCookie(res, session);
+    sendJson(res, 200, { ok: true, session: publicSession(session), videoAccess: false });
+    return;
+  }
+
+  if (req.method === "POST" && (url.pathname === "/auth/logout" || url.pathname === "/api/auth" && url.searchParams.get("action") === "logout")) {
+    clearSessionCookie(res);
+    sendJson(res, 200, { ok: true });
+    return;
+  }
+
+  if (req.method === "POST" && (url.pathname === "/auth/login" || url.pathname === "/api/auth" && url.searchParams.get("action") === "login")) {
+    try {
+      const body = await readJsonBody<{ email?: unknown; ownerCode?: unknown }>(req);
+      const email = String(body.email ?? "").trim().toLowerCase();
+      if (!isValidEmail(email)) {
+        sendJson(res, 400, { ok: false, error: "Vpiši veljaven e-mail." });
+        return;
+      }
+
+      if (body.ownerCode) {
+        if (createSession(email, body.ownerCode).role !== "owner") throw new Error("Invalid admin credentials.");
+        const session = await loginSession(email, body.ownerCode);
+        setSessionCookie(res, session);
+        sendJson(res, 200, { ok: true, session: publicSession(session) });
+      } else {
+        await sendEmailCode(email);
+        sendJson(res, 200, { ok: true, verificationRequired: true });
+      }
+    } catch (error) {
+      sendJson(res, 403, { ok: false, error: error instanceof Error ? error.message : "Sign-in failed." });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && (url.pathname === "/auth/verify-email" || url.pathname === "/api/auth" && url.searchParams.get("action") === "verify-email")) {
+    try {
+      const body = await readJsonBody<{ email?: unknown; code?: unknown }>(req);
+      const email = String(body.email ?? "").trim().toLowerCase();
+      const verifiedEmail = await verifyEmailCode(email, body.code);
+      const stored = await loginSession(verifiedEmail);
+      const session = { ...stored, role: "user" as const, emailVerified: true };
+      setSessionCookie(res, session);
+      sendJson(res, 200, { ok: true, session: publicSession(session) });
+    } catch (error) {
+      sendJson(res, 403, { ok: false, error: error instanceof Error ? error.message : "Verification failed." });
+    }
+    return;
+  }
+
   if (req.method === "POST" && url.pathname === "/agent/draft") {
     try {
       const body = await readJsonBody<{ topic?: string; language?: string; tone?: string; length?: string; imageStyle?: "social-editorial" | "artwork-cover" | "contradictory-art"; includeImage?: boolean }>(req).catch(() => ({
@@ -1116,10 +1179,12 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && url.pathname === "/api/video/generate") {
     try {
+      const session = await getSession(req);
+      if (!session) { sendJson(res, 401, { ok: false, error: "Sign in first." }); return; }
       const body = await readJsonBody<RunwayVideoInput>(req);
       sendJson(res, 200, {
         ok: true,
-        task: await createRunwayImageToVideoTask(body),
+        task: await generateStudioVideo(session, body),
       });
     } catch (error) {
       sendJson(res, 400, {
@@ -1133,9 +1198,11 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "GET" && url.pathname === "/api/video/task") {
     try {
+      const session = await getSession(req);
+      if (!session) { sendJson(res, 401, { ok: false, error: "Sign in first." }); return; }
       sendJson(res, 200, {
         ok: true,
-        task: await getRunwayTask(url.searchParams.get("id") ?? ""),
+        task: await getStudioVideo(session, url.searchParams.get("id") ?? ""),
       });
     } catch (error) {
       sendJson(res, 400, {

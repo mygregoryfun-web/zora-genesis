@@ -1,5 +1,9 @@
 import {
   clearSessionCookie,
+  currentSession,
+  createSession,
+  manageUserForAdmin,
+  deleteDraftForSession,
   getSession,
   isValidEmail,
   listDraftsForSession,
@@ -13,6 +17,8 @@ import {
 } from "../src/services/auth.js";
 import { getAdminSystemStatus } from "../src/services/admin-dashboard.js";
 import { claimPaymentForSession } from "../src/services/billing.js";
+import { hasVideoAccess } from "../src/services/studio-video.js";
+import { sendEmailCode, verifyEmailCode } from "../src/services/email-auth.js";
 
 export const config = { maxDuration: 10 };
 
@@ -20,7 +26,7 @@ export default async function handler(req: any, res: any) {
   const action = String(req.query?.action ?? "").toLowerCase();
 
   if (req.method === "GET" && action === "admin") {
-    const session = getSession(req);
+    const session = await getSession(req);
     if (!session || session.role !== "owner") {
       res.status(401).send("<!doctype html><meta charset=\"utf-8\"><title>Admin</title><p>Najprej se prijavi kot admin v Studiu.</p><p><a href=\"/studio\">Nazaj v Studio</a></p>");
       return;
@@ -45,6 +51,30 @@ ${systemDashboard(systemStatus)}
 <tbody>${rows.map((user) => `<tr><td><code>${escapeHtml(user.email)}</code></td><td><div class="edit-row"><input type="hidden" value="${escapeHtml(user.email)}" data-field="email" /><select data-field="role"><option value="user" ${user.role === "user" ? "selected" : ""}>user</option><option value="owner" ${user.role === "owner" ? "selected" : ""}>owner</option></select><input type="number" min="0" step="1" value="${user.credits}" data-field="credits" /><button type="button" data-save-user>Shrani</button></div></td><td class="num">${user.totalSpent}</td><td class="num">${user.loginCount}</td><td>${escapeHtml(user.lastLoginAt)}</td><td>${escapeHtml(user.updatedAt)}</td></tr>`).join("") || `<tr><td colspan="6" class="muted">Ni še prijavljenih uporabnikov v trenutni shrambi.</td></tr>`}</tbody></table>
 <script>
 const status=document.getElementById("status");
+const accountStates=${JSON.stringify(rows.map(user => ({ email: user.email, state: user.accountStatus ?? "active", protected: user.role === "owner" || user.email === session.email }))).replace(/</g, "\\u003c")};
+document.querySelectorAll("[data-save-user]").forEach((save)=>{
+  const row=save.closest("tr"),email=row.querySelector('[data-field="email"]').value;
+  const account=accountStates.find(item=>item.email===email),box=row.querySelector(".edit-row");
+  const state=document.createElement("span");state.textContent=account?.state==="blocked"?"Blokiran":"Aktiven";state.className="tiny";box.appendChild(state);
+  if(account?.protected)return;
+  for(const operation of [account?.state==="blocked"?"unblock":"block","delete"]){
+    const button=document.createElement("button");button.type="button";button.textContent=operation==="delete"?"Izbriši uporabnika":operation==="unblock"?"Odblokiraj":"Blokiraj";
+    button.style.background=operation==="delete"?"#b42318":"#475467";button.style.borderColor=button.style.background;
+    button.addEventListener("click",async()=>{
+      let confirmation="";
+      if(operation==="delete"){
+        confirmation=prompt("Izbris odstrani račun, kredite in osnutke. Zgodovina plačil ostane brez povezave z računom. E-mail ostane v evidenci prepovedi za preprečevanje novih brezplačnih kreditov. Izbrisan račun se ne more ponovno prijaviti. Za potrditev vpiši: "+email)||"";
+        if(confirmation.trim().toLowerCase()!==email.toLowerCase())return;
+      }else if(!confirm((operation==="block"?"Blokiram uporabo računa ":"Odblokiram račun ")+email+"?"))return;
+      button.disabled=true;status.textContent="Shranjujem spremembo računa...";
+      try{
+        const response=await fetch("/api/auth?action=admin-user-manage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,operation,confirmation})});
+        const raw=await response.text();let data;try{data=JSON.parse(raw)}catch{throw new Error("Strežniška napaka (HTTP "+response.status+"). Poskusi znova.")}
+        if(!response.ok||!data.ok)throw new Error(data.error||"Sprememba ni uspela.");location.reload();
+      }catch(error){status.textContent=error instanceof Error?error.message:String(error);button.disabled=false}
+    });box.appendChild(button);
+  }
+});
 document.querySelectorAll("[data-save-user]").forEach((button)=>button.addEventListener("click",async()=>{
   const row=button.closest("tr");
   const email=row.querySelector('[data-field="email"]').value;
@@ -54,7 +84,9 @@ document.querySelectorAll("[data-save-user]").forEach((button)=>button.addEventL
   status.textContent="Shranjujem uporabnika "+email+"...";
   try {
     const response=await fetch("/admin/users/update",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,role,credits})});
-    const data=await response.json();
+    const raw=await response.text();
+    let data;
+    try { data=JSON.parse(raw); } catch { throw new Error("Shranjevanje ni uspelo (HTTP "+response.status+"). Poskusi znova; če se napaka ponovi, preveri strežniške dnevnike."); }
     if(!response.ok||!data.ok) throw new Error(data.error||"Shranjevanje ni uspelo.");
     status.textContent="Uporabnik "+email+" je posodobljen.";
   } catch(error) {
@@ -93,7 +125,7 @@ function fmtNumber(value){
 function renderSystem(data){
   const runway=data.runway;
   const runwayState=runway.ok?(Number(runway.creditBalance)<100?'warn':'ok'):'danger';
-  return '<section class="card" id="systemStatus"><div class="toolbar"><div><h2>Nadzorna plošča sredstev</h2><p class="muted">Stanje API goriva za tekst, sliko in video. Ključi se ne prikazujejo.</p></div><button type="button" onclick="refreshSystem()">Osveži</button></div>'+
+  return '<section class="card" id="systemStatus"><div class="toolbar"><div><h2>Nadzorna plošča sredstev</h2><p class="muted">Stanje sredstev za delovanje Studia. Pregled Runway kreditov, uporabniških kreditov in povezav za tekst, slike, video ter plačila. API ključi niso prikazani.</p></div><button type="button" onclick="refreshSystem()">Osveži</button></div>'+
     '<div class="grid">'+
     metric('Runway krediti',fmtNumber(runway.creditBalance),runwayState)+
     metric('Ocenjena vrednost USD',fmtNumber(runway.usdEstimate),runwayState)+
@@ -116,7 +148,7 @@ function renderSystem(data){
   }
 
   if (req.method === "GET" && action === "admin-system-status") {
-    const session = getSession(req);
+    const session = await getSession(req);
     if (!session || session.role !== "owner") {
       res.status(401).json({ ok: false, error: "Najprej se prijavi kot admin." });
       return;
@@ -127,21 +159,34 @@ function renderSystem(data){
   }
 
   if (req.method === "POST" && action === "admin-user-update") {
-    const session = getSession(req);
+    const session = await getSession(req);
     if (!session || session.role !== "owner") {
       res.status(401).json({ ok: false, error: "Najprej se prijavi kot admin." });
       return;
     }
 
-    res.status(200).json({
-      ok: true,
-      user: await updateUserForAdmin(req.body ?? {}),
-    });
+    try {
+      const user = await updateUserForAdmin(req.body ?? {});
+      res.status(200).json({ ok: true, user });
+    } catch (error) {
+      console.error("Admin user update failed", error);
+      res.status(400).json({ ok: false, error: "Uporabnika ni bilo mogoče shraniti. Preveri veljaven e-mail, število kreditov in ali uporabnik že obstaja." });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && action === "admin-user-manage") {
+    try {
+      const session = await getSession(req);
+      if (!session || session.role !== "owner") { res.status(401).json({ ok: false, error: "Admin access required." }); return; }
+      await manageUserForAdmin(session, req.body ?? {});
+      res.status(200).json({ ok: true });
+    } catch (error) { res.status(400).json({ ok: false, error: error instanceof Error ? error.message : "Account management failed." }); }
     return;
   }
 
   if (req.method === "POST" && action === "billing-claim") {
-    const session = getSession(req);
+    const session = await getSession(req);
     if (!session) {
       res.status(401).json({ ok: false, error: "Najprej se prijavi v Studio." });
       return;
@@ -150,6 +195,7 @@ function renderSystem(data){
     try {
       const result = await claimPaymentForSession(session, req.body ?? {});
       const updatedSession = {
+        emailVerified: session.emailVerified,
         email: result.user.email,
         role: result.user.role,
         credits: result.user.credits,
@@ -174,7 +220,9 @@ function renderSystem(data){
   }
 
   if (req.method === "GET" && action === "status") {
-    res.status(200).json({ ok: true, session: publicSession(getSession(req)) });
+    const session = await currentSession(req);
+    if (session) setSessionCookie(res, session);
+    res.status(200).json({ ok: true, session: publicSession(session), videoAccess: await hasVideoAccess(session) });
     return;
   }
 
@@ -185,14 +233,34 @@ function renderSystem(data){
       return;
     }
 
-    const session = await loginSession(email, req.body?.ownerCode);
-    setSessionCookie(res, session);
-    res.status(200).json({ ok: true, session: publicSession(session) });
+    try {
+      if (req.body?.ownerCode) {
+        if (createSession(email, req.body.ownerCode).role !== "owner") throw new Error("Invalid admin credentials.");
+        const session = await loginSession(email, req.body.ownerCode);
+        setSessionCookie(res, session);
+        res.status(200).json({ ok: true, session: publicSession(session) });
+      } else {
+        await sendEmailCode(email);
+        res.status(200).json({ ok: true, verificationRequired: true });
+      }
+    } catch (error) { res.status(403).json({ ok: false, error: error instanceof Error ? error.message : "Sign-in failed." }); }
+    return;
+  }
+
+  if (req.method === "POST" && action === "verify-email") {
+    try {
+      const email = String(req.body?.email ?? "").trim().toLowerCase();
+      const verifiedEmail = await verifyEmailCode(email, req.body?.code);
+      const stored = await loginSession(verifiedEmail);
+      const session = { ...stored, role: "user" as const, emailVerified: true };
+      setSessionCookie(res, session);
+      res.status(200).json({ ok: true, session: publicSession(session) });
+    } catch (error) { res.status(403).json({ ok: false, error: error instanceof Error ? error.message : "Verification failed." }); }
     return;
   }
 
   if (req.method === "GET" && action === "drafts") {
-    const session = getSession(req);
+    const session = await getSession(req);
     if (!session) {
       res.status(401).json({ ok: false, error: "Najprej se prijavi." });
       return;
@@ -202,8 +270,16 @@ function renderSystem(data){
     return;
   }
 
+  if (req.method === "POST" && action === "drafts-delete") {
+    const session = await getSession(req);
+    if (!session) { res.status(401).json({ ok: false, error: "Sign in first." }); return; }
+    try { await deleteDraftForSession(session, req.body?.id); res.status(200).json({ ok: true }); }
+    catch (error) { res.status(400).json({ ok: false, error: error instanceof Error ? error.message : "Delete failed" }); }
+    return;
+  }
+
   if (req.method === "POST" && action === "drafts-save") {
-    const session = getSession(req);
+    const session = await getSession(req);
     if (!session) {
       res.status(401).json({ ok: false, error: "Najprej se prijavi." });
       return;
@@ -254,7 +330,7 @@ function systemDashboard(status: Awaited<ReturnType<typeof getAdminSystemStatus>
 
   return `<section class="card" id="systemStatus">
     <div class="toolbar">
-      <div><h2>Nadzorna plošča sredstev</h2><p class="muted">Stanje API goriva za tekst, sliko in video. Ključi se ne prikazujejo.</p></div>
+      <div><h2>Nadzorna plošča sredstev</h2><p class="muted">Stanje sredstev za delovanje Studia. Pregled Runway kreditov, uporabniških kreditov in povezav za tekst, slike, video ter plačila. API ključi niso prikazani.</p></div>
       <button type="button" onclick="refreshSystem()">Osveži</button>
     </div>
     <div class="grid">

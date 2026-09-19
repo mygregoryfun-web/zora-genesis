@@ -6,6 +6,7 @@ import { config } from "../config.js";
 export type UserRole = "owner" | "user";
 
 export type StudioSession = {
+  emailVerified?: boolean;
   email: string;
   role: UserRole;
   credits: number;
@@ -40,6 +41,7 @@ function normalizeEmail(email: unknown) {
 }
 
 type UserRecord = StudioSession & {
+  accountStatus?: string;
   totalSpent: number;
   loginCount: number;
   lastLoginAt: string;
@@ -66,6 +68,30 @@ function hasSupabase() {
 
 export function storageMode() {
   return hasSupabase() ? "supabase" : "temporary";
+}
+
+export async function currentSession(req: any): Promise<StudioSession | null> {
+  const session = await getSession(req);
+  if (!session || session.role === "owner") return session;
+  const user = hasSupabase() ? await getSupabaseUser(session.email) : readStore().users[session.email];
+  return user ? { ...user, role: session.role, emailVerified: session.emailVerified } : null;
+}
+
+async function accountRestriction(email: string): Promise<string | null> {
+  if (!hasSupabase()) return null;
+  const rows = await supabaseFetch("studio_account_restrictions", {}, `?email=eq.${encodeURIComponent(email)}&select=status&limit=1`);
+  return Array.isArray(rows) && rows[0] ? String(rows[0].status) : null;
+}
+
+export async function manageUserForAdmin(actor: StudioSession, input: { email?: unknown; confirmation?: unknown; operation?: unknown }) {
+  if (actor.role !== "owner") throw new Error("Admin access required.");
+  const email = normalizeEmail(input.email);
+  if (!isValidEmail(email)) throw new Error("Invalid email.");
+  if (email === actor.email || email === config.ownerEmail) throw new Error("Admin accounts cannot be blocked or deleted.");
+  if (!["block", "unblock", "delete"].includes(String(input.operation))) throw new Error("Invalid operation.");
+  if (input.operation === "delete" && normalizeEmail(input.confirmation) !== email) throw new Error("Confirm deletion by entering the user's email.");
+  if (!hasSupabase()) throw new Error("User management requires Supabase and the account-management migration.");
+  await supabaseFetch("rpc/studio_manage_account", { method: "POST", body: JSON.stringify({ p_email: email, p_operation: input.operation, p_actor: actor.email, p_protected: config.ownerEmail }) });
 }
 
 function supabaseEndpoint(table: string, query = "") {
@@ -111,7 +137,7 @@ function fromSupabaseDraft(row: any): StoredDraft {
   };
 }
 
-async function supabaseFetch(table: string, init: RequestInit = {}, query = "") {
+export async function supabaseFetch(table: string, init: RequestInit = {}, query = "") {
   const response = await fetch(supabaseEndpoint(table, query), {
     ...init,
     headers: {
@@ -147,7 +173,7 @@ async function getSupabaseUser(email: string): Promise<UserRecord | null> {
 async function upsertSupabaseUser(user: UserRecord): Promise<UserRecord> {
   const rows = await supabaseFetch(
     "studio_users",
-    { method: "POST", body: JSON.stringify(toSupabaseUser(user)) },
+    { method: "POST", body: JSON.stringify(toSupabaseUser(user)), headers: { Prefer: "resolution=merge-duplicates,return=representation" } },
     "?on_conflict=email",
   );
   return Array.isArray(rows) && rows[0] ? fromSupabaseUser(rows[0]) : user;
@@ -190,7 +216,8 @@ function toRecord(session: StudioSession, existing?: UserRecord): UserRecord {
 export async function listUsers() {
   if (hasSupabase()) {
     const rows = await supabaseFetch("studio_users", { method: "GET" }, "?select=*&order=updated_at.desc");
-    return Array.isArray(rows) ? rows.map(fromSupabaseUser) : [];
+    const restrictions = await supabaseFetch("studio_account_restrictions", {}, "?select=email,status");
+    return Array.isArray(rows) ? rows.map(row => ({ ...fromSupabaseUser(row), accountStatus: Array.isArray(restrictions) ? restrictions.find(item => item.email === row.email)?.status ?? "active" : "active" })) : [];
   }
 
   return Object.values(readStore().users).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
@@ -334,6 +361,7 @@ export function createSession(emailInput: unknown, ownerCodeInput?: unknown): St
 
 export async function loginSession(emailInput: unknown, ownerCodeInput?: unknown): Promise<StudioSession> {
   const session = createSession(emailInput, ownerCodeInput);
+  if (await accountRestriction(session.email)) throw new Error("Račun je blokiran ali izbrisan. Obrni se na skrbnika.");
   if (session.role === "owner") {
     return session;
   }
@@ -400,8 +428,11 @@ export function decodeSession(value: unknown): StudioSession | null {
   }
 }
 
-export function getSession(req: any): StudioSession | null {
-  return decodeSession(parseCookies(req.headers?.cookie).get(COOKIE_NAME));
+export async function getSession(req: any): Promise<StudioSession | null> {
+  const session = decodeSession(parseCookies(req.headers?.cookie).get(COOKIE_NAME));
+  if (!session || await accountRestriction(session.email)) return null;
+  if (session.role !== "owner" && session.emailVerified !== true) return null;
+  return session;
 }
 
 export function setSessionCookie(res: any, session: StudioSession) {
@@ -426,7 +457,7 @@ export function publicSession(session: StudioSession | null) {
 }
 
 export async function requireCredits(req: any, res: any, cost: number, label: string) {
-  const session = getSession(req);
+  const session = await getSession(req);
   if (!session) {
     res.status(401).json({ ok: false, error: "Najprej se prijavi z e-mailom.", code: "AUTH_REQUIRED" });
     return null;
@@ -441,8 +472,9 @@ export async function requireCredits(req: any, res: any, cost: number, label: st
   const effectiveSession: StudioSession = stored
     ? {
         email: stored.email,
-        role: stored.role,
+        role: session.role,
         credits: stored.credits,
+        emailVerified: session.emailVerified,
         createdAt: stored.createdAt,
         updatedAt: stored.updatedAt,
       }
@@ -492,6 +524,12 @@ export async function listDraftsForSession(session: StudioSession) {
   }
 
   return [];
+}
+
+export async function deleteDraftForSession(session: StudioSession, id: unknown) {
+  if (!hasSupabase()) throw new Error("Supabase is not configured.");
+  if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Invalid draft ID.");
+  await supabaseFetch("studio_drafts", { method: "DELETE" }, `?id=eq.${encodeURIComponent(id)}&email=eq.${encodeURIComponent(session.email)}`);
 }
 
 export async function saveDraftForSession(session: StudioSession, input: {

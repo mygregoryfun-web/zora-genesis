@@ -42,7 +42,8 @@ VOICE RULES
 - Use ordinary language.
 - Keep it human, direct, slightly raw, and not motivational.
 - Avoid crypto/Web3/digital asset references.
-- Avoid cliches and strange poetic phrases.
+- Avoid cliches, abstract startup language, and polished marketing phrases.
+- Do not use: synergy, vibrant ecosystem, compelling opportunity, strategic opportunity, unlocking potential, game-changing, next-generation, seamless experience, robust ecosystem, world-class.
 - Keep short paragraphs.
 - End with a question when it fits.
 - Maximum 3 hashtags.

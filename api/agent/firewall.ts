@@ -4,7 +4,7 @@ import { escapeHtml, page, wantsJson } from "../../src/services/html.js";
 
 export const config = { maxDuration: 30 };
 
-type Language = "en" | "es";
+type Language = "en" | "es" | "sl";
 
 function languageTabs(lang: Language) {
   return `
@@ -12,12 +12,118 @@ function languageTabs(lang: Language) {
       <div class="band">
         <a class="button ${lang === "en" ? "primary" : ""}" href="/agent/firewall?lang=en">English</a>
         <a class="button ${lang === "es" ? "primary" : ""}" href="/agent/firewall?lang=es">Espanol</a>
+        <a class="button ${lang === "sl" ? "primary" : ""}" href="/agent/firewall?lang=sl">Slovenščina</a>
       </div>
     </section>
   `;
 }
 
 function form(lang: Language) {
+  if (lang === "sl") {
+    return `
+      ${languageTabs(lang)}
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Transaction Firewall</div>
+          <h1>Preveri transakcijo pred podpisom.</h1>
+          <p class="lead">Prilepi hash transakcije na omrežju Base ali vnesi napredne podatke transakcije. Stran ne poveže denarnice, ne zahteva podpisa in ne izvede transakcije.</p>
+        </div>
+        <div class="stat"><strong>Samo branje</strong><span>brez podpisa</span></div>
+      </section>
+
+      <section class="section">
+        <div class="cockpit">
+          <div class="radar-panel">
+            <div class="eyebrow">Varnostni pregled</div>
+            <div class="radar" aria-hidden="true"></div>
+            <div class="check-row"><span>Hash</span><span class="safe-badge">Pripravljen</span></div>
+            <div class="check-row"><span>Calldata</span><span class="safe-badge">Dekodiranje</span></div>
+          </div>
+          <div class="console-panel">
+            <div class="console-top"><span>Transaction Firewall</span><span>Samo branje</span></div>
+            <div class="wave" aria-hidden="true"></div>
+            <div class="proof-grid">
+              <div class="proof-chip"><span>Podpis</span><strong>Ni zahtevan</strong></div>
+              <div class="proof-chip"><span>Denarnica</span><strong>Ni povezana</strong></div>
+              <div class="proof-chip"><span>Omrežje</span><strong>Base</strong></div>
+            </div>
+          </div>
+          <div class="status-panel">
+            <div class="eyebrow">Preverjanja</div>
+            <div class="check-row"><span>Odobritve</span><span class="safe-badge">Pregled</span></div>
+            <div class="check-row"><span>Dovoljenja</span><span class="safe-badge">Pregled</span></div>
+            <div class="check-row"><span>Simulacija</span><span class="safe-badge">Vključena</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="grid two">
+          <article class="card highlight">
+            <h2>Hitri pregled</h2>
+            <p>Najlažje je, da prilepiš hash transakcije iz BaseScana, denarnice ali aplikacije. Agent samodejno prebere cilj, calldata, pošiljatelja in vrednost.</p>
+            <form method="get" action="/agent/firewall">
+              <input type="hidden" name="lang" value="sl">
+              <label>Hash transakcije
+                <input name="tx" required placeholder="0x...64 znakov">
+                <small>Hash pripravljene ali že oddane transakcije na omrežju Base.</small>
+              </label>
+              <label>Omrežje
+                <select name="network"><option value="base">Base</option><option value="base-sepolia">Base Sepolia</option></select>
+              </label>
+              <button type="submit">Preveri hash transakcije</button>
+            </form>
+          </article>
+
+          <article class="card">
+            <h2>Napredni vnos calldata</h2>
+            <form method="get" action="/agent/firewall">
+              <input type="hidden" name="lang" value="sl">
+              <label>Ciljni naslov pogodbe
+                <input name="to" required placeholder="0x...">
+                <small>Polje <code>to</code> iz pripravljene interakcije s pogodbo.</small>
+              </label>
+              <label>Calldata
+                <textarea name="data" rows="5" placeholder="0x"></textarea>
+                <small>Šestnajstiški podatki transakcije, ki se začnejo z <code>0x</code>. Vrednosti ne ugibaj.</small>
+              </label>
+              <label>Naslov pošiljatelja
+                <input name="from" placeholder="0x...">
+                <small>Priporočeno za natančnejšo simulacijo.</small>
+              </label>
+              <label>Vrednost v wei<input name="valueWei" value="0"></label>
+              <label>Omrežje
+                <select name="network"><option value="base">Base</option><option value="base-sepolia">Base Sepolia</option></select>
+              </label>
+              <button type="submit">Preveri transakcijo</button>
+            </form>
+          </article>
+
+          <article class="card">
+            <h2>Kaj vnesti</h2>
+            <ul>
+              <li><strong>Hash transakcije</strong>: najlažja možnost, če ga imaš iz BaseScana ali denarnice.</li>
+              <li><strong>Ciljna pogodba</strong>: polje <code>to</code> iz transakcije.</li>
+              <li><strong>Calldata</strong>: polje <code>data</code>, ki se začne z <code>0x</code>.</li>
+              <li><strong>Pošiljatelj</strong>: naslov tvoje denarnice za natančnejšo simulacijo.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h2>Kaj preveri agent</h2>
+            <ul>
+              <li>ali je calldata veljaven,</li>
+              <li>ali pogodba obstaja v izbranem omrežju,</li>
+              <li>ali simulacija uspe ali se razveljavi,</li>
+              <li>ali so prisotni izbrani znaki nevarnosti.</li>
+            </ul>
+            <p class="warn"><strong>Pomembno:</strong> rezultat zmanjša tveganje, vendar ne zagotavlja, da je pogodba varna.</p>
+          </article>
+        </div>
+      </section>
+    `;
+  }
+
   if (lang === "es") {
     return `
       ${languageTabs(lang)}
@@ -244,7 +350,20 @@ function form(lang: Language) {
 }
 
 function result(report: TransactionFirewallReport, lang: Language) {
-  const resultText = lang === "es"
+  const resultText = lang === "sl"
+    ? {
+        destination: "Cilj",
+        action: "dejanje",
+        nativeTransfer: "prenos osnovne valute",
+        riskScore: "ocena tveganja",
+        findings: "Ugotovitve",
+        simulation: "Simulacija",
+        simulationSuccess: "uspešno zaključena brez razveljavitve",
+        simulationFailed: "ni bila zaključena",
+        checkAnother: "Preveri drugo transakcijo",
+        noWarnings: "Izbranih opozoril nismo zaznali. To ni zagotovilo varnosti.",
+      }
+    : lang === "es"
     ? {
         destination: "Destino",
         action: "accion",
@@ -301,7 +420,8 @@ export default async function handler(req: any, res: any) {
   }
 
   const url = new URL(req.url ?? "/agent/firewall", "https://zora-genesis-t1j9.vercel.app");
-  const lang = String(req.query?.lang ?? url.searchParams.get("lang") ?? "en") === "es" ? "es" : "en";
+  const requestedLanguage = String(req.query?.lang ?? url.searchParams.get("lang") ?? "en");
+  const lang: Language = requestedLanguage === "es" || requestedLanguage === "sl" ? requestedLanguage : "en";
   const tx = String(req.query?.tx ?? url.searchParams.get("tx") ?? "");
   const to = String(req.query?.to ?? url.searchParams.get("to") ?? "");
 
