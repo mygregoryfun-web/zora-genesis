@@ -1073,6 +1073,12 @@ function isAuthorized(req: http.IncomingMessage) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
 
+  if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/auth/verify-email")) {
+    res.writeHead(302, { Location: "/studio", "Cache-Control": "no-store" });
+    res.end();
+    return;
+  }
+
   if (req.method === "GET" && url.pathname === "/health") {
     sendJson(res, 200, {
       ok: true,

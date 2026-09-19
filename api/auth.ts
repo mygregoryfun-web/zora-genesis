@@ -25,6 +25,12 @@ export const config = { maxDuration: 10 };
 export default async function handler(req: any, res: any) {
   const action = String(req.query?.action ?? "").toLowerCase();
 
+  if (req.method === "GET" && action === "verify-email") {
+    res.setHeader("Cache-Control", "no-store");
+    res.redirect(302, "/studio");
+    return;
+  }
+
   if (req.method === "GET" && action === "admin") {
     const session = await getSession(req);
     if (!session || session.role !== "owner") {
