@@ -24,7 +24,10 @@ export function normalizeGeneratedPost(raw: unknown): GeneratedPost {
     const foundTags = candidate.post.match(/#[\p{L}\p{N}_]+/gu) ?? [];
     candidate.post = candidate.post
       .replace(/(?:\s*#[\p{L}\p{N}_]+){1,}$/gu, "")
-      .replace(/\s{2,}/g, " ")
+      .replace(/[^\S\r\n]{2,}/g, " ")
+      .replace(/\r\n?/g, "\n")
+      .replace(/\n[ \t]+/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
       .trim();
 
     if (!Array.isArray(candidate.hashtags) || candidate.hashtags.length === 0) {
@@ -134,7 +137,7 @@ function polishGeneratedText(text: string) {
     text,
   )
     .replace(/\s+([,.!?;:])/g, "$1")
-    .replace(/\s{2,}/g, " ")
+    .replace(/[^\S\r\n]{2,}/g, " ")
     .trim();
 }
 

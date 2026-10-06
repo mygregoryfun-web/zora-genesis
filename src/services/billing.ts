@@ -49,7 +49,7 @@ function productById(id: unknown) {
 
 function requireBillingWallet() {
   if (!isAddress(config.billingWalletAddress)) {
-    throw new Error("Billing wallet ni nastavljen.");
+    throw new Error("Prejemna denarnica za plačila ni nastavljena.");
   }
   return getAddress(config.billingWalletAddress);
 }
@@ -146,15 +146,15 @@ export async function claimPaymentForSession(session: StudioSession, input: {
   const receiver = requireBillingWallet();
   const txHash = String(input.txHash ?? "").trim().toLowerCase();
   if (!/^0x[0-9a-f]{64}$/.test(txHash)) {
-    throw new Error("Vpiši veljaven transaction hash.");
+    throw new Error("Vpiši veljaven hash transakcije.");
   }
 
   const used = await existingPayment(txHash);
   if (used?.status === "needs_review") {
-    throw new Error("Ta transaction hash je že zabeležen, vendar potrebuje ročen pregled. Piši skrbniku.");
+    throw new Error("Ta hash transakcije je že zabeležen, vendar potrebuje ročen pregled. Piši skrbniku.");
   }
   if (used) {
-    throw new Error("Ta transaction hash je že bil uporabljen za dodajanje kreditov.");
+    throw new Error("Ta hash transakcije je že bil uporabljen za dodajanje kreditov.");
   }
 
   const client = createPublicClient({
@@ -198,7 +198,7 @@ export async function claimPaymentForSession(session: StudioSession, input: {
   }
 
   if (!matched) {
-    throw new Error("V tej transakciji nisem našel pravega USDC plačila na billing wallet.");
+    throw new Error("V tej transakciji nisem našel pravega USDC plačila na prejemno denarnico.");
   }
 
   const payment = await savePayment({

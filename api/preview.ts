@@ -38,7 +38,7 @@ function previewPage() {
     let draft=null,activeChannel="facebook";const status=document.getElementById("status"),text=document.getElementById("text"),image=document.getElementById("image"),generate=document.getElementById("generate"),topic=document.getElementById("topic"),language=document.getElementById("language");
     function setStatus(v){status.textContent=v} function renderDraft(){if(!draft)return;text.value=draft.channels[activeChannel]?.text||"";if(draft.image?.dataUrl){image.innerHTML="";const img=document.createElement("img");img.src=draft.image.dataUrl;img.alt="Generirana slika";image.appendChild(img)}else image.textContent="Slika ni bila ustvarjena."}
     document.querySelectorAll(".tab").forEach((button)=>button.addEventListener("click",()=>{activeChannel=button.dataset.channel;document.querySelectorAll(".tab").forEach((item)=>item.classList.remove("active"));button.classList.add("active");renderDraft()}));
-    async function createDraft(){generate.disabled=true;setStatus("Ustvarjam...");try{const response=await fetch("/agent/draft",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topic:topic.value.trim(),language:language.value})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error||"Draft failed");draft=data.draft;renderDraft();setStatus("Osnutek pripravljen.")}catch(error){setStatus(error instanceof Error?error.message:String(error))}finally{generate.disabled=false}}
+    async function createDraft(){generate.disabled=true;setStatus("Ustvarjam...");try{const response=await fetch("/agent/draft",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topic:topic.value.trim(),language:language.value})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error||"Osnutka ni bilo mogoče pripraviti.");draft=data.draft;renderDraft();setStatus("Osnutek pripravljen.")}catch(error){setStatus(error instanceof Error?error.message:String(error))}finally{generate.disabled=false}}
     generate.addEventListener("click",createDraft);document.getElementById("addTopic").addEventListener("click",createDraft);document.getElementById("copyText").addEventListener("click",async()=>{await navigator.clipboard.writeText(text.value);setStatus("Tekst kopiran.")});document.getElementById("copyImage").addEventListener("click",async()=>{if(!draft?.image?.dataUrl)return setStatus("Ni slike za kopiranje.");const blob=await fetch(draft.image.dataUrl).then((response)=>response.blob());await navigator.clipboard.write([new ClipboardItem({[blob.type]:blob})]);setStatus("Slika kopirana.")});
   </script>
 </body>
@@ -49,7 +49,7 @@ export default function handler(req: any, res: any) {
   if (req.method !== "GET") {
     res.status(405).json({
       ok: false,
-      error: "Method not allowed",
+      error: "Metoda ni dovoljena.",
     });
     return;
   }

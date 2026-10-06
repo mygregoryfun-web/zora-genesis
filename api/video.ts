@@ -4,7 +4,7 @@ function videoPage() {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Zora Genesis AI Video</title>
+  <title>AI video urejevalnik</title>
   <style>
     :root{color-scheme:light;--bg:#f5f6f8;--paper:#ffffff;--ink:#17191c;--muted:#68707d;--line:#d9e0ea;--accent:#7a3f2a;--accent2:#146f64;--soft:#f1f5f4;--dark:#121416}
     *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#eef3f4 0,#f7f8fa 230px,var(--bg) 100%);color:var(--ink);min-height:100vh;position:relative;overflow-x:hidden}
@@ -24,7 +24,7 @@ function videoPage() {
 </head>
 <body>
   <main>
-    <header><div><h1>AI foto v video</h1><p>Naloži sliko, opiši prizor in pripravi video osnutek za Reels, Story ali objavo.</p></div><div class="button-row"><a href="/studio">Studio</a><a href="/preview">Predogled</a></div></header>
+    <header><div><h1>AI fotografija v video</h1><p>Naloži sliko, opiši prizor in pripravi video osnutek za Reels, Story ali objavo.</p></div><div class="button-row"><a href="/studio">Studio</a><a href="/preview">Predogled</a></div></header>
     <section class="layout">
       <aside class="panel controls">
         <figure class="hero-card">
@@ -35,10 +35,10 @@ function videoPage() {
         <div class="row"><label>Format<select id="aspect"><option value="9:16">Reels / Story 9:16</option><option value="1:1">Kvadrat 1:1</option><option value="16:9">Ležeče 16:9</option></select></label><label>Trajanje<select id="duration"><option value="5">5 sekund</option><option value="10">10 sekund</option></select></label></div>
         <div class="row"><label>Tema za govor<input id="speechTopic" placeholder="Npr. ponos, izdaja, denar, zaupanje..." /></label><label>Jezik govora<select id="speechLanguage"><option value="si">SI</option><option value="eng">ENG</option><option value="esp">ESP</option></select></label></div>
         <button id="generateSpeech" class="secondary" type="button">Ustvari govor</button>
-        <label>Opis videa<textarea id="prompt" placeholder="Npr. počasen cinematic približek, oseba se nasmehne, topla svetloba, realistično gibanje..."></textarea></label>
+        <label>Opis videa<textarea id="prompt" placeholder="Npr. počasen filmski približek, oseba se nasmehne, topla svetloba, realistično gibanje..."></textarea></label>
         <div class="button-row"><button id="aiVideo" type="button" disabled>Ustvari AI video</button><button id="localExport" class="secondary" type="button">Hiter WebM izvoz</button></div>
         <p class="lock-note" id="videoAccessNotice">AI video je v demo obdobju zaklenjen za uporabnike brez potrjenega nakupa kreditov. Začetnih 50 brezplačnih kreditov ga ne odklene. Lokalni WebM izvoz ostane brezplačen. <a href="/pricing">Kupi kredite</a></p>
-        <section class="credit-panel"><h2>Video krediti</h2><div class="credit-grid"><div class="credit-card"><strong>5 sekund</strong><span>Gen-4 Turbo porabi približno 25 kreditov.</span></div><div class="credit-card"><strong>10 sekund</strong><span>Gen-4 Turbo porabi približno 50 kreditov.</span></div><div class="credit-card"><strong>1000 kreditov</strong><span>Približno 40 kratkih 5s testov.</span></div></div><p class="note">Ključ ostane na backendu kot RUNWAYML_API_SECRET. Brskalnik ga nikoli ne vidi.</p></section>
+        <section class="credit-panel"><h2>Video krediti</h2><div class="credit-grid"><div class="credit-card"><strong>5 sekund</strong><span>Gen-4 Turbo porabi približno 25 kreditov.</span></div><div class="credit-card"><strong>10 sekund</strong><span>Gen-4 Turbo porabi približno 50 kreditov.</span></div><div class="credit-card"><strong>1000 kreditov</strong><span>Približno 40 kratkih 5-sekundnih testov.</span></div></div><p class="note">Ključ ostane na strežniku kot RUNWAYML_API_SECRET. Brskalnik ga nikoli ne vidi.</p></section>
       </aside>
       <section class="panel stage"><div class="canvas-wrap"><canvas id="canvas" width="1080" height="1920"></canvas><video id="video" controls playsinline></video><div class="status" id="status">Naloži sliko in ustvari AI video.</div><a id="download" class="download" download="ai-video.mp4">Prenesi video</a></div></section>
     </section>
@@ -48,16 +48,42 @@ function videoPage() {
     const params=new URLSearchParams(window.location.search);if(params.get("topic"))speechTopic.value=params.get("topic");if(params.get("language"))speechLanguage.value=params.get("language");if(params.get("text"))prompt.value=params.get("text");
     function setStatus(v){status.textContent=v}function ratio(){if(aspect.value==="16:9")return"1280:720";if(aspect.value==="1:1")return"960:960";return"720:1280"}function setCanvas(){if(aspect.value==="16:9"){canvas.width=1920;canvas.height=1080}else if(aspect.value==="1:1"){canvas.width=1080;canvas.height=1080}else{canvas.width=1080;canvas.height=1920}draw()}
     function draw(){ctx.fillStyle="#151312";ctx.fillRect(0,0,canvas.width,canvas.height);if(!image){ctx.fillStyle="#efe7de";ctx.font="700 42px Arial,sans-serif";ctx.textAlign="center";ctx.fillText("Naloži sliko",canvas.width/2,canvas.height/2);ctx.textAlign="left";return}const ir=image.width/image.height;let w=canvas.width,h=w/ir;if(h<canvas.height){h=canvas.height;w=h*ir}ctx.drawImage(image,(canvas.width-w)/2,(canvas.height-h)/2,w,h)}
+    // Video transport helpers: keep the image payload below request-size limits.
+    async function readVideoResponse(response){
+      const text=await response.text();
+      if(response.status===413)throw new Error("Slika je prevelika za pošiljanje. Izberi manjšo sliko in poskusi znova.");
+      let data;try{data=JSON.parse(text)}catch{throw new Error(response.status===504?"Strežnik se ni odzval pravočasno. Poskusi znova čez nekaj trenutkov.":"Strežnik je vrnil neveljaven odgovor (HTTP "+response.status+"). Poskusi znova čez nekaj trenutkov.")}
+      if(!data||typeof data!=="object"||Array.isArray(data))throw new Error("Strežnik je vrnil neveljaven odgovor.");
+      return data;
+    }
+    function prepareVideoImage(img){
+      const width=img.naturalWidth||img.width,height=img.naturalHeight||img.height;
+      if(!width||!height)throw new Error("Slika še ni pripravljena. Počakaj, da se naloži.");
+      const surface=document.createElement("canvas"),context=surface.getContext("2d");
+      if(!context)throw new Error("Brskalnik ne more pripraviti slike.");
+      let scale=Math.min(1,1600/Math.max(width,height));
+      for(let pass=0;pass<5;pass++){
+        surface.width=Math.max(1,Math.round(width*scale));surface.height=Math.max(1,Math.round(height*scale));
+        context.fillStyle="#ffffff";context.fillRect(0,0,surface.width,surface.height);context.drawImage(img,0,0,surface.width,surface.height);
+        for(const quality of [0.88,0.76,0.64]){
+          const encoded=surface.toDataURL("image/jpeg",quality);
+          if(encoded.startsWith("data:image/jpeg;base64,")&&encoded.length<=900000)return encoded;
+        }
+        scale*=0.75;
+      }
+      throw new Error("Slike ni bilo mogoče dovolj zmanjšati. Izberi manjšo JPG ali PNG sliko.");
+    }
+    // End video transport helpers.
     file.addEventListener("change",()=>{const selected=file.files&&file.files[0];if(!selected)return;const reader=new FileReader();reader.onload=()=>{imageDataUrl=String(reader.result);const img=new Image();img.onload=()=>{image=img;draw();setStatus("Slika pripravljena.")};img.src=imageDataUrl};reader.readAsDataURL(selected)});
     aspect.addEventListener("change",setCanvas);
-    document.getElementById("generateSpeech").addEventListener("click",async()=>{const topic=speechTopic.value.trim();if(!topic)return setStatus("Najprej vpiši temo za govor.");const button=document.getElementById("generateSpeech");button.disabled=true;try{setStatus("Ustvarjam govor...");const response=await fetch("/agent/draft",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topic:topic,language:speechLanguage.value})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error||"Speech draft failed");prompt.value=data.draft.source.post;setStatus("Govor je pripravljen kot opis videa.")}catch(error){setStatus(error instanceof Error?error.message:String(error))}finally{button.disabled=false}});
-    async function poll(id){for(let i=0;i<48;i++){await new Promise((resolve)=>setTimeout(resolve,i<2?2500:5000));const response=await fetch("/api/video/task?id="+encodeURIComponent(id));const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error||"Video status failed");const task=data.task;setStatus("Runway: "+(task.status||"processing")+(task.progress?" "+Math.round(task.progress*100)+"%":""));if(task.status==="SUCCEEDED"&&task.output?.[0])return task.output[0];if(task.status==="FAILED"||task.status==="CANCELED")throw new Error("AI video ni uspel: "+task.status)}throw new Error("Video se predolgo ustvarja.")}
-    document.getElementById("aiVideo").addEventListener("click",async()=>{if(!imageDataUrl)return setStatus("Najprej naloži sliko.");const button=document.getElementById("aiVideo");button.disabled=true;video.style.display="none";download.classList.remove("show");try{setStatus("Pošiljam v Runway...");const response=await fetch("/api/video/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"gen4_turbo",promptImage:imageDataUrl,promptText:prompt.value.trim()||"Subtle cinematic movement, natural light, realistic social media video.",ratio:ratio(),duration:Number(duration.value)})});const data=await response.json();if(!response.ok||!data.ok)throw new Error(data.error||"AI video generation failed");setStatus("Runway task sprejet. Cena: "+(data.task.estimatedCost?.credits||"?")+" kreditov.");const url=await poll(data.task.id);video.src=url;video.style.display="block";download.href=url;download.classList.add("show");setStatus("AI video je pripravljen.")}catch(error){setStatus(error instanceof Error?error.message:String(error))}finally{button.disabled=false}});
+    document.getElementById("generateSpeech").addEventListener("click",async()=>{const topic=speechTopic.value.trim();if(!topic)return setStatus("Najprej vpiši temo za govor.");const button=document.getElementById("generateSpeech");button.disabled=true;try{setStatus("Ustvarjam govor...");const response=await fetch("/agent/draft",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topic:topic,language:speechLanguage.value,includeImage:false})});const data=await readVideoResponse(response);if(!response.ok||!data.ok)throw new Error(data.error||"Govor ni bil ustvarjen.");prompt.value=data.draft.source.post;setStatus("Govor je pripravljen kot opis videa.")}catch(error){setStatus(error instanceof Error?error.message:String(error))}finally{button.disabled=false}});
+    async function poll(id){for(let i=0;i<48;i++){await new Promise((resolve)=>setTimeout(resolve,i<2?2500:5000));const response=await fetch("/api/video/task?id="+encodeURIComponent(id));const data=await readVideoResponse(response);if(!response.ok||!data.ok)throw new Error(data.error||"Statusa videa ni bilo mogoče preveriti.");const task=data.task;setStatus("Runway: "+(task.status||"processing")+(task.progress?" "+Math.round(task.progress*100)+"%":""));if(task.status==="SUCCEEDED"&&task.output?.[0])return task.output[0];if(task.status==="FAILED"||task.status==="CANCELED")throw new Error("AI video ni uspel: "+task.status)}throw new Error("Video se predolgo ustvarja.")}
+    document.getElementById("aiVideo").addEventListener("click",async()=>{if(!imageDataUrl||!image)return setStatus("Najprej naloži sliko in počakaj, da se prikaže.");const button=document.getElementById("aiVideo");button.disabled=true;video.style.display="none";download.classList.remove("show");try{if(prompt.value.trim().length>1000)throw new Error("Opis videa je predolg. Skrajšaj ga na največ 1000 znakov.");setStatus("Pripravljam sliko za video...");const preparedImage=prepareVideoImage(image);setStatus("Pošiljam v Runway...");const response=await fetch("/api/video/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"gen4_turbo",promptImage:preparedImage,promptText:prompt.value.trim()||"Nežno filmsko gibanje, naravna svetloba, realističen video za družbena omrežja.",ratio:ratio(),duration:Number(duration.value)})});const data=await readVideoResponse(response);if(!response.ok||!data.ok)throw new Error(data.error||"AI videa ni bilo mogoče ustvariti.");setStatus("Runway naloga sprejeta. Cena: "+(data.task.estimatedCost?.credits||"?")+" kreditov.");const url=await poll(data.task.id);video.src=url;video.style.display="block";download.href=url;download.classList.add("show");setStatus("AI video je pripravljen.")}catch(error){setStatus(error instanceof Error?error.message:String(error))}finally{button.disabled=false}});
     document.getElementById("localExport").addEventListener("click",()=>{if(!image)return setStatus("Najprej naloži sliko.");const stream=canvas.captureStream(30),recorder=new MediaRecorder(stream,{mimeType:"video/webm;codecs=vp9"}),chunks=[];recorder.ondataavailable=(event)=>{if(event.data.size)chunks.push(event.data)};recorder.onstop=()=>{const blob=new Blob(chunks,{type:"video/webm"});download.href=URL.createObjectURL(blob);download.download="hitri-video.webm";download.classList.add("show");setStatus("WebM pripravljen.")};recorder.start();setTimeout(()=>recorder.stop(),Number(duration.value)*1000);setStatus("Izvažam WebM...")});
     setCanvas();
     const videoAccessCopy=params.get("language")==="eng"?["AI video requires a confirmed credit purchase. Free trial credits do not unlock it. Local WebM export remains free.","AI video unlocked. Generating a video uses credits."]:params.get("language")==="esp"?["El vídeo con IA requiere una compra de créditos confirmada. Los créditos gratuitos no lo desbloquean. La exportación WebM local sigue siendo gratuita.","Vídeo con IA desbloqueado. Generar un vídeo consume créditos."]:["AI video se odklene po potrjenem nakupu kreditov. Začetnih 50 brezplačnih kreditov ga ne odklene. Lokalni WebM izvoz ostane brezplačen.","AI video je odklenjen. Generiranje porablja kredite."];
     document.getElementById("videoAccessNotice").firstChild.textContent=videoAccessCopy[0]+" ";
-    fetch("/auth/status").then((response)=>{if(!response.ok)throw new Error("Access check failed");return response.json()}).then((data)=>{document.getElementById("aiVideo").disabled=!data.videoAccess;if(data.videoAccess)document.getElementById("videoAccessNotice").firstChild.textContent=videoAccessCopy[1]+" "}).catch(()=>{document.getElementById("aiVideo").disabled=true});
+    fetch("/auth/status").then((response)=>{if(!response.ok)throw new Error("Dostopa ni bilo mogoče preveriti.");return readVideoResponse(response)}).then((data)=>{document.getElementById("aiVideo").disabled=!data.videoAccess;if(data.videoAccess)document.getElementById("videoAccessNotice").firstChild.textContent=videoAccessCopy[1]+" "}).catch(()=>{document.getElementById("aiVideo").disabled=true});
     if(params.get("from")==="studio"){const transferred=sessionStorage.getItem("zg_video_image");if(transferred&&transferred.startsWith("data:image/")){const img=new Image();img.onload=()=>{image=img;imageDataUrl=transferred;draw();sessionStorage.removeItem("zg_video_image");setStatus("Slika iz Studia je pripravljena.")};img.onerror=()=>setStatus("Slike ni bilo mogoče prenesti. Naloži jo ročno.");img.src=transferred}}
   </script>
 </body>
@@ -66,7 +92,7 @@ function videoPage() {
 
 export default function handler(req: any, res: any) {
   if (req.method !== "GET") {
-    res.status(405).json({ ok: false, error: "Method not allowed" });
+    res.status(405).json({ ok: false, error: "Metoda ni dovoljena." });
     return;
   }
 

@@ -38,22 +38,7 @@ export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
     input.imageStyle === "artwork-cover" || input.imageStyle === "contradictory-art"
       ? input.imageStyle
       : "social-editorial";
-  const post = await generateFacebookPost({ memory, topic, language, tone, length }).catch((err) => {
-    const reason = err instanceof Error ? err.message : String(err);
-    console.error("Facebook draft text generation failed, using fallback:", reason);
-    return {
-      title: topic || "Ko ponos preglasi resnico",
-      post: [
-        ...(topic ? [`Tema: ${topic}`, ""] : []),
-        "Najtežji trenutek v odnosu ni vedno prepir.",
-        "",
-        "Včasih je najtežje priznati, da nas ne vodi več resnica, ampak ponos. Tisti notranji glas, ki ne želi slišati, ne želi razumeti in ne želi popustiti. Takrat človek ne brani ljubezni. Brani svojo podobo.",
-        "",
-        "In ravno tam se začnejo razdalje med ljudmi.",
-      ].join("\n"),
-      hashtags: [],
-    };
-  });
+  const post = await generateFacebookPost({ memory, topic, language, tone, length });
   const image =
     input.includeImage === false
       ? null

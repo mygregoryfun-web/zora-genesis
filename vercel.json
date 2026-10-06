@@ -112,6 +112,10 @@
       "dest": "/api/auth.ts?action=verify-email"
     },
     {
+      "src": "/auth/supabase-session",
+      "dest": "/api/auth.ts?action=supabase-session"
+    },
+    {
       "src": "/auth/logout",
       "dest": "/api/auth.ts?action=logout"
     },
@@ -198,6 +202,10 @@
     {
       "src": "/api/auth/verify-email",
       "dest": "/api/auth.ts?action=verify-email"
+    },
+    {
+      "src": "/api/auth/supabase-session",
+      "dest": "/api/auth.ts?action=supabase-session"
     },
     {
       "src": "/api/auth",

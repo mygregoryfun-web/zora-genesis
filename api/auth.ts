@@ -18,7 +18,7 @@ import {
 import { getAdminSystemStatus } from "../src/services/admin-dashboard.js";
 import { claimPaymentForSession } from "../src/services/billing.js";
 import { hasVideoAccess } from "../src/services/studio-video.js";
-import { sendEmailCode, verifyEmailCode } from "../src/services/email-auth.js";
+import { sendEmailCode, verifyEmailCode, verifySupabaseAccessToken } from "../src/services/email-auth.js";
 
 export const config = { maxDuration: 10 };
 
@@ -27,7 +27,8 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "GET" && action === "verify-email") {
     res.setHeader("Cache-Control", "no-store");
-    res.redirect(302, "/studio");
+    res.setHeader("Allow", "POST");
+    res.status(405).json({ ok: false, error: "Potrditev e-maila zahteva POST zahtevo." });
     return;
   }
 
@@ -42,7 +43,7 @@ export default async function handler(req: any, res: any) {
     const storage = storageMode();
     const storageNotice = storage === "supabase"
       ? `<section class="card ok"><strong>Shramba je aktivna:</strong> uporabniki, krediti in knjižnica objav se shranjujejo v Supabase bazo.</section>`
-      : `<section class="card warn"><strong>Pomembno:</strong> trenutna shramba je primerna za MVP in testiranje. Na Vercel Hobby brez prave baze datoteka v <code>/tmp</code> ni trajna garancija proti ponovni registraciji po cold-startu ali redeployu. Za oglase rabimo Supabase, Neon ali Vercel KV.</section>`;
+      : `<section class="card warn"><strong>Pomembno:</strong> trenutna shramba je primerna za MVP in testiranje. Na Vercel Hobby brez prave baze datoteka v <code>/tmp</code> ni trajna garancija proti ponovni registraciji po hladnem zagonu ali ponovni objavi projekta. Za oglase rabimo Supabase, Neon ali Vercel KV.</section>`;
     res.setHeader("content-type", "text/html; charset=utf-8");
     res.status(200).send(`<!doctype html>
 <html lang="sl"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -144,7 +145,7 @@ function renderSystem(data){
     pill('OpenAI',data.providers.openai)+
     pill('OpenRouter',data.providers.openrouter)+
     pill('Supabase',data.providers.supabase)+
-    pill('Billing wallet',data.providers.billingWallet)+
+    pill('Prejemna denarnica',data.providers.billingWallet)+
     '</div>'+
     '<p class="tiny">Runway ocena: Gen-4 Turbo 5 kreditov/s, 5s video 25 kreditov, 10s video 50 kreditov. Zadnji zajem: '+esc(new Date(data.generatedAt).toLocaleString('sl-SI'))+'. '+(runway.error?'Runway opozorilo: '+esc(runway.error):'')+'</p></section>';
 }
@@ -184,10 +185,10 @@ function renderSystem(data){
   if (req.method === "POST" && action === "admin-user-manage") {
     try {
       const session = await getSession(req);
-      if (!session || session.role !== "owner") { res.status(401).json({ ok: false, error: "Admin access required." }); return; }
+      if (!session || session.role !== "owner") { res.status(401).json({ ok: false, error: "Potreben je admin dostop." }); return; }
       await manageUserForAdmin(session, req.body ?? {});
       res.status(200).json({ ok: true });
-    } catch (error) { res.status(400).json({ ok: false, error: error instanceof Error ? error.message : "Account management failed." }); }
+    } catch (error) { res.status(400).json({ ok: false, error: error instanceof Error ? error.message : "Upravljanje računa ni uspelo." }); }
     return;
   }
 
@@ -241,7 +242,7 @@ function renderSystem(data){
 
     try {
       if (req.body?.ownerCode) {
-        if (createSession(email, req.body.ownerCode).role !== "owner") throw new Error("Invalid admin credentials.");
+        if (createSession(email, req.body.ownerCode).role !== "owner") throw new Error("Admin koda ni veljavna.");
         const session = await loginSession(email, req.body.ownerCode);
         setSessionCookie(res, session);
         res.status(200).json({ ok: true, session: publicSession(session) });
@@ -249,7 +250,7 @@ function renderSystem(data){
         await sendEmailCode(email);
         res.status(200).json({ ok: true, verificationRequired: true });
       }
-    } catch (error) { res.status(403).json({ ok: false, error: error instanceof Error ? error.message : "Sign-in failed." }); }
+    } catch (error) { res.status(403).json({ ok: false, error: error instanceof Error ? error.message : "Prijava ni uspela." }); }
     return;
   }
 
@@ -261,7 +262,18 @@ function renderSystem(data){
       const session = { ...stored, role: "user" as const, emailVerified: true };
       setSessionCookie(res, session);
       res.status(200).json({ ok: true, session: publicSession(session) });
-    } catch (error) { res.status(403).json({ ok: false, error: error instanceof Error ? error.message : "Verification failed." }); }
+    } catch (error) { res.status(403).json({ ok: false, error: error instanceof Error ? error.message : "Potrditev ni uspela." }); }
+    return;
+  }
+
+  if (req.method === "POST" && action === "supabase-session") {
+    try {
+      const verifiedEmail = await verifySupabaseAccessToken(req.body?.accessToken);
+      const stored = await loginSession(verifiedEmail);
+      const session = { ...stored, role: "user" as const, emailVerified: true };
+      setSessionCookie(res, session);
+      res.status(200).json({ ok: true, session: publicSession(session) });
+    } catch (error) { res.status(403).json({ ok: false, error: error instanceof Error ? error.message : "Potrditev e-mail povezave ni uspela." }); }
     return;
   }
 
@@ -278,9 +290,9 @@ function renderSystem(data){
 
   if (req.method === "POST" && action === "drafts-delete") {
     const session = await getSession(req);
-    if (!session) { res.status(401).json({ ok: false, error: "Sign in first." }); return; }
+    if (!session) { res.status(401).json({ ok: false, error: "Najprej se prijavi." }); return; }
     try { await deleteDraftForSession(session, req.body?.id); res.status(200).json({ ok: true }); }
-    catch (error) { res.status(400).json({ ok: false, error: error instanceof Error ? error.message : "Delete failed" }); }
+    catch (error) { res.status(400).json({ ok: false, error: error instanceof Error ? error.message : "Brisanje ni uspelo." }); }
     return;
   }
 
@@ -302,7 +314,7 @@ function renderSystem(data){
     return;
   }
 
-  res.status(404).json({ ok: false, error: "Unknown auth action." });
+  res.status(404).json({ ok: false, error: "Neznano auth dejanje." });
 }
 
 function escapeHtml(value: unknown) {
@@ -351,7 +363,7 @@ function systemDashboard(status: Awaited<ReturnType<typeof getAdminSystemStatus>
       ${providerPill("OpenAI", status.providers.openai)}
       ${providerPill("OpenRouter", status.providers.openrouter)}
       ${providerPill("Supabase", status.providers.supabase)}
-      ${providerPill("Billing wallet", status.providers.billingWallet)}
+      ${providerPill("Prejemna denarnica", status.providers.billingWallet)}
     </div>
     <p class="tiny">Runway ocena: Gen-4 Turbo 5 kreditov/s, 5s video 25 kreditov, 10s video 50 kreditov. Zadnji zajem: ${escapeHtml(new Date(status.generatedAt).toLocaleString("sl-SI"))}.${runwayNote}</p>
   </section>`;

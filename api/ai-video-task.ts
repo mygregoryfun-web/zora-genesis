@@ -7,13 +7,13 @@ export const config = {
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "GET") {
-    res.status(405).json({ ok: false, error: "Method not allowed" });
+    res.status(405).json({ ok: false, error: "Metoda ni dovoljena." });
     return;
   }
 
   try {
     const session = await getSession(req);
-    if (!session) { res.status(401).json({ ok: false, error: "Sign in first." }); return; }
+    if (!session) { res.status(401).json({ ok: false, error: "Najprej se prijavi." }); return; }
     const id = String(req.query?.id ?? "");
     if (!/^[a-zA-Z0-9_-]{1,100}$/.test(id)) throw new Error("Invalid task ID.");
     const task = await getStudioVideo(session, id);
@@ -21,7 +21,7 @@ export default async function handler(req: any, res: any) {
   } catch (error) {
     res.status(400).json({
       ok: false,
-      error: error instanceof Error ? error.message : "Video task lookup failed",
+      error: error instanceof Error ? error.message : "Preverjanje video naloge ni uspelo.",
     });
   }
 }

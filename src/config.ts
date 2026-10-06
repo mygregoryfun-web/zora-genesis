@@ -6,6 +6,8 @@ const list = (name: string) =>
     .filter(Boolean);
 
 export const config = {
+  appUrl: (process.env.APP_URL ?? process.env.PUBLIC_APP_URL ?? "https://fun-studio-gregory.vercel.app").replace(/\/$/, ""),
+  authRedirectUrl: process.env.AUTH_REDIRECT_URL ?? "https://fun-studio-gregory.vercel.app/studio?lang=sl",
   openRouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
   openAiApiKey: process.env.OPENAI_API_KEY ?? "",
   model: process.env.MODEL ?? "openai/gpt-4o-mini",

@@ -13,23 +13,23 @@ const tiers = [
     price: 19,
     credits: 250,
     description: "Za posameznike, ki želijo redne objave za FB, Instagram in X.",
-    features: ["Content Studio", "Moj slog", "Tekst + slika", "Ročno objavljanje", "Osnovni video workflow"],
+    features: ["Content Studio", "Moj slog", "Tekst + slika", "Ročno objavljanje", "Osnovni video potek"],
   },
   {
     id: "studio",
     name: "Studio",
     price: 49,
     credits: 800,
-    description: "Za ustvarjalce, strani in manjse skupine, ki rabijo vec idej in boljsi workflow.",
-    features: ["Vse iz Creator", "Vec stilov slik", "Kontradiktorni art", "Video osnutki", "Prioritetne izboljsave promptov"],
+    description: "Za ustvarjalce, strani in manjše skupine, ki potrebujejo več idej in boljši ustvarjalni potek.",
+    features: ["Vse iz Creator", "Več stilov slik", "Kontradiktorni art", "Video osnutki", "Prioritetne izboljšave navodil"],
   },
   {
     id: "agency",
     name: "Agency",
     price: 149,
     credits: 3000,
-    description: "Za uporabo z vec profili ali za storitev, ki jo prodajas naprej.",
-    features: ["Vse iz Studio", "Vec brand glasov", "White-label priprava", "Mesecni setup support", "Rocni pregled workflowa"],
+    description: "Za uporabo z več profili ali za storitev, ki jo prodajaš naprej.",
+    features: ["Vse iz Studio", "Več glasov znamke", "White-label priprava", "Mesečna podpora pri nastavitvah", "Ročni pregled poteka"],
   },
 ];
 
@@ -107,7 +107,7 @@ function pricingPage() {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Content Studio Pricing</title>
+  <title>Cenik Content Studia</title>
   <style>
     :root{color-scheme:light;--bg:#f5f1eb;--paper:#fffdf9;--ink:#181512;--muted:#6d675f;--line:#ddd3c7;--accent:#8d4b34;--green:#1e6f62;--blue:#285e9c;--soft:#eee5da;--danger:#9f2d20}
     *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
@@ -124,7 +124,7 @@ function pricingPage() {
 <body>
   <main>
     <header>
-      <div><h1>Naročnine</h1><p>Studio za ustvarjalce: tekst, slika in video workflow. Plačilo je approval-first in nikoli ne zahteva zasebnega ključa.</p></div>
+      <div><h1>Naročnine</h1><p>Studio za ustvarjalce: tekst, slika in video potek. Plačilo vedno potrdiš v denarnici in nikoli ne zahteva zasebnega ključa.</p></div>
       <div class="actions"><a class="button secondary" href="/studio">Studio</a><a class="button secondary" href="/video">Video</a></div>
     </header>
 
@@ -138,26 +138,26 @@ function pricingPage() {
       <h2>Kako plačaš z digitalno denarnico?</h2>
       <p>Za plačilo potrebuješ denarnico, ki podpira Base omrežje, na primer MetaMask, Coinbase Wallet ali Rabby. Plačilo poteka v USDC na Base omrežju.</p>
       <div class="steps">
-        <div class="step"><strong>1. Odpri denarnico</strong><span>Uporabi browser wallet ali mobilno denarnico, kjer lahko poskeniraš QR kodo.</span></div>
+        <div class="step"><strong>1. Odpri denarnico</strong><span>Uporabi denarnico v brskalniku ali mobilno denarnico, kjer lahko poskeniraš QR kodo.</span></div>
         <div class="step"><strong>2. Izberi Base</strong><span>Če nisi na Base omrežju, te bo stran prosila za preklop. Preklop potrdi v denarnici.</span></div>
         <div class="step"><strong>3. Imej USDC na Base</strong><span>Za plačilo rabiš USDC na Base in malo ETH na Base za omrežno provizijo.</span></div>
         <div class="step"><strong>4. Potrdi plačilo</strong><span>Klikni plačilni gumb, preveri znesek v denarnici in potrdi transakcijo.</span></div>
       </div>
-      <div class="notice safe"><strong>Varno:</strong> Studio nikoli ne zahteva seed phrase, private keya ali dovoljenja za upravljanje vseh sredstev. Potrdiš samo konkretno USDC transakcijo.</div>
-      <div class="notice danger-note"><strong>Pazi:</strong> če stran ali denarnica kadarkoli zahteva seed phrase ali private key, prekini. Tega se nikoli ne vpisuje v nobeno spletno stran.</div>
+      <div class="notice safe"><strong>Varno:</strong> Studio nikoli ne zahteva seed phrase, zasebnega ključa ali dovoljenja za upravljanje vseh sredstev. Potrdiš samo konkretno USDC transakcijo.</div>
+      <div class="notice danger-note"><strong>Pazi:</strong> če stran ali denarnica kadarkoli zahteva seed phrase ali zasebni ključ, prekini. Tega se nikoli ne vpisuje v nobeno spletno stran.</div>
     </section>
 
     ${
       billingReady
-        ? `<div class="notice"><strong>Plačilo:</strong> USDC na Base omrežju. Prejemni naslov: <code id="receiver">${escapeHtml(receiver)}</code><br /><span class="tiny">USDC contract: <code>${usdcBaseAddress}</code></span></div>`
-        : `<div class="notice warn"><strong>Plačila še niso aktivna.</strong> Nastavi <code>BILLING_WALLET_ADDRESS</code> na svež varen prejemni wallet in redeployaj projekt.</div>`
+        ? `<div class="notice"><strong>Plačilo:</strong> USDC na Base omrežju. Prejemni naslov: <code id="receiver">${escapeHtml(receiver)}</code><br /><span class="tiny">USDC pogodba: <code>${usdcBaseAddress}</code></span></div>`
+        : `<div class="notice warn"><strong>Plačila še niso aktivna.</strong> Nastavi <code>BILLING_WALLET_ADDRESS</code> na svežo varno prejemno denarnico in znova objavi projekt.</div>`
     }
 
     <div class="qr-panel" id="qrPanel">
       <div class="qr-frame"><img id="qrImage" alt="QR koda za USDC plačilo na Base" /></div>
       <div class="qr-details">
         <h2 id="qrTitle">Plačilo z mobilno denarnico</h2>
-        <p id="qrText">Poskeniraj QR kodo z denarnico in pred potrditvijo preveri znesek, USDC contract, Base omrežje in prejemni naslov.</p>
+        <p id="qrText">Poskeniraj QR kodo z denarnico in pred potrditvijo preveri znesek, USDC pogodbo, Base omrežje in prejemni naslov.</p>
         <a class="button wallet-link" id="walletLink" href="#">Odpri v denarnici</a>
         <div><span class="tiny">Wallet URI</span><br /><code id="walletUri"></code></div>
       </div>
@@ -165,10 +165,10 @@ function pricingPage() {
 
     <section class="claim">
       <h2>Potrdi plačilo in dodaj kredite</h2>
-      <p>Po plačilu prilepi transaction hash. Sistem preveri USDC transfer na Base in kredite doda tvojemu prijavljenemu računu.</p>
+      <p>Po plačilu prilepi hash transakcije. Sistem preveri USDC prenos na Base omrežju in kredite doda tvojemu prijavljenemu računu.</p>
       <div class="claim-grid">
         <label>Paket<select id="claimProduct">${products.map((product) => `<option value="${escapeHtml(product.id)}">${escapeHtml(product.name)} - ${product.priceUsdc} USDC / ${product.credits} kreditov</option>`).join("")}</select></label>
-        <label>Transaction hash<input id="claimTx" placeholder="0x..." /></label>
+        <label>Hash transakcije<input id="claimTx" placeholder="0x..." /></label>
         <button id="claimPayment" type="button">Potrdi plačilo</button>
       </div>
       <p class="tiny" id="claimStatus">Najprej moraš biti prijavljen v Studiu z e-mailom, potem lahko potrdiš plačilo.</p>
@@ -176,9 +176,9 @@ function pricingPage() {
 
     <div class="receipt" id="receipt">
       <strong>Plačilo poslano.</strong>
-      <p>Transaction hash:</p>
+      <p>Hash transakcije:</p>
       <code id="txHash"></code>
-      <p class="tiny">Shrani hash. V naslednjem koraku lahko dodamo avtomatsko preverjanje plačila in aktivacijo naročnine.</p>
+      <p class="tiny">Shrani hash. Studio ga uporabi za preverjanje plačila in dodajanje kreditov.</p>
     </div>
   </main>
 
@@ -218,7 +218,7 @@ function pricingPage() {
 
     function renderQr(button) {
       if (!/^0x[a-fA-F0-9]{40}$/.test(receiver)) {
-        alert("Billing wallet se ni nastavljen.");
+        alert("Prejemna denarnica za plačila še ni nastavljena.");
         return;
       }
 
@@ -281,7 +281,7 @@ function pricingPage() {
         return;
       }
       if (!/^0x[a-fA-F0-9]{40}$/.test(receiver)) {
-        alert("Billing wallet se ni nastavljen.");
+        alert("Prejemna denarnica za plačila še ni nastavljena.");
         return;
       }
 
@@ -318,7 +318,7 @@ function pricingPage() {
 
 export default function handler(req: any, res: any) {
   if (req.method !== "GET") {
-    res.status(405).json({ ok: false, error: "Method not allowed" });
+    res.status(405).json({ ok: false, error: "Metoda ni dovoljena." });
     return;
   }
 

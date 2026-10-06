@@ -84,13 +84,13 @@ async function accountRestriction(email: string): Promise<string | null> {
 }
 
 export async function manageUserForAdmin(actor: StudioSession, input: { email?: unknown; confirmation?: unknown; operation?: unknown }) {
-  if (actor.role !== "owner") throw new Error("Admin access required.");
+  if (actor.role !== "owner") throw new Error("Potreben je admin dostop.");
   const email = normalizeEmail(input.email);
-  if (!isValidEmail(email)) throw new Error("Invalid email.");
-  if (email === actor.email || email === config.ownerEmail) throw new Error("Admin accounts cannot be blocked or deleted.");
-  if (!["block", "unblock", "delete"].includes(String(input.operation))) throw new Error("Invalid operation.");
-  if (input.operation === "delete" && normalizeEmail(input.confirmation) !== email) throw new Error("Confirm deletion by entering the user's email.");
-  if (!hasSupabase()) throw new Error("User management requires Supabase and the account-management migration.");
+  if (!isValidEmail(email)) throw new Error("E-mail ni veljaven.");
+  if (email === actor.email || email === config.ownerEmail) throw new Error("Admin računov ni mogoče blokirati ali izbrisati.");
+  if (!["block", "unblock", "delete"].includes(String(input.operation))) throw new Error("Dejanje ni veljavno.");
+  if (input.operation === "delete" && normalizeEmail(input.confirmation) !== email) throw new Error("Brisanje potrdi z vpisom uporabnikovega e-maila.");
+  if (!hasSupabase()) throw new Error("Upravljanje uporabnikov zahteva Supabase in account-management migracijo.");
   await supabaseFetch("rpc/studio_manage_account", { method: "POST", body: JSON.stringify({ p_email: email, p_operation: input.operation, p_actor: actor.email, p_protected: config.ownerEmail }) });
 }
 
@@ -530,8 +530,8 @@ export async function listDraftsForSession(session: StudioSession) {
 }
 
 export async function deleteDraftForSession(session: StudioSession, id: unknown) {
-  if (!hasSupabase()) throw new Error("Supabase is not configured.");
-  if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Invalid draft ID.");
+  if (!hasSupabase()) throw new Error("Supabase ni nastavljen.");
+  if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("ID osnutka ni veljaven.");
   await supabaseFetch("studio_drafts", { method: "DELETE" }, `?id=eq.${encodeURIComponent(id)}&email=eq.${encodeURIComponent(session.email)}`);
 }
 
@@ -542,11 +542,11 @@ export async function saveDraftForSession(session: StudioSession, input: {
   draft?: unknown;
 }) {
   if (!hasSupabase()) {
-    throw new Error("Supabase is not configured yet.");
+    throw new Error("Supabase še ni nastavljen.");
   }
 
   if (session.role === "owner") {
-    throw new Error("Owner drafts are not stored in the shared user library.");
+    throw new Error("Admin osnutki se ne shranjujejo v skupno uporabniško knjižnico.");
   }
 
   const now = new Date().toISOString();

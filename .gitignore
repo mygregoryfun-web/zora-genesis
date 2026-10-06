@@ -16,3 +16,8 @@ x-oauth-url.txt
 *oauth*.txt
 x-api-.txt
 x-oauth-session.json
+
+# >>> magpie: library skills placed here (magpie adds and removes these lines) >>>
+/.agents/skills/find-skills
+/.claude/skills/find-skills
+# <<< magpie <<<

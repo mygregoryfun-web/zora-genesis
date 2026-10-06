@@ -25,7 +25,7 @@ test("video billing refunds provider rejection and checks ownership before provi
     };
     await assert.rejects(generateStudioVideo(session, input), /Rejected/);
     assert.deepEqual(actions, ["reserve", "refund"]);
-    await assert.rejects(getStudioVideo(session, "someone-elses-task"), /not found/);
+    await assert.rejects(getStudioVideo(session, "someone-elses-task"), /ni bila najdena/);
     actions.length = 0;
     await assert.rejects(generateStudioVideo(session, { ...input, duration: 30 }));
     assert.deepEqual(actions, []);

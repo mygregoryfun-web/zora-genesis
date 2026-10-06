@@ -13,14 +13,14 @@ function imageToDataUrl(image: { mimeType: string; buffer: Buffer } | null) {
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
-    res.status(405).json({ ok: false, error: "Method not allowed" });
+    res.status(405).json({ ok: false, error: "Metoda ni dovoljena." });
     return;
   }
 
   try {
     const postText = String(req.body?.post ?? "").trim();
     if (!postText) {
-      res.status(400).json({ ok: false, error: "Missing post text." });
+      res.status(400).json({ ok: false, error: "Manjka tekst objave." });
       return;
     }
     const session = await requireCredits(req, res, CREDIT_COSTS.image, "sliko");
@@ -53,7 +53,7 @@ export default async function handler(req: any, res: any) {
   } catch (error) {
     res.status(500).json({
       ok: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : "Neznana napaka.",
     });
   }
 }

@@ -16,15 +16,16 @@ import { createNftDraft } from "./services/nft-draft.js";
 import { createSocialDraft } from "./services/social-draft.js";
 import { type RunwayVideoInput } from "./services/runway-video.js";
 import { clearSessionCookie, createSession, currentSession, getSession, isValidEmail, loginSession, publicSession, setSessionCookie } from "./services/auth.js";
-import { sendEmailCode, verifyEmailCode } from "./services/email-auth.js";
+import { sendEmailCode, verifyEmailCode, verifySupabaseAccessToken } from "./services/email-auth.js";
 import { generateStudioVideo, getStudioVideo } from "./services/studio-video.js";
 // The local tsx server reuses the Vercel page implementation; api/ is intentionally outside tsconfig rootDir.
 // @ts-ignore Local dev-only page module is compiled by tsx, not the src build.
 import { studioPage } from "../api/studio.js";
 
-function sendJson(res: http.ServerResponse, statusCode: number, data: unknown) {
+function sendJson(res: http.ServerResponse, statusCode: number, data: unknown, headers: http.OutgoingHttpHeaders = {}) {
   res.writeHead(statusCode, {
     "content-type": "application/json; charset=utf-8",
+    ...headers,
   });
   res.end(JSON.stringify(data, null, 2));
 }
@@ -1073,9 +1074,14 @@ function isAuthorized(req: http.IncomingMessage) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
 
-  if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/auth/verify-email")) {
+  if (req.method === "GET" && url.pathname === "/") {
     res.writeHead(302, { Location: "/studio", "Cache-Control": "no-store" });
     res.end();
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/auth/verify-email") {
+    sendJson(res, 405, { ok: false, error: "Email verification requires POST." }, { Allow: "POST", "Cache-Control": "no-store" });
     return;
   }
 
@@ -1151,6 +1157,20 @@ const server = http.createServer(async (req, res) => {
       sendJson(res, 200, { ok: true, session: publicSession(session) });
     } catch (error) {
       sendJson(res, 403, { ok: false, error: error instanceof Error ? error.message : "Verification failed." });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && (url.pathname === "/auth/supabase-session" || url.pathname === "/api/auth" && url.searchParams.get("action") === "supabase-session")) {
+    try {
+      const body = await readJsonBody<{ accessToken?: unknown }>(req);
+      const verifiedEmail = await verifySupabaseAccessToken(body.accessToken);
+      const stored = await loginSession(verifiedEmail);
+      const session = { ...stored, role: "user" as const, emailVerified: true };
+      setSessionCookie(res, session);
+      sendJson(res, 200, { ok: true, session: publicSession(session) });
+    } catch (error) {
+      sendJson(res, 403, { ok: false, error: error instanceof Error ? error.message : "Email link verification failed." });
     }
     return;
   }

@@ -9,7 +9,7 @@ export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
     res.status(405).json({
       ok: false,
-      error: "Method not allowed",
+      error: "Metoda ni dovoljena.",
     });
     return;
   }
@@ -35,7 +35,7 @@ export default async function handler(req: any, res: any) {
   } catch (error) {
     res.status(500).json({
       ok: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : "Neznana napaka.",
     });
   }
 }

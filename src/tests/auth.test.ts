@@ -41,10 +41,10 @@ test("blocked and deleted accounts cannot log in or use an old cookie", async ()
 
 test("account management requires admin access, protects self, and checks deletion confirmation", async () => {
   const member = createSession("member@example.com");
-  await assert.rejects(manageUserForAdmin(member, { email: "target@example.com", operation: "delete", confirmation: "target@example.com" }), /Admin access/);
+  await assert.rejects(manageUserForAdmin(member, { email: "target@example.com", operation: "delete", confirmation: "target@example.com" }), /admin dostop/);
   const admin = { ...member, role: "owner" as const };
-  await assert.rejects(manageUserForAdmin(admin, { email: admin.email, operation: "block" }), /cannot be blocked/);
-  await assert.rejects(manageUserForAdmin(admin, { email: "target@example.com", operation: "delete", confirmation: "wrong@example.com" }), /Confirm deletion/);
+  await assert.rejects(manageUserForAdmin(admin, { email: admin.email, operation: "block" }), /ni mogoče blokirati/);
+  await assert.rejects(manageUserForAdmin(admin, { email: "target@example.com", operation: "delete", confirmation: "wrong@example.com" }), /Brisanje potrdi/);
 });
 
 test("creates a signed studio session for an email user", () => {
