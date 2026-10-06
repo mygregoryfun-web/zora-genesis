@@ -6,9 +6,12 @@ const list = (name: string) =>
     .filter(Boolean);
 
 export const config = {
+  appUrl: (process.env.APP_URL ?? process.env.PUBLIC_APP_URL ?? "https://fun-studio-gregory.vercel.app").replace(/\/$/, ""),
+  authRedirectUrl: process.env.AUTH_REDIRECT_URL ?? "https://fun-studio-gregory.vercel.app/studio?lang=sl",
   openRouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
   openAiApiKey: process.env.OPENAI_API_KEY ?? "",
   model: process.env.MODEL ?? "openai/gpt-4o-mini",
+  socialModel: process.env.SOCIAL_MODEL ?? process.env.MODEL ?? "openai/gpt-4o-mini",
   imageModel: process.env.IMAGE_MODEL ?? "gpt-image-1",
   imageProvider: process.env.IMAGE_PROVIDER ?? "openai",
   comfyApiKey: process.env.COMFY_API_KEY ?? "",
@@ -19,7 +22,16 @@ export const config = {
   comfySeedInput: process.env.COMFY_SEED_INPUT ?? "seed",
   comfyTimeoutMs: Number(process.env.COMFY_TIMEOUT_MS ?? 300000),
   creatorName: process.env.ZORA_CREATOR_NAME ?? "Fun Gregory",
-  publishSignature: process.env.PUBLISH_SIGNATURE ?? process.env.ZORA_CREATOR_NAME ?? "Fun Gregory",
+  publishSignature: process.env.PUBLISH_SIGNATURE ?? "",
+  billingWalletAddress: process.env.BILLING_WALLET_ADDRESS ?? "",
+  ownerEmail: (process.env.OWNER_EMAIL ?? "").trim().toLowerCase(),
+  ownerWalletAddress: (process.env.OWNER_WALLET_ADDRESS ?? "").trim().toLowerCase(),
+  ownerLoginCode: process.env.OWNER_LOGIN_CODE ?? "",
+  authSecret: process.env.AUTH_SECRET ?? "",
+  trialCredits: Number(process.env.TRIAL_CREDITS ?? 50),
+  userStoreFile: process.env.USER_STORE_FILE ?? (process.env.VERCEL ? "/tmp/zora-genesis-users.json" : "src/memory/studio-users.json"),
+  supabaseUrl: process.env.SUPABASE_URL ?? "",
+  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
   creatorWalletAddress: process.env.ZORA_CREATOR_WALLET_ADDRESS ?? "",
   zoraApiKey: process.env.ZORA_API_KEY ?? "",
   walletPrivateKey: process.env.WALLET_PRIVATE_KEY ?? "",
@@ -45,8 +57,11 @@ export const config = {
   facebookGraphVersion: process.env.FACEBOOK_GRAPH_VERSION ?? "v23.0",
   facebookTopic: process.env.FACEBOOK_TOPIC ?? "relationships",
   facebookMemoryFile: process.env.FACEBOOK_MEMORY_FILE ?? (process.env.VERCEL ? "/tmp/zora-genesis-facebook-posts.json" : "src/memory/facebook-posts.json"),
+  instagramUserId: process.env.INSTAGRAM_USER_ID ?? "",
+  instagramAccessToken: process.env.INSTAGRAM_ACCESS_TOKEN ?? process.env.FACEBOOK_PAGE_ACCESS_TOKEN ?? "",
   skipPost: bool("SKIP_POST") || bool("DRY_RUN"),
   publishChannels: list("PUBLISH_CHANNELS"),
+  runwayApiSecret: process.env.RUNWAYML_API_SECRET ?? "",
 
   requestTimeoutMs: Number(process.env.REQUEST_TIMEOUT_MS ?? 15000),
 
@@ -72,9 +87,10 @@ export function validateRuntimeConfig() {
     const xConfigured = xOAuth2Configured || xOAuth1Configured;
     const zoraConfigured = Boolean(config.creatorWalletAddress && config.walletPrivateKey && config.baseRpcUrl && config.zoraApiKey);
     const facebookConfigured = Boolean(config.facebookPageId && config.facebookPageAccessToken);
+    const instagramConfigured = Boolean(config.instagramUserId && config.instagramAccessToken);
 
-    if (!farcasterConfigured && !xConfigured && !zoraConfigured && !facebookConfigured) {
-      throw new Error("Missing publishing credentials: configure NEYNAR_API_KEY + NEYNAR_SIGNER_UUID, X_BEARER_TOKEN, Zora wallet settings, or Facebook Page settings");
+    if (!farcasterConfigured && !xConfigured && !zoraConfigured && !facebookConfigured && !instagramConfigured) {
+      throw new Error("Missing publishing credentials: configure Facebook/Instagram, X, Farcaster, or Zora settings");
     }
   }
 }

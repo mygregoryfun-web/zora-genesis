@@ -1,12 +1,12 @@
 import "dotenv/config";
 
-const validChannels = new Set(["x", "farcaster", "zora"]);
+const validChannels = new Set(["facebook", "instagram", "x", "farcaster", "zora"]);
 
 const channel = process.argv[2]?.toLowerCase();
 const live = process.argv.includes("--live");
 
 if (!channel || !validChannels.has(channel)) {
-  throw new Error("Usage: node dist/channel-run.js <x|farcaster|zora> [--live]");
+  throw new Error("Usage: node dist/channel-run.js <facebook|instagram|x|farcaster|zora> [--live]");
 }
 
 process.env.PUBLISH_CHANNELS = channel;

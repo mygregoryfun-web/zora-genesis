@@ -14,8 +14,8 @@ test("prepares concise X content with fewer hashtags", () => {
   assert.ok(post.title.length <= 72);
   assert.ok(post.post.length <= 190);
   assert.ok(post.hashtags.length <= 2);
-  assert.match(post.post, /creator asset pulse|asset pulse|launch/i);
-  assert.match(post.post, /Fun Gregory$/);
+  assert.match(post.post, /Base activity is high|low transaction costs/i);
+  assert.doesNotMatch(post.post, /Fun Gregory$/);
 });
 
 test("prepares Zora content as an asset-ready brief", () => {
@@ -23,6 +23,6 @@ test("prepares Zora content as an asset-ready brief", () => {
 
   assert.ok(post.post.length <= 900);
   assert.match(post.post, /Zora-ready creator asset brief/);
-  assert.match(post.post, /Fun Gregory$/);
+  assert.doesNotMatch(post.post, /Fun Gregory$/);
   assert.ok(post.hashtags.length <= 3);
 });

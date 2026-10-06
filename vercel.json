@@ -2,11 +2,79 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/**/*.ts",
+      "src": "site-assets/zora-genesis-creator-hero.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "site-assets/fun-studio-video-creator-hero.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "site-assets/fun-studio-creator-background.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/home.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/health.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/preview.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/studio.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/pricing.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/auth.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/video.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/agent/draft.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/agent/rewrite.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/agent/image.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/ai-video-generate.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/ai-video-task.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "/assets/zora-genesis-creator-hero.png",
+      "dest": "/site-assets/zora-genesis-creator-hero.png"
+    },
+    {
+      "src": "/assets/fun-studio-video-creator-hero.png",
+      "dest": "/site-assets/fun-studio-video-creator-hero.png"
+    },
+    {
+      "src": "/assets/fun-studio-creator-background.png",
+      "dest": "/site-assets/fun-studio-creator-background.png"
+    },
     {
       "src": "/",
       "dest": "/api/home.ts"
@@ -20,92 +88,172 @@
       "dest": "/api/health.ts"
     },
     {
+      "src": "/preview",
+      "dest": "/api/preview.ts"
+    },
+    {
+      "src": "/studio",
+      "dest": "/api/studio.ts"
+    },
+    {
+      "src": "/pricing",
+      "dest": "/api/pricing.ts"
+    },
+    {
+      "src": "/billing/claim",
+      "dest": "/api/auth.ts?action=billing-claim"
+    },
+    {
+      "src": "/auth/login",
+      "dest": "/api/auth.ts?action=login"
+    },
+    {
+      "src": "/auth/verify-email",
+      "dest": "/api/auth.ts?action=verify-email"
+    },
+    {
+      "src": "/auth/supabase-session",
+      "dest": "/api/auth.ts?action=supabase-session"
+    },
+    {
+      "src": "/auth/logout",
+      "dest": "/api/auth.ts?action=logout"
+    },
+    {
+      "src": "/auth/status",
+      "dest": "/api/auth.ts?action=status"
+    },
+    {
+      "src": "/admin",
+      "dest": "/api/auth.ts?action=admin"
+    },
+    {
+      "src": "/admin/users/update",
+      "dest": "/api/auth.ts?action=admin-user-update"
+    },
+    {
+      "src": "/admin/system/status",
+      "dest": "/api/auth.ts?action=admin-system-status"
+    },
+    {
+      "src": "/drafts/list",
+      "dest": "/api/auth.ts?action=drafts"
+    },
+    {
+      "src": "/drafts/save",
+      "dest": "/api/auth.ts?action=drafts-save"
+    },
+    {
+      "src": "/video",
+      "dest": "/api/video.ts"
+    },
+    {
+      "src": "/api/video/generate",
+      "dest": "/api/ai-video-generate.ts"
+    },
+    {
+      "src": "/api/video/task",
+      "dest": "/api/ai-video-task.ts"
+    },
+    {
       "src": "/base-grant",
       "dest": "/api/home.ts"
     },
     {
-      "src": "/agent/profile",
-      "dest": "/api/agent/profile.ts"
+      "src": "/agent/(metrics|opportunities|monetization|nft|security|firewall|profile|builder-code|growth)",
+      "dest": "/api/home.ts"
     },
     {
-      "src": "/agent/run",
-      "dest": "/api/agent/run.ts"
+      "src": "/agent/draft",
+      "dest": "/api/agent/draft.ts"
     },
     {
-      "src": "/agent/opportunities",
-      "dest": "/api/agent/opportunities.ts"
+      "src": "/agent/rewrite",
+      "dest": "/api/agent/rewrite.ts"
     },
     {
-      "src": "/agent/monetization",
-      "dest": "/api/agent/monetization.ts"
-    },
-    {
-      "src": "/agent/builder-code",
-      "dest": "/api/agent/builder-code.ts"
-    },
-    {
-      "src": "/agent/metrics",
-      "dest": "/api/agent/metrics.ts"
-    },
-    {
-      "src": "/agent/security",
-      "dest": "/api/agent/security.ts"
-    },
-    {
-      "src": "/agent/nft",
-      "dest": "/api/agent/nft.ts"
-    },
-    {
-      "src": "/agent/firewall",
-      "dest": "/api/agent/firewall.ts"
-    },
-    {
-      "src": "/agent/growth",
-      "dest": "/api/agent/growth.ts"
+      "src": "/agent/image",
+      "dest": "/api/agent/image.ts"
     },
     {
       "src": "/api/health",
       "dest": "/api/health.ts"
     },
     {
-      "src": "/api/agent/profile",
-      "dest": "/api/agent/profile.ts"
+      "src": "/api/preview",
+      "dest": "/api/preview.ts"
     },
     {
-      "src": "/api/agent/run",
-      "dest": "/api/agent/run.ts"
+      "src": "/api/studio",
+      "dest": "/api/studio.ts"
     },
     {
-      "src": "/api/agent/opportunities",
-      "dest": "/api/agent/opportunities.ts"
+      "src": "/api/pricing",
+      "dest": "/api/pricing.ts"
     },
     {
-      "src": "/api/agent/monetization",
-      "dest": "/api/agent/monetization.ts"
+      "src": "/api/billing/claim",
+      "dest": "/api/auth.ts?action=billing-claim"
     },
     {
-      "src": "/api/agent/builder-code",
-      "dest": "/api/agent/builder-code.ts"
+      "src": "/api/auth/login",
+      "dest": "/api/auth.ts?action=login"
     },
     {
-      "src": "/api/agent/metrics",
-      "dest": "/api/agent/metrics.ts"
+      "src": "/api/auth/verify-email",
+      "dest": "/api/auth.ts?action=verify-email"
     },
     {
-      "src": "/api/agent/security",
-      "dest": "/api/agent/security.ts"
+      "src": "/api/auth/supabase-session",
+      "dest": "/api/auth.ts?action=supabase-session"
     },
     {
-      "src": "/api/agent/nft",
-      "dest": "/api/agent/nft.ts"
+      "src": "/api/auth",
+      "dest": "/api/auth.ts"
     },
     {
-      "src": "/api/agent/firewall",
-      "dest": "/api/agent/firewall.ts"
+      "src": "/api/auth/logout",
+      "dest": "/api/auth.ts?action=logout"
     },
     {
-      "src": "/api/agent/growth",
-      "dest": "/api/agent/growth.ts"
+      "src": "/api/auth/status",
+      "dest": "/api/auth.ts?action=status"
+    },
+    {
+      "src": "/api/admin",
+      "dest": "/api/auth.ts?action=admin"
+    },
+    {
+      "src": "/api/admin/users/update",
+      "dest": "/api/auth.ts?action=admin-user-update"
+    },
+    {
+      "src": "/api/admin/system/status",
+      "dest": "/api/auth.ts?action=admin-system-status"
+    },
+    {
+      "src": "/api/drafts/list",
+      "dest": "/api/auth.ts?action=drafts"
+    },
+    {
+      "src": "/api/drafts/save",
+      "dest": "/api/auth.ts?action=drafts-save"
+    },
+    {
+      "src": "/api/video",
+      "dest": "/api/video.ts"
+    },
+    {
+      "src": "/api/agent/draft",
+      "dest": "/api/agent/draft.ts"
+    },
+    {
+      "src": "/api/agent/rewrite",
+      "dest": "/api/agent/rewrite.ts"
+    },
+    {
+      "src": "/api/agent/image",
+      "dest": "/api/agent/image.ts"
     }
   ]
 }

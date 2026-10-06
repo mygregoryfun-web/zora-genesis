@@ -1,0 +1,86 @@
+import { generateFacebookPost } from "./facebook-ai.js";
+import { loadFacebookPosts } from "./facebook-memory.js";
+import { generateImageForPost, type GeneratedImage, type ImageStyle } from "./image.js";
+import { preparePostForChannel } from "./channel-content.js";
+import { formatForFacebook } from "./facebook.js";
+import { formatForX } from "./x.js";
+import type { GeneratedPost } from "../types.js";
+
+function imageToDataUrl(image: GeneratedImage | null) {
+  if (!image) {
+    return null;
+  }
+
+  return `data:${image.mimeType};base64,${image.buffer.toString("base64")}`;
+}
+
+function formatForInstagram(post: GeneratedPost) {
+  const hashtags = post.hashtags.join(" ");
+  return `${post.post}\n\n${hashtags}`.trim();
+}
+
+type CreateSocialDraftInput = {
+  topic?: string;
+  language?: string;
+  tone?: string;
+  length?: string;
+  imageStyle?: ImageStyle;
+  includeImage?: boolean;
+};
+
+export async function createSocialDraft(input: CreateSocialDraftInput = {}) {
+  const memory = loadFacebookPosts();
+  const topic = input.topic?.trim();
+  const language = input.language?.trim().toLowerCase() || "si";
+  const tone = input.tone?.trim().toLowerCase() || "my-style";
+  const length = input.length?.trim().toLowerCase() || "medium";
+  const imageStyle =
+    input.imageStyle === "artwork-cover" || input.imageStyle === "contradictory-art"
+      ? input.imageStyle
+      : "social-editorial";
+  const post = await generateFacebookPost({ memory, topic, language, tone, length });
+  const image =
+    input.includeImage === false
+      ? null
+      : await generateImageForPost(post, imageStyle).catch((err) => {
+          const reason = err instanceof Error ? err.message : String(err);
+          console.error("Image generation failed for preview draft:", reason);
+          return null;
+        });
+
+  const facebookPost = preparePostForChannel(post, "facebook");
+  const instagramPost = preparePostForChannel(post, "instagram");
+  const xPost = preparePostForChannel(post, "x");
+
+  return {
+    generatedAt: new Date().toISOString(),
+    topic: topic || null,
+    language,
+    tone,
+    length,
+    imageStyle,
+    source: post,
+    image: image
+      ? {
+          prompt: image.prompt,
+          filename: image.filename,
+          mimeType: image.mimeType,
+          dataUrl: imageToDataUrl(image),
+        }
+      : null,
+    channels: {
+      facebook: {
+        title: facebookPost.title,
+        text: formatForFacebook(facebookPost),
+      },
+      instagram: {
+        title: instagramPost.title,
+        text: formatForInstagram(instagramPost),
+      },
+      x: {
+        title: xPost.title,
+        text: formatForX(xPost),
+      },
+    },
+  };
+}
