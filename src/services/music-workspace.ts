@@ -167,5 +167,75 @@ export function musicWorkspaceScript() {
     if (audioUrl) URL.revokeObjectURL(audioUrl);
   });
 })();
+
+(function () {
+  const key = "studio-music-draft-v1";
+  const ids = [
+    "musicStyle", "musicVoice", "musicDuration",
+    "musicLanguage", "musicPrompt", "musicLyrics"
+  ];
+  const fields = ids.map(id => document.getElementById(id));
+  if (fields.some(field => !field)) return;
+
+  const notice = document.createElement("p");
+  notice.setAttribute("role", "status");
+  notice.setAttribute("aria-live", "polite");
+  notice.style.fontSize = "13px";
+
+  const button = document.getElementById("musicGenerate");
+  if (!button) return;
+  button.parentElement.insertAdjacentElement("afterend", notice);
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || "null");
+    if (saved && saved.version === 1 && saved.values) {
+      fields.forEach(field => {
+        const value = saved.values[field.id];
+        if (typeof value !== "string") return;
+        if (field.tagName === "SELECT" &&
+            !Array.from(field.options).some(option => option.value === value)) return;
+        if (field.type === "number" &&
+            (!Number.isFinite(Number(value)) ||
+             Number(value) < 10 || Number(value) > 120)) return;
+        field.value = field.maxLength > 0
+          ? value.slice(0, field.maxLength)
+          : value;
+      });
+      notice.textContent = "Obnovljeno shranjeno besedilo in nastavitve.";
+    } else {
+      notice.textContent = "Besedilo in nastavitve se shranjujejo v tem brskalniku.";
+    }
+  } catch {
+    notice.textContent = "Shranjevanje v tem brskalniku ni na voljo.";
+  }
+
+  function save() {
+    try {
+      const values = {};
+      fields.forEach(field => { values[field.id] = field.value; });
+      localStorage.setItem(key, JSON.stringify({ version: 1, values }));
+      notice.textContent = "Besedilo in nastavitve so shranjeni v tem brskalniku.";
+    } catch {
+      notice.textContent = "Shranjevanje ni uspelo. Kopiraj besedilo pred zapiranjem.";
+    }
+  }
+
+  let timer;
+  fields.forEach(field => {
+    field.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(save, 300);
+    });
+    field.addEventListener("change", save);
+  });
+
+  const usePost = document.getElementById("musicUsePost");
+  if (usePost) usePost.addEventListener("click", () => setTimeout(save, 0));
+  button.addEventListener("click", save);
+  window.addEventListener("pagehide", save);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") save();
+  });
+})();
 </script>`;
 }
