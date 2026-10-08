@@ -1,8 +1,8 @@
-import { getSession } from "../src/services/auth.js";
+import { getSession } from "./auth.js";
 import {
   generateMusic,
   MusicError
-} from "../src/services/music-generation.js";
+} from "./music-generation.js";
 
 export const config = { maxDuration: 60 };
 

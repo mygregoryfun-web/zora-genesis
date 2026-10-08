@@ -1,3 +1,5 @@
+export const config = { maxDuration: 60 };
+import musicHandler from "../src/services/music-handler.js";
 function videoPage() {
   return `<!doctype html>
 <html lang="sl">
@@ -91,6 +93,10 @@ function videoPage() {
 }
 
 export default function handler(req: any, res: any) {
+  const action = req.query?.action ||
+    new URL(req.url || "/", "https://studio.local").searchParams.get("action");
+  if (action === "music") return musicHandler(req, res);
+
   if (req.method !== "GET") {
     res.status(405).json({ ok: false, error: "Metoda ni dovoljena." });
     return;
