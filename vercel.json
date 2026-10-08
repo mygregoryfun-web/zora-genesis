@@ -64,6 +64,10 @@
   ],
   "routes": [
     {
+      "src": "/api/music",
+      "dest": "/api/video.ts?action=music"
+    },
+    {
       "src": "/assets/zora-genesis-creator-hero.png",
       "dest": "/site-assets/zora-genesis-creator-hero.png"
     },
