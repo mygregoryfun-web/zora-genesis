@@ -1,3 +1,5 @@
+import { musicWorkspace, musicWorkspaceScript } from "../src/services/music-workspace.js";
+
 const creativeDetails = `<g stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="66" height="66" rx="20" stroke="#d1c4ff" stroke-opacity=".25"/><path d="M29 65c8-1 10 5 18 2s10-6 15-4" stroke="#5ce0c7" stroke-width="1.8" opacity=".7"/><circle cx="15" cy="43" r="1.6" fill="#ffce79"/><circle cx="18" cy="48" r="1.6" fill="#f1b4e6"/><circle cx="14" cy="53" r="1.6" fill="#5ce0c7"/><path d="m33 18 2-3m-5 2-1-3m7 7 3-1" stroke="#e0d7ff" stroke-width="1" opacity=".75"/><g transform="translate(57 11) rotate(12)"><rect width="12" height="9" rx="2" fill="#a997f1" fill-opacity=".3" stroke="#d7caff" stroke-width=".8"/><circle cx="8.5" cy="2.8" r="1" fill="#ffce79"/><path d="m2 7 3-3 3 3 2-2" stroke="#b9fff0" stroke-width=".8"/></g><g transform="translate(41 58) rotate(-8)"><rect width="11" height="8" rx="1.5" fill="#362d85" stroke="#c9bbff" stroke-width=".7"/><path d="m4.5 2 3 2-3 2Z" fill="#ffce79"/><path d="M1.5 2h1m-1 4h1M8.5 2h1m-1 4h1" stroke="#c9bbff" stroke-width=".6"/></g><circle cx="65" cy="41" r="1" fill="#b9fff0"/><circle cx="36" cy="10" r=".7" fill="#ffce79"/><circle cx="9" cy="35" r=".7" fill="#f1b4e6"/><path d="m69 60 1.5 1.5m-1.5 0 1.5-1.5" stroke="#ffce79" stroke-width=".8"/></g>`;
 
 const evolvingSketch = `<svg viewBox="0 0 480 160" fill="none" aria-hidden="true" focusable="false"><g class="sketch-lines" stroke-linecap="round" stroke-linejoin="round"><path class="draw-line stage-one" pathLength="1" d="M55 132h364M95 126l10-105h210l-10 105H95Z" stroke="#b4a4da" stroke-width="2"/><path class="draw-line stage-two" pathLength="1" d="m119 105 39-44 29 27 34-48 53 65H119Zm112-73a9 9 0 1 0 18 0 9 9 0 0 0-18 0" stroke="#7150c8" stroke-width="2.5"/><path class="draw-line stage-three" pathLength="1" d="m327 102 39-76 12 6-39 76-15 11 3-17Zm36-70 12 6M327 102l12 6m-15 11 4-7" stroke="#0b8f82" stroke-width="2.5"/><path class="draw-line stage-four" pathLength="1" d="M380 114c-15-6-22-27-9-38 10-8 18-1 27-2 13-2 30 16 23 28-4 7-13 1-17 5-3 4-10 11-24 7ZM67 54l3-8 8-3-8-3-3-8-3 8-8 3 8 3 3 8Zm265-38 2-6 6-2-6-2-2-6-2 6-6 2 6 2 2 6" stroke="#b97527" stroke-width="2"/><path class="draw-line stage-five" pathLength="1" d="M111 140c30-8 70 9 102 0s58 2 83-3m-172-4 50-5m72 6 18-2M49 92l-8-5m14-3-3-7m352-42 8-5m-5 16 9-1" stroke="#a270c4" stroke-width="1.5"/></g><g class="sketch-color"><path d="m121 104 37-41 28 28 35-49 51 62H121Z" fill="#9fdcd4" fill-opacity=".5"/><path d="m188 92 33-50 51 62h-44l-16-20-24 8Z" fill="#c8b5ed" fill-opacity=".8"/><circle cx="240" cy="32" r="8" fill="#ffd18c"/><circle cx="378" cy="88" r="4" fill="#e99cae"/><circle cx="391" cy="82" r="4" fill="#9e85e3"/><circle cx="407" cy="88" r="4" fill="#57bdb0"/><circle cx="411" cy="99" r="3" fill="#f0bb64"/></g></svg>`;
@@ -244,6 +246,7 @@ export function studioPage() {
         <p class="small">AI video se odklene po potrjenem nakupu kreditov. Začetnih 50 brezplačnih kreditov ga ne odklene. Lokalni WebM izvoz ostane brezplačen.</p>
       </aside>
     </section>
+    ${musicWorkspace()}
     </div>
   </main>
   <script>
@@ -385,6 +388,7 @@ export function studioPage() {
     new MutationObserver(translateInterface).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["placeholder"]});
     completeSupabaseLinkSession().then((handled)=>{if(!handled)return refreshSession().catch(()=>renderAccount())});
   </script>
+  ${musicWorkspaceScript()}
 </body>
 </html>`;
 }

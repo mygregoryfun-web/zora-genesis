@@ -60,9 +60,17 @@
     {
       "src": "api/ai-video-task.ts",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/music.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "/api/music",
+      "dest": "/api/music.ts"
+    },
     {
       "src": "/assets/zora-genesis-creator-hero.png",
       "dest": "/site-assets/zora-genesis-creator-hero.png"
