@@ -105,7 +105,7 @@ export async function generateMusic(
       503
     );
 
-  const signal = AbortSignal.timeout(52000);
+  const signal = AbortSignal.timeout(280000);
 
   const headers = {
     Authorization: "Bearer " + key,
