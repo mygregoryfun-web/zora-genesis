@@ -1,4 +1,5 @@
-export const config = { maxDuration: 60 };
+export const maxDuration = 300;
+export const config = { maxDuration: 300 };
 import musicHandler from "../src/services/music-handler.js";
 function videoPage() {
   return `<!doctype html>
