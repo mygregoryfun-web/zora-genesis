@@ -3,13 +3,14 @@ import { config } from "../config.js";
 const RUNWAY_API_URL = "https://api.dev.runwayml.com/v1";
 const RUNWAY_API_VERSION = "2024-11-06";
 
-export type RunwayVideoModel = "gen4_turbo" | "gen4.5";
+export type RunwayVideoModel = "gen4_turbo" | "wan3";
 
 export type RunwayVideoInput = {
   promptImage: string;
   promptText: string;
   ratio: "720:1280" | "1280:720" | "960:960";
-  duration: 5 | 10;
+  duration: 5 | 10 | 20 | 30;
+  quality?: "480p" | "720p" | "1080p";
   model?: RunwayVideoModel;
 };
 
@@ -68,7 +69,7 @@ export async function createRunwayImageToVideoTask(input: RunwayVideoInput): Pro
       model: input.model ?? "gen4_turbo",
       promptImage: input.promptImage,
       promptText,
-      ratio: input.ratio,
+      ratio: input.model === "wan3" ? `auto_${input.quality ?? "720p"}` : input.ratio,
       duration: input.duration,
     }),
   });
