@@ -2,11 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { config } from "../config.js";
 import { createSession } from "../services/auth.js";
+import { generateStudioVideo, getStudioVideo, validateVideoInput } from "../services/studio-video.js";
 import { generateStudioVideo, getStudioVideo, validateVideoInput, videoCostCredits } from "../services/studio-video.js";
 
 const input = { promptText: "A gentle camera movement", promptImage: "data:image/png;base64,AAAA", duration: 5, ratio: "720:1280" };
 test("validates video input before billing", () => {
   assert.equal(validateVideoInput(input).model, "gen4_turbo");
+  for (const change of [{ duration: 20 }, { model: "gen4.5" }, { promptText: "" }, { promptImage: "file:///secret" }]) assert.throws(() => validateVideoInput({ ...input, ...change }));
   for (const change of [{ duration: 31 }, { model: "gen4.5" }, { promptText: "" }, { promptImage: "file:///secret" }]) assert.throws(() => validateVideoInput({ ...input, ...change }));
 });
 
@@ -27,6 +29,7 @@ test("video billing refunds provider rejection and checks ownership before provi
     assert.deepEqual(actions, ["reserve", "refund"]);
     await assert.rejects(getStudioVideo(session, "someone-elses-task"), /ni bila najdena/);
     actions.length = 0;
+    await assert.rejects(generateStudioVideo(session, { ...input, duration: 30 }));
     await assert.rejects(generateStudioVideo(session, { ...input, duration: 31 }));
     assert.deepEqual(actions, []);
   } finally { config.supabaseUrl = old.url; config.supabaseServiceRoleKey = old.key; config.runwayApiSecret = old.runway; globalThis.fetch = old.fetch; }
