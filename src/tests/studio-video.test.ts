@@ -3,11 +3,13 @@ import test from "node:test";
 import { config } from "../config.js";
 import { createSession } from "../services/auth.js";
 import { generateStudioVideo, getStudioVideo, validateVideoInput } from "../services/studio-video.js";
+import { generateStudioVideo, getStudioVideo, validateVideoInput, videoCostCredits } from "../services/studio-video.js";
 
 const input = { promptText: "A gentle camera movement", promptImage: "data:image/png;base64,AAAA", duration: 5, ratio: "720:1280" };
 test("validates video input before billing", () => {
   assert.equal(validateVideoInput(input).model, "gen4_turbo");
   for (const change of [{ duration: 20 }, { model: "gen4.5" }, { promptText: "" }, { promptImage: "file:///secret" }]) assert.throws(() => validateVideoInput({ ...input, ...change }));
+  for (const change of [{ duration: 31 }, { model: "gen4.5" }, { promptText: "" }, { promptImage: "file:///secret" }]) assert.throws(() => validateVideoInput({ ...input, ...change }));
 });
 
 test("video billing refunds provider rejection and checks ownership before provider lookup", async () => {
@@ -28,6 +30,7 @@ test("video billing refunds provider rejection and checks ownership before provi
     await assert.rejects(getStudioVideo(session, "someone-elses-task"), /ni bila najdena/);
     actions.length = 0;
     await assert.rejects(generateStudioVideo(session, { ...input, duration: 30 }));
+    await assert.rejects(generateStudioVideo(session, { ...input, duration: 31 }));
     assert.deepEqual(actions, []);
   } finally { config.supabaseUrl = old.url; config.supabaseServiceRoleKey = old.key; config.runwayApiSecret = old.runway; globalThis.fetch = old.fetch; }
 });
@@ -48,4 +51,15 @@ test("free credits cannot call Runway or reserve credits; only a confirmed purch
     await assert.rejects(generateStudioVideo(session, input), (error: any) => error.code === "VIDEO_PURCHASE_REQUIRED");
     assert.equal(calls.length, 1);
   } finally { config.supabaseUrl = old.url; config.supabaseServiceRoleKey = old.key; globalThis.fetch = old.fetch; }
+});
+
+test("WAN 3.0 validates 20/30s and calculates server-side Runway credits", () => {
+  for (const duration of [20, 30]) {
+    const value = validateVideoInput({ ...input, duration, model: "wan3", quality: "720p" });
+    assert.equal(value.model, "wan3");
+    assert.equal(videoCostCredits(value), duration * 10);
+    assert.equal(videoCostCredits({ ...value, quality: "480p" }), duration * 5);
+    assert.equal(videoCostCredits({ ...value, quality: "1080p" }), duration * 20);
+    assert.throws(() => validateVideoInput({ ...input, duration, model: "gen4_turbo" }));
+  }
 });

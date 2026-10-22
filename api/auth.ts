@@ -52,6 +52,14 @@ body{margin:0;font-family:Inter,system-ui,sans-serif;background:#f6f7f9;color:#1
 <body><main><header><div><h1>Studio Admin</h1><p class="muted">Pregled prijav in kreditov.</p></div><a href="/studio">Studio</a></header>
 ${storageNotice}
 ${systemDashboard(systemStatus)}
+<section class="card" id="providerPayments"><h2>Upravljanje plačil in API kreditov</h2><p class="muted">Vse povezave na enem mestu. Plačilo se opravi neposredno pri ponudniku in se ne izvede samodejno iz Studia. Prijavi se v pravilen račun ponudnika.</p>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+<div class="metric"><strong style="font-size:18px">Runway Dev</strong><span>AI-video, nakup kreditov, API ključi</span><p><a href="https://dev.runwayml.com/" target="_blank" rel="noopener noreferrer">Odpri kredite in plačila ↗</a></p></div>
+<div class="metric"><strong style="font-size:18px">OpenAI API</strong><span>Besedila, slike in modeli – API poraba</span><p><a href="https://platform.openai.com/settings/organization/billing/overview" target="_blank" rel="noopener noreferrer">Plačila OpenAI ↗</a></p></div>
+<div class="metric"><strong style="font-size:18px">OpenRouter</strong><span>Modeli za besedila in druge naloge</span><p><a href="https://openrouter.ai/settings/credits" target="_blank" rel="noopener noreferrer">Nakup kreditov ↗</a></p></div>
+<div class="metric"><strong style="font-size:18px">Supabase</strong><span>Baza, prostor, podatkovni promet</span><p><a href="https://supabase.com/dashboard/organizations" target="_blank" rel="noopener noreferrer">Organizacija in obračun ↗</a></p></div>
+<div class="metric"><strong style="font-size:18px">Vercel</strong><span>Gostovanje in poraba aplikacije</span><p><a href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer">Projekti in plačila ↗</a></p></div>
+</div><p class="tiny">Opomba: krediti Runway Dev niso enaki kreditom v Studiu. API ključe nastavljaš v varnih spremenljivkah okolja na Vercelu; nikoli jih ne vnašaj v javni obrazec.</p></section>
 <section class="card"><strong>Uporabniki:</strong> ${rows.length}</section>
 <div class="status" id="status"></div>
 <table><thead><tr><th>E-mail</th><th>Uredi</th><th class="num">Porabljeno</th><th class="num">Prijave</th><th>Zadnja prijava</th><th>Posodobljeno</th></tr></thead>
